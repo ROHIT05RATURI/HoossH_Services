@@ -1,4 +1,4 @@
-﻿namespace Hoossh_Services_DAL
+﻿namespace HoossH_Service_DAL
 {
     public class Class1
     {
