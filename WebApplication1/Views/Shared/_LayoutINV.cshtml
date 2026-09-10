@@ -1,266 +1,473 @@
-
 <!doctype html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@ViewBag.Title - HoossH Service</title>
-    
+
     <!-- Favicon & Fonts -->
-    <link rel="icon" href="~/images/logo.png" type="image/x-icon" />
+    <link rel="icon" href="~/Images/Icon.ico" type="image/x-icon" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    
-    <!-- Bootstrap 5 & AdminLTE Styles -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css">
+
+    <!-- Stylesheets -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/NewCss.css">
+    <link rel="stylesheet" href="~/css/TableCreation.css">
+    <link rel="stylesheet" href="~/css/sweetalert2.min.css">
+    <link rel="stylesheet" href="~/css/OverlayScrollbars.min.css">
+    <link rel="stylesheet" href="~/css/HoosshNV.css">
     <link rel="stylesheet" href="~/css/adminlte.min.css">
+    <link rel="stylesheet" href="~/css/Userkundali.css">
     <link rel="stylesheet" href="~/css/site.css">
 
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
     <style>
-        :root {
-            --primary-brand: #3f6791;
-            --brand-light: #f0f4f8;
-            --text-main: #334155;
-            --bg-body: #f8fafc;
-        }
+            :root {
+                --primary-color: #3f6791;
+                --primary-light: #f0f4f8;
+                --text-main: #334155;
+                --border-color: #e2e8f0;
+                --bg-light: #f8fafc;
+            }
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--bg-body);
-            color: var(--text-main);
-            font-size: 14px;
-        }
+            body {
+                font-family: 'Poppins', sans-serif;
+                background-color: var(--bg-light);
+                color: var(--text-main);
+                font-size: 14px;
+            }
 
-        /* Navbar Customization */
-        .main-header {
-            background-color: #ffffff;
-            border-bottom: 1px solid #e2e8f0;
-        }
+            /* Navbar Styling */
+            .main-header {
+                background-color: #ffffff !important;
+                border-bottom: 1px solid var(--border-color) !important;
+            }
 
-        /* Sidebar Clean Modern Styling */
-        .main-sidebar {
-            background-color: #ffffff !important;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.03);
-            border-right: 1px solid #e2e8f0;
-        }
+            .navbar-title-center {
+                position: absolute;
+                left: 50%;
+                transform: translateX(-50%);
+                pointer-events: none;
+            }
 
-        .brand-link {
-            padding: 15px;
-            text-align: center;
-            border-bottom: 1px solid #f1f5f9;
-        }
+                .navbar-title-center h6 {
+                    font-size: 1.1rem;
+                    font-weight: 600;
+                    color: var(--text-main);
+                    white-space: nowrap;
+                }
 
-        .sidebar-menu-container {
-            padding: 10px 15px;
-            height: calc(100vh - 70px);
-            overflow-y: auto;
-        }
+            /* Sidebar Styling - Modern Light Theme */
+            .main-sidebar {
+                position: fixed !important;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                width: 280px;
+                background-color: #ffffff !important;
+                border-right: 1px solid var(--border-color);
+                transform: translateX(-100%);
+                transition: transform 0.3s ease, visibility 0.3s ease;
+                z-index: 10080;
+                visibility: hidden;
+                overflow-y: auto !important;
+            }
 
-        /* Menu Headings & Items */
-        .menu-item {
-            display: flex;
-            align-items: center;
-            padding: 10px 14px;
-            color: var(--text-main);
-            text-decoration: none;
-            font-weight: 500;
-            border-radius: 8px;
-            margin-bottom: 4px;
-            transition: all 0.2s ease-in-out;
-        }
+            body:not(.sidebar-collapse) .main-sidebar {
+                transform: translateX(0);
+                visibility: visible;
+                box-shadow: 4px 0 20px rgba(0, 0, 0, 0.05);
+            }
 
-        .menu-item i {
-            color: var(--primary-brand);
-            font-size: 16px;
-            width: 25px;
-            text-align: center;
-            margin-right: 10px;
-        }
+            .grow-nav-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 15px 20px;
+                border-bottom: 1px solid var(--border-color);
+                background-color: #ffffff;
+                position: sticky;
+                top: 0;
+                z-index: 10;
+            }
 
-        .menu-item:hover, .menu-item.active {
-            background-color: var(--brand-light);
-            color: var(--primary-brand);
-        }
+            .fb-menu-container {
+                padding: 12px;
+            }
 
-        /* Collapsible Submenus */
-        .menu-dropdown-toggle {
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 14px;
-            color: var(--text-main);
-            font-weight: 500;
-            border-radius: 8px;
-            margin-bottom: 4px;
-            transition: background 0.2s;
-        }
+            .fb-menu-heading {
+                font-size: 13.5px;
+                font-weight: 500;
+                color: var(--text-main);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                cursor: pointer;
+                padding: 10px 14px;
+                border-radius: 6px;
+                transition: all 0.2s ease;
+                margin-bottom: 4px;
+            }
 
-        .menu-dropdown-toggle:hover {
-            background-color: var(--brand-light);
-            color: var(--primary-brand);
-        }
+                .fb-menu-heading:hover {
+                    background-color: var(--primary-light);
+                    color: var(--primary-color);
+                }
 
-        .menu-dropdown-container {
-            display: none;
-            padding-left: 20px;
-            margin-bottom: 5px;
-        }
+                .fb-menu-heading.active {
+                    background-color: var(--primary-light);
+                    color: var(--primary-color);
+                    font-weight: 600;
+                }
 
-        .menu-dropdown-container .menu-item {
-            font-size: 13.5px;
-            padding: 8px 12px;
-        }
+            .grow-nav-icon {
+                color: var(--primary-color);
+                font-size: 15px;
+                width: 24px;
+                text-align: center;
+                margin-right: 8px;
+            }
 
-        /* Content Wrapper */
-        .content-wrapper {
-            background-color: var(--bg-body);
-            padding: 20px;
-            min-height: 100vh;
-        }
+            /* Submenus / Cards Grid */
+            .fb-collapsible-content {
+                display: none;
+                margin: 6px 0 10px 0;
+                padding-left: 10px;
+            }
+
+            .fb-grid-row {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+                margin-bottom: 8px;
+            }
+
+            .fb-card {
+                background-color: #ffffff;
+                border-radius: 8px;
+                padding: 12px;
+                text-decoration: none;
+                border: 1px solid var(--border-color);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                height: 70px;
+                transition: all 0.2s ease;
+            }
+
+                .fb-card:hover {
+                    border-color: var(--primary-color);
+                    background-color: var(--primary-light);
+                    transform: translateY(-2px);
+                }
+
+            .fb-card-icon {
+                font-size: 20px;
+                margin-bottom: 4px;
+                color: var(--primary-color);
+            }
+
+            .fb-card-title {
+                font-size: 11px;
+                font-weight: 500;
+                color: var(--text-main);
+                text-align: center;
+                line-height: 1.2;
+            }
+
+            /* Active Navigation States */
+            .url-link.active {
+                background: var(--primary-light) !important;
+                color: var(--primary-color) !important;
+                font-weight: 600;
+                border-radius: 6px;
+                border-left: 3px solid var(--primary-color);
+            }
+
+            /* Profile Dropdown */
+            .profile-dropdown {
+                display: none;
+                position: absolute;
+                top: 100%;
+                right: 0;
+                background-color: white;
+                min-width: 160px;
+                border-radius: 8px;
+                padding: 8px 0;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+                border: 1px solid var(--border-color);
+                z-index: 10000;
+            }
+
+            .dropdown-item {
+                padding: 8px 16px;
+                font-size: 13px;
+                color: var(--text-main);
+            }
+
+                .dropdown-item:hover {
+                    background-color: var(--primary-light);
+                    color: var(--primary-color);
+                }
+
+            /* Loader Overlay */
+            .loader-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background-color: rgba(255, 255, 255, 0.8);
+                backdrop-filter: blur(2px);
+                z-index: 99999;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .spinner {
+                width: 50px;
+                height: 50px;
+                border: 4px solid var(--border-color);
+                border-top: 4px solid var(--primary-color);
+                border-radius: 50%;
+                animation: spin 0.8s linear infinite;
+            }
+
+            @@keyframes spin {
+                0% {
+                    transform: rotate(0deg);
+                }
+
+                100% {
+                    transform: rotate(360deg);
+                }
+            }
+
+            /* Bottom Nav for Mobile */
+            .bottom-nav {
+                height: 60px;
+                background-color: #fff;
+                box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+                z-index: 1050;
+                border-top: 1px solid var(--border-color);
+                display: none;
+            }
+
+            @@media (max-width: 600px) {
+                .bottom-nav {
+                    display: flex !important;
+                }
+            }
     </style>
 </head>
-<body class="hold-transition sidebar-mini layout-fixed">
-    <div class="wrapper">
 
-        <!-- Navbar -->
-        <nav class="main-header navbar navbar-expand navbar-light fixed-top">
+<body class="hold-transition sidebar-mini sidebar-collapse layout-navbar-fixed">
+
+    @* @if (role == "SalesPerson" || role == "SalesManager")
+    {
+        <partial name="_BottomNavigation" />
+        <div class="bottom-nav justify-content-around align-items-center fixed-bottom" id="mainBottomNav">
+            <div id="dynamic-nav-container" class="d-flex justify-content-around flex-grow-1"></div>
+            <a asp-controller="Flow" asp-action="CustomerReport" class="text-center text-decoration-none text-dark" style="min-width: 60px;">
+                <div class="btn btn-light rounded-circle shadow-sm mx-auto mb-1 d-flex align-items-center justify-content-center"
+                     style="width: 38px; height: 38px; color: var(--primary-color);">
+                    <i class="fa-solid fa-handshake"></i>
+                </div>
+                <div style="font-size: 10px;">Meeting</div>
+            </a>
+        </div>
+    } *@
+
+    <div id="global-loader" class="loader-overlay" style="display: none;">
+        <div class="spinner"></div>
+    </div>
+
+    <div class="wrapper w-100">
+        <!-- Top Navbar -->
+        <nav class="main-header navbar navbar-expand navbar-light shadow-sm fixed-top">
             <div class="container-fluid">
-                <ul class="navbar-nav">
+                <ul class="navbar-nav align-items-center">
                     <li class="nav-item">
-                        <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars text-secondary"></i></a>
-                    </li>
-                    <li class="nav-item d-none d-sm-inline-block">
-                        <span class="nav-link font-weight-bold text-dark">@ViewBag.Title</span>
+                        <a class="nav-link text-secondary" data-widget="pushmenu" href="#" role="button">
+                            <i class="fas fa-bars fs-5"></i>
+                        </a>
                     </li>
                 </ul>
 
-                <!-- Right Navbar Links -->
-                <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-user-circle fs-5 text-primary me-2"></i>
-                            <span></span>
+                <div class="navbar-title-center">
+                    <h6 class="m-0">@ViewBag.Title</h6>
+                </div>
+
+                <ul class="navbar-nav align-items-center ms-auto">
+                    <li class="nav-item me-3">
+                        <a href="javascript:history.back()" class="nav-link text-secondary" title="Go Back">
+                            <i class="fas fa-arrow-left fs-5"></i>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0" aria-labelledby="userDropdown">
-                            <li><a class="dropdown-item" href="/User/Profile"><i class="fas fa-user me-2"></i> Profile</a></li>
-                            <li><a class="dropdown-item" href="/User/ChangePassword"><i class="fas fa-key me-2"></i> Change Password</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item text-danger" href="/Auth/Login"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
-                        </ul>
+                    </li>
+                    <li class="nav-item position-relative">
+                        <i class="fa-solid fa-user-circle fs-4 text-secondary cursor-pointer profile-icon" id="profileMenuTrigger"></i>
+                        <div id="profileDropdown" class="profile-dropdown shadow-sm">
+                            <a href="" class="dropdown-item"><i class="fas fa-user me-2"></i> Profile</a>
+                            <a href="/Flow/NewKundaliOverView" class="dropdown-item"><i class="fas fa-scroll me-2"></i> Kundali</a>
+                            <a href="/home/Index" class="dropdown-item text-danger"><i class="fas fa-sign-out-alt me-2"></i> Logout</a>
+                        </div>
                     </li>
                 </ul>
             </div>
         </nav>
 
-        <!-- Main Sidebar Container based on Project Structure -->
-        <aside class="main-sidebar sidebar-light-primary elevation-1">
-            <a href="/" class="brand-link text-decoration-none">
-                <img src="~/images/hoossh.png" alt="HoossH Logo" style="height: 32px;" class="me-2">
-            </a>
-
-            <div class="sidebar-menu-container">
-                
-                    <!-- MANAGER MENU -->
-                    <div class="text-muted small fw-bold px-3 mb-2 text-uppercase">Manager Navigation</div>
-                    <a href="/Manager/Dashboard" class="menu-item @(ViewContext.RouteData.Values["action"]?.ToString() == "Dashboard" ? "active" : "")">
-                        <i class="fas fa-home"></i> Dashboard
+        <!-- Sidebar Navigation -->
+        <aside class="main-sidebar">
+            <div class="sidebar" style="height: 100vh;">
+                <div class="grow-nav-header">
+                    <a class="nav-link text-secondary p-0 d-flex justify-content-between" data-widget="pushmenu" href="#" role="button">
+                        <i class="fas fa-bars fs-5"></i>
+                    <img src="~/images/Icon.png" alt="HoossH Service" style="height: 28px;" />
                     </a>
-                    <a href="/Manager/Users" class="menu-item">
-                        <i class="fas fa-users"></i> Team Users
-                    </a>
-                    <a href="/Manager/Reports" class="menu-item">
-                        <i class="fas fa-chart-line"></i> Reports
-                    </a>
-  <!-- STANDARD USER / EMPLOYEE MENU -->
-                    <div class="text-muted small fw-bold px-3 mb-2 text-uppercase">Workspace</div>
-                    <a href="/User/Dashboard" class="menu-item">
-                        <i class="fas fa-tachometer-alt"></i> Dashboard
-                    </a>
+                </div>
 
-                    <!-- HRMS Dropdown -->
-                    <div class="menu-dropdown-toggle" onclick="toggleMenu('hrmsSub')">
-                        <span><i class="fas fa-users-cog"></i> HRMS</span>
-                        <i class="fas fa-chevron-down small"></i>
-                    </div>
-                    <div id="hrmsSub" class="menu-dropdown-container">
-                        <a href="/Team/Attendence" class="menu-item"><i class="fas fa-clock"></i> Attendance</a>
-                        <a href="/User/HRMS/Leave" class="menu-item"><i class="fas fa-calendar-minus"></i> Leaves</a>
-                    </div>
+                <div class="fb-menu-container">
+                   
+                    
+                        <div class="fb-menu-heading">
+                            <a href="" class="text-decoration-none w-100 d-flex align-items-center text-dark url-link">
+                                <i class="fas fa-home grow-nav-icon"></i>
+                                <span class="ms-2">Dashboard</span>
+                            </a>
+                        </div>
+                        <div class="fb-menu-heading" data-target="sec-hrms">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-users grow-nav-icon"></i>
+                                <span>HRMS</span>
+                            </div>
+                            <i class="fas fa-chevron-down fb-chevron"></i>
+                        </div>
+                        <div id="sec-hrms" class="fb-collapsible-content">
+                            <div class="fb-grid-row">
+                                <a href="@Url.Action("Attendence", "Team")" class="fb-card url-link">
+                                    <i class="fas fa-clock fb-card-icon"></i>
+                                    <span class="fb-card-title">Attendance</span>
+                                </a>
+                                <a href="@Url.Action("Leave", "UserHRMS")" class="fb-card url-link">
+                                    <i class="fas fa-calendar-minus fb-card-icon"></i>
+                                    <span class="fb-card-title">Leaves</span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="fb-menu-heading">
+                            <a href="@Url.Action("VisitList", "UserVisit")" class="text-decoration-none w-100 d-flex align-items-center text-dark url-link">
+                                <i class="fa-solid fa-clipboard-list grow-nav-icon"></i>
+                                <span class="ms-2">Visits</span>
+                            </a>
+                        </div>
+                        <div class="fb-menu-heading">
+                            <a href="@Url.Action("ClientList", "UserClient")" class="text-decoration-none w-100 d-flex align-items-center text-dark url-link">
+                                <i class="fas fa-user-tie grow-nav-icon"></i>
+                                <span class="ms-2">Clients</span>
+                            </a>
+                        </div>
+                        <div class="fb-menu-heading">
+                            <a href="@Url.Action("ProductList", "UserProduct")" class="text-decoration-none w-100 d-flex align-items-center text-dark url-link">
+                                <i class="fa-solid fa-box-open grow-nav-icon"></i>
+                                <span class="ms-2">Products Catalogue</span>
+                            </a>
+                        </div>
+                    
+                    @* else if ("manager"== "Manager")
+                    {
+                        
+                        <div class="fb-menu-heading">
+                            <a href="@Url.Action("Users", "Manager")" class="text-decoration-none w-100 d-flex align-items-center text-dark url-link">
+                                <i class="fas fa-users grow-nav-icon"></i>
+                                <span class="ms-2">Team Users</span>
+                            </a>
+                        </div>
+                        <div class="fb-menu-heading">
+                            <a href="@Url.Action("Reports", "Manager")" class="text-decoration-none w-100 d-flex align-items-center text-dark url-link">
+                                <i class="fas fa-chart-line grow-nav-icon"></i>
+                                <span class="ms-2">Reports</span>
+                            </a>
+                        </div>
+                    }
+                    else
+                    {
+                        <!-- Default Fallback Navigation for other roles -->
+                        <div class="fb-menu-heading">
+                            <a href="/User/Dashboard" class="text-decoration-none w-100 d-flex align-items-center text-dark url-link">
+                                <i class="fas fa-home grow-nav-icon"></i>
+                                <span class="ms-2">Dashboard</span>
+                            </a>
+                        </div>
+                    } *@
 
-                    <!-- Client Management -->
-                    <div class="menu-dropdown-toggle" onclick="toggleMenu('clientSub')">
-                        <span><i class="fas fa-user-tie"></i> Clients</span>
-                        <i class="fas fa-chevron-down small"></i>
+                    <div class="fb-menu-heading mt-3 border-top pt-2">
+                        <a href="/Auth/Login" class="text-decoration-none w-100 d-flex align-items-center text-danger url-link">
+                            <i class="fas fa-sign-out-alt grow-nav-icon text-danger"></i>
+                            <span class="ms-2">Logout</span>
+                        </a>
                     </div>
-                    <div id="clientSub" class="menu-dropdown-container">
-                        <a href="/User/Client/ClientList" class="menu-item"><i class="fas fa-list"></i> Client List</a>
-                        <a href="/User/Client/AddClient" class="menu-item"><i class="fas fa-user-plus"></i> Add Client</a>
-                    </div>
-
-                    <!-- Visit Management -->
-                    <div class="menu-dropdown-toggle" onclick="toggleMenu('visitSub')">
-                        <span><i class="fas fa-map-marked-alt"></i> Visits</span>
-                        <i class="fas fa-chevron-down small"></i>
-                    </div>
-                    <div id="visitSub" class="menu-dropdown-container">
-                        <a href="/User/Visit/VisitList" class="menu-item"><i class="fas fa-route"></i> Visit List</a>
-                        <a href="/User/Visit/AddVisit" class="menu-item"><i class="fas fa-plus-circle"></i> Add Visit</a>
-                    </div>
-
-                    <!-- Product Catalogue -->
-                    <div class="menu-dropdown-toggle" onclick="toggleMenu('productSub')">
-                        <span><i class="fas fa-box-open"></i> Products</span>
-                        <i class="fas fa-chevron-down small"></i>
-                    </div>
-                    <div id="productSub" class="menu-dropdown-container">
-                        <a href="/User/Product/ProductList" class="menu-item"><i class="fas fa-boxes"></i> Catalogue</a>
-                        <a href="/User/Product/AddProduct" class="menu-item"><i class="fas fa-folder-plus"></i> Add Product</a>
-                    </div>
-                
-
-                <hr class="my-3 text-muted">
-                
-                <div class="text-muted small fw-bold px-3 mb-2 text-uppercase">System</div>
-                <a href="/User/Notifications" class="menu-item">
-                    <i class="fas fa-bell"></i> Notifications
-                </a>
-                <a href="/Auth/Login" class="menu-item text-danger">
-                    <i class="fas fa-sign-out-alt text-danger"></i> Logout
-                </a>
+                </div>
             </div>
         </aside>
 
-        <!-- Content Wrapper -->
-        <div class="content-wrapper" style="margin-top: 56px;">
-            <section class="content">
-                <div class="container-fluid px-2">
+        <!-- Main Content Area -->
+        <div class="content-wrapper" style="background-color: var(--bg-light); min-height: 100vh; padding-top: 60px;">
+            <section class="content px-3 py-4">
+                <div class="container-fluid">
                     @RenderBody()
                 </div>
             </section>
         </div>
 
-        <!-- Footer -->
-        <footer class="main-footer text-center text-muted small py-3 bg-white border-top">
-            <strong>Copyright &copy; @DateTime.Now.Year <span class="text-primary">HoossH Service</span>.</strong> All rights reserved.
+        <footer class="main-footer text-muted text-center py-3 border-top bg-white">
+            <small>&copy; @DateTime.Now.Year HoossH Service. All rights reserved.</small>
         </footer>
-
     </div>
 
     <!-- Scripts -->
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/adminlte.min.js"></script>
+    <script src="~/js/adminlte.min.js">    </script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
     <script>
-        function toggleMenu(id) {
-            const element = document.getElementById(id);
-            if (element.style.display === "block") {
-                element.style.display = "none";
-            } else {
-                element.style.display = "block";
-            }
-        }
+                // Profile dropdown toggle
+                const trigger = document.getElementById('profileMenuTrigger');
+                const dropdown = document.getElementById('profileDropdown');
+
+                if (trigger && dropdown) {
+                    trigger.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+                    });
+                    window.addEventListener('click', function() {
+                        dropdown.style.display = 'none';
+                    });
+                }
+
+                // Collapsible sidebar menu handling
+                document.querySelectorAll(".fb-menu-heading[data-target]").forEach(header => {
+                    header.addEventListener("click", function () {
+                const targetId = this.dataset.target;
+                const targetContent = document.getElementById(targetId);
+                if (targetContent) {
+                    const isVisible = targetContent.style.display === "block";
+                    targetContent.style.display = isVisible ? "none" : "block";
+                    this.classList.toggle("active", !isVisible);
+                }
+            });
+            });
+
+                // Close sidebar on navigation for mobile view
+                function closeSidebar() {
+                    document.body.classList.add('sidebar-collapse');
+                }
     </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
