@@ -1,0 +1,617 @@
+@{
+    ViewBag.Title = "Login";
+    Layout = null; 
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - HoossH Services</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+    <style>
+        :root {
+            --primary-color: #3f6791;
+            --primary-hover: #2d4a68;
+            --border-light: #e1e5eb;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: #ffffff;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            overflow: hidden;
+            position: relative;
+            flex-direction: column;
+        }
+
+        /* --- Login Card Styling --- */
+        .login-card {
+            background: rgba(255, 255, 255, 0.95);
+            width: 90%;
+            max-width: 420px;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            border-top: 5px solid var(--primary-color);
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+            justify-self: center;
+            margin-top: auto;
+            margin-bottom: auto;
+        }
+
+        .login-logo {
+            max-width: 150px;
+            margin-bottom: 20px;
+            mix-blend-mode: multiply;
+        }
+
+        .login-header h2 {
+            color: #333;
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            letter-spacing: -0.5px;
+        }
+
+        /* --- Inputs Styling --- */
+        .input-group-custom {
+            margin-bottom: 18px;
+            text-align: left;
+        }
+
+        .form-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #444;
+            margin-bottom: 8px;
+            display: block;
+            justify-content: start;
+        }
+
+        .input-wrapper {
+            position: relative;
+            width: 100% !important;
+        }
+
+        .form-control {
+            width: 100%;
+            border: 1.5px solid var(--border-light);
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 12px 15px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+            .form-control:focus {
+                background: #ffffff;
+                border-color: var(--primary-color);
+                box-shadow: 0 0 0 3px rgba(63, 103, 145, 0.15);
+            }
+
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #94a3b8;
+            transition: color 0.3s ease;
+        }
+
+            .toggle-password:hover {
+                color: var(--primary-color);
+            }
+
+        /* --- Forgot Password Link --- */
+        .forgot-password-link {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: block;
+            text-align: right;
+            margin-top: 8px;
+            transition: 0.3s ease;
+        }
+
+            .forgot-password-link:hover {
+                color: var(--primary-hover);
+                text-decoration: underline;
+            }
+
+        /* --- Action Button --- */
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--primary-color);
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s ease;
+            margin-top: 5px;
+        }
+
+            .btn-login:hover {
+                background-color: var(--primary-hover);
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(63, 103, 145, 0.3);
+            }
+
+            .btn-login:active {
+                transform: scale(0.98);
+            }
+
+            .btn-login:disabled {
+                background-color: #9cb3c9;
+                cursor: not-allowed;
+                transform: none;
+                box-shadow: none;
+            }
+
+        /* --- Extra Links --- */
+        .know-more-link {
+            font-size: 14px;
+            color: var(--primary-color);
+            display: inline-block;
+            margin-top: 20px;
+            transition: 0.3s;
+        }
+
+            .know-more-link:hover {
+                text-decoration: underline;
+                color: var(--primary-hover);
+            }
+
+        /* --- Error Message Box --- */
+        #errorMessage {
+            font-size: 14px;
+            text-align: left;
+            border-radius: 10px;
+            padding: 12px;
+        }
+
+        /* --- Animated Waves Styling --- */
+        .waves-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 35vh;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .waves {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .parallax > use {
+            animation: move-forever 25s cubic-bezier(.55,.5,.45,.5) infinite;
+        }
+
+            .parallax > use:nth-child(1) {
+                animation-delay: -2s;
+                animation-duration: 7s;
+                fill: rgba(63, 103, 145, 0.15);
+            }
+
+            .parallax > use:nth-child(2) {
+                animation-delay: -3s;
+                animation-duration: 10s;
+                fill: rgba(63, 103, 145, 0.3);
+            }
+
+            .parallax > use:nth-child(3) {
+                animation-delay: -4s;
+                animation-duration: 13s;
+                fill: rgba(63, 103, 145, 0.5);
+            }
+
+            .parallax > use:nth-child(4) {
+                animation-delay: -5s;
+                animation-duration: 20s;
+                fill: var(--primary-color);
+            }
+
+        @@keyframes move-forever {
+            0% {
+                transform: translate3d(-90px, 0, 0);
+            }
+
+            100% {
+                transform: translate3d(85px, 0, 0);
+            }
+        }
+
+        /* --- Mobile Optimization --- */
+        @@media (max-width: 768px) {
+            .login-card {
+                padding: 50px 20px;
+                width: 92%;
+            }
+
+            .waves-container {
+                height: 25vh;
+            }
+        }
+
+        /* --- Social Links --- */
+        .social-links-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 50px;
+        }
+
+        .social-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #f8fafc;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            border: 1.5px solid var(--border-light);
+        }
+
+            .social-icon:hover {
+                background-color: var(--primary-color);
+                color: #ffffff;
+                transform: translateY(-3px);
+                box-shadow: 0 5px 15px rgba(63, 103, 145, 0.2);
+                border-color: var(--primary-color);
+            }
+
+        /* --- Premium Custom Loader --- */
+        .custom-loader-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.85); /* Light blur background */
+            backdrop-filter: blur(4px);
+            z-index: 10005; /* Highest z-index */
+            display: none; /* Hidden by default */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+            .custom-loader-overlay.active {
+                display: flex;
+            }
+
+        .spinner-circle {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f1f5f9;
+            border-top: 4px solid #00d09c; /* Green spinning part */
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        .loader-text {
+            font-family: 'Segoe UI', sans-serif;
+            font-weight: 700;
+            color: #1e293b;
+            font-size: 1rem;
+            letter-spacing: 0.5px;
+            animation: pulseText 1.5s ease-in-out infinite;
+        }
+
+        @@keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @@keyframes pulseText {
+            0%, 100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        /* --- Premium Success Popup (Spacious & Elegant) --- */
+        .custom-success-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.4); /* Thoda dim background */
+            backdrop-filter: blur(8px); /* Premium Apple-like Blur */
+            z-index: 10010;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+            .custom-success-overlay.active {
+                display: flex;
+            }
+
+        .success-content-card {
+            background: #ffffff;
+            width: 90%;
+            max-width: 380px; /* Thoda bada size kiya (not too compact) */
+            border-radius: 28px; /* Ekdum smooth round corners */
+            padding: 40px 30px; /* Zyada breathing space */
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0,0,0,0.05); /* Soft premium shadow */
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            position: relative;
+            overflow: hidden;
+        }
+
+            /* Card ke upar ek subtle light gradient effect */
+            .success-content-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 120px;
+                background: linear-gradient(180deg, rgba(241, 245, 249, 0.7) 0%, rgba(255,255,255,0) 100%);
+                z-index: 0;
+            }
+
+        .success-icon-wrapper {
+            width: 85px; /* Icon circle ka size badhaya */
+            height: 85px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 20px auto;
+            position: relative;
+            z-index: 1;
+            animation: successPulse 2s infinite ease-in-out; /* Premium glowing animation */
+        }
+
+            /* Check-in Theme (Emerald Gradient) */
+            .success-icon-wrapper.checkin {
+                background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                color: white;
+                box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.4), 0 0 0 12px rgba(16, 185, 129, 0.1);
+            }
+
+            .success-icon-wrapper i {
+                font-size: 38px; /* Icon thoda aur bold */
+            }
+
+        .success-title {
+            font-size: 1.6rem; /* Text size badhaya */
+            font-weight: 800;
+            color: #0f172a;
+            margin: 0 0 12px 0;
+            position: relative;
+            z-index: 1;
+            letter-spacing: -0.5px;
+        }
+
+        .success-time {
+            font-size: 1rem;
+            color: #3f6791;
+            font-weight: 700;
+            margin: 0;
+            background: #ebf2ff;
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 50px;
+            position: relative;
+            z-index: 1;
+            border: 1px solid #dbeafe; /* Premium badge outline */
+        }
+
+        /* Smooth Breathing Animation for Icon */
+        @@keyframes successPulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.03);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        <div class="login-header">
+            <img src="~/Images/Login.jpg" alt="Hoossh Logo" class="login-logo">
+            <h2> </h2>
+        </div>
+
+        <div id="errorMessage" class="alert alert-danger d-none mb-3">
+            <i class="fa fa-exclamation-circle me-2"></i> <span id="errorText"></span>
+        </div>
+
+        <form id="loginForm">
+            <div class="input-group-custom">
+                <label for="userName" class="form-label">User Name</label>
+                <div class="input-wrapper">
+                    <input type="text" name="userName" id="userName" class="form-control" placeholder="Enter username" required />
+                </div>
+            </div>
+
+            <div class="input-group-custom">
+                <label for="password" class="form-label">Password</label>
+                <div class="input-wrapper">
+                    <input type="password" name="password" id="password" class="form-control" placeholder="Enter password" required />
+                    <i class="fas fa-eye-slash toggle-password" id="toggleIcon"></i>
+                </div>
+                <!-- Added Forgot Password Link -->
+                <a href="@Url.Action("ForgotPassword", "Home")" class="forgot-password-link">Forgot Password?</a>
+            </div>
+
+            <button type="submit" id="btnSubmit" class="btn-login"> 
+                <span id="btnText">Log In</span>
+            </button>
+            <div class="social-links-container">
+                <a href="@Url.Action("homeweb", "Web")" class="social-icon" title="Website">
+                    <i class="fas fa-globe"></i>
+                </a>
+                <a href="#" class="social-icon" title="Instagram">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="#" class="social-icon" title="Facebook">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="#" class="social-icon" title="Twitter">
+                    <i class="fab fa-x-twitter"></i>
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <div class="waves-container">
+        <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+            <defs>
+                <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+            </defs>
+            <g class="parallax">
+                <use xlink:href="#gentle-wave" x="48" y="0" />
+                <use xlink:href="#gentle-wave" x="48" y="3" />
+                <use xlink:href="#gentle-wave" x="48" y="5" />
+                <use xlink:href="#gentle-wave" x="48" y="7" />
+            </g>
+        </svg>
+    </div>
+
+    <!-- Custom Premium Popups for Login -->
+
+    <div id="customSuccessModal" class="custom-success-overlay">
+        <div class="success-content-card animate__animated" id="successCard">
+            <div class="success-icon-wrapper checkin">
+                <i class="fas fa-check" id="successIcon"></i>
+            </div>
+            <h3 id="successTitle" class="success-title">Welcome Back! 🌟</h3>
+            <p id="successTime" class="success-time">Signed in successfully</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+
+            // 1. Password Visibility Logic
+            $('#toggleIcon').on('click', function() {
+                const passInput = $('#password');
+                if (passInput.attr('type') === 'password') {
+                    passInput.attr('type', 'text');
+                    $(this).removeClass('fa-eye-slash').addClass('fa-eye');
+                } else {
+                    passInput.attr('type', 'password');
+                    $(this).removeClass('fa-eye').addClass('fa-eye-slash');
+                }
+            });
+
+            // 2. Your AJAX Login Logic
+            $("#loginForm").on("submit", function(e) {
+                e.preventDefault();
+
+                // Reset UI
+                $("#errorMessage").addClass("d-none");
+                $("#btnSubmit").prop("disabled", true);
+                $("#btnText").text("Authenticating...");
+
+                const loginData = {
+                    userName: $("#userName").val(),
+                    password: $("#password").val()
+                };
+
+                $.ajax({
+                    url: '@Url.Action("Login", "Login")',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(loginData),
+                    success: function(response) {
+                        if (response.success) {
+                            const successModal = document.getElementById("customSuccessModal");
+                            const successCard = document.getElementById("successCard");
+
+                            // Reset animations
+                            successCard.classList.remove("animate__zoomIn", "animate__zoomOut");
+
+                            // Show Success modal
+                            successModal.classList.add("active");
+                            successCard.classList.add("animate__zoomIn");
+
+                            setTimeout(() => {
+                                successCard.classList.remove("animate__zoomIn");
+                                successCard.classList.add("animate__zoomOut");
+
+                                setTimeout(() => {
+                                    window.location.href = response.redirect;
+                                }, 400);
+                            }, 2000);
+                        } else {
+                            // Show error above credentials
+                            $("#errorText").text(response.message);
+                            $("#errorMessage").removeClass("d-none");
+
+                            // Reset button
+                            $("#btnSubmit").prop("disabled", false);
+                            $("#btnText").text("Log In");
+                        }
+                    },
+                    error: function() {
+                        $("#errorText").text("An unexpected error occurred. Please try again.");
+                        $("#errorMessage").removeClass("d-none");
+                        $("#btnSubmit").prop("disabled", false);
+                        $("#btnText").text("Log In");
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
