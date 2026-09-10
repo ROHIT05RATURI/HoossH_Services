@@ -1,0 +1,409 @@
+﻿
+.page-wrapper {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.role-badge {
+    padding: 5px 10px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    color: #fff;
+}
+
+.role-salesperson {
+    background-color: #3f6791;
+}
+
+.role-leader {
+    background-color: #28a745;
+}
+
+.role-manager {
+    background-color: #ffc107;
+}
+
+.profile-pic {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #ddd;
+}
+
+.top-performer {
+    box-shadow: 0 0 15px 4px #3f6791;
+    height: 200px;
+    width: 200px;
+}
+
+.progress {
+    height: 20px;
+}
+
+.sticky-nav {
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 10;
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+    .sticky-nav a.active {
+        font-weight: bold;
+        color: #007bff;
+    }
+
+/* Timeline */
+.timeline {
+    list-style: none;
+    padding-left: 0;
+}
+
+    .timeline li {
+        padding: 10px;
+        border-left: 2px solid #007bff;
+        margin-left: 20px;
+        position: relative;
+    }
+
+        .timeline li::before {
+            content: "";
+            position: absolute;
+            left: -8px;
+            top: 15px;
+            width: 12px;
+            height: 12px;
+            background-color: #007bff;
+            border-radius: 50%;
+        }
+
+/* Stat Cards */
+.stat-card {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+
+.stat-icon {
+    font-size: 2rem;
+    margin-right: 15px;
+}
+
+.bg-basic {
+    background-color: #e11d48;
+}
+
+.bg-performance {
+    background-color: #198754;
+}
+
+.bg-activities {
+    background-color: #1d4c7d;
+}
+
+.bg-leaves {
+    background-color: #dc941aed;
+}
+
+.bg-success {
+    background-color: #3f6791 !important;
+}
+
+.heatmap {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+    .heatmap div {
+        width: 20px;
+        height: 20px;
+        border-radius: 4px;
+    }
+
+/* Tablet screens */
+@media (max-width: 768px) {
+    .heatmap div {
+        width: 16px;
+        height: 16px;
+    }
+}
+
+/* Small mobile screens */
+@media (max-width: 480px) {
+    .heatmap div {
+        width: 12px;
+        height: 12px;
+    }
+}
+
+
+.heat-cell {
+    width: 20px;
+    height: 20px;
+    background: #e0e0e0;
+    border-radius: 3px;
+}
+
+    .heat-cell.present {
+        background: #3f6791;
+    }
+
+    .heat-cell.leave {
+        background: #ffc107;
+    }
+
+    .heat-cell.absent {
+        background: #edf5e6;
+    }
+
+
+    .heat-cell.na {
+        background: #75ece2;
+    }
+
+h5 {
+    display: flex;
+    justify-content: center;
+}
+
+/* Card */
+.dark-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: 0 4px 10px rgba(0,0,0,.05);
+}
+
+.dark-header {
+    color: #0f172a;
+    font-weight: 600;
+    letter-spacing: .2px;
+}
+
+.dark-card .card-header {
+    background: linear-gradient(135deg, rgba(0,0,0,.02), rgba(0,0,0,0));
+    border-bottom: 1px solid var(--border);
+}
+
+
+
+.bg-primary {
+    background-color: #3f6791 !important;
+}
+
+.bg-success {
+    background-color: #edf5e6 !important;
+}
+
+.bg-warning {
+    background-color: #edf5e6 !important;
+}
+
+.btn-primary {
+    background-color: #3f6791 !important;
+    border: none;
+    width: 70px;
+    height: 25px;
+    font-size: 12px;
+    font-weight: normal;
+    border-radius: 6px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+.btn-secondary {
+    background-color: #3f6791 !important;
+    border: none;
+    border-radius: 6px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+.stat-card {
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+#attendance {
+    padding-left: 99px;
+}
+
+.btn-info {
+    background-color: #3f6791;
+    border-radius: 6px;
+    border: none;
+    color: white;
+}
+
+    .btn-info:hover {
+        background-color: #3f6791;
+        border-radius: 6px;
+        border: none;
+        color: white;
+    }
+
+/*table css*/
+
+.table-responsive {
+    margin-top: 15px;
+    border: 2px solid hidden;
+    border-radius: 12px;
+}
+
+.table-darkish {
+    --bs-table-bg: transparent;
+    --bs-table-border-color: var(--border);
+    color: #0f172a;
+    margin-top: 0 !important;
+    margin-bottom: 0;
+}
+
+    .table-darkish thead th {
+        color: var(--primary);
+        border-bottom: 1px solid var(--border);
+    }
+
+.tools .btn-tool {
+    color: #64748b;
+    border: none;
+    background: transparent;
+}
+
+    .tools .btn-tool:hover {
+        color: var(--primary);
+    }
+
+.card-spacer {
+    width: 650px;
+}
+
+.table-bordered {
+    border: 2px solid #3f6791;
+}
+
+#quotation {
+    width: 70px;
+    background-color: #3f6791;
+    border: none;
+    color: white;
+    border-radius: 6px
+}
+
+#invoice {
+    width: 70px;
+    background-color: #3f6791;
+    border: none;
+    color: white;
+    border-radius: 8px;
+}
+
+#closemodal {
+    width: 70px;
+    background-color: #3f6791;
+    border: none;
+    color: white;
+    border-radius: 8px;
+}
+
+#stats-overview .card {
+    border: 1px solid var(--border, #ddd);
+    border-radius: 14px;
+    box-shadow: 0 4px 10px rgba(0,0,0,.05);
+}
+
+table td a {
+    color: black !important;
+    text-decoration: none !important;
+}
+
+    table td a:hover {
+        color: #3f6791 !important;
+        text-decoration: underline !important;
+    }
+
+.heat-cell {
+    width: 20px;
+    height: 20px;
+    margin: 3px;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.legend-box {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    margin-right: 5px;
+    border-radius: 3px;
+}
+
+.present {
+    background-color: #3f6791;
+}
+
+.leave {
+    background-color: #ffc107;
+}
+
+.absent {
+    background-color: #edf5e6;
+}
+
+#heatmapLegend{
+    margin-left : 8rem !important;
+}
+
+
+
+@media (max-width: 503px) {
+    .card-spacer {
+        width: 295px !important;
+        overflow-x: auto;
+    }
+}
+
+/**user Dashboard*/
+
+
+.chart-container {
+    position: relative;
+    width: 100%; 
+    max-width: 815px; 
+    height: auto; 
+}
+
+
+@media (max-width: 576px) {
+    .chart-container {
+        max-width: 100%;
+    }
+}
+.fa-briefcase:before,
+.fa-chart-line:before,
+.fa-id-card:before {
+    color: #3f6791 !important;
+}
+
+
+#ShowVisit *:not(h3):not(i) {
+    font-size: 12px !important;
+    font-family: var(--font-family);
+}
+
+.stat-icon {
+    font-size: 20px;
+
+}

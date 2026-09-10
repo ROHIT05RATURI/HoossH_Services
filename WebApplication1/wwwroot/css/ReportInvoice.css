@@ -1,0 +1,177 @@
+﻿/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    padding: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    border-radius: 8px;
+    z-index: 9999;
+    width: 95%;
+    max-width: 900px;
+    max-height: 85vh; /* fixed height */
+    overflow-y: auto; /* scroll inside */
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    color: #000;
+}
+
+/* Title */
+.modal-title {
+    text-align: center;
+    margin: 10px 0 15px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* Invoice Box */
+.invoice-container {
+    width: 100%;
+}
+
+.invoice-box {
+    padding: 0;
+    font-size: 12px;
+}
+
+/* Company Header */
+.company-header {
+    text-align: center;
+    font-weight: bold;
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+
+.company-subheader {
+    font-weight: normal;
+    font-size: 12px;
+}
+
+/* Contact & GST */
+.contact-gst {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #000;
+    padding: 6px 0;
+    font-size: 12px;
+}
+
+    .contact-gst .right {
+        text-align: right;
+    }
+
+/* Receiver / Consignee */
+.receiver-consignee {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    flex-wrap: nowrap; /* ✅ never stacks */
+    gap: 10px;
+    font-size: 12px;
+}
+
+/* Section Titles */
+.section-title {
+    margin-top: 15px;
+    font-size: 12px;
+    font-weight: bold;
+    border-top: 1px solid #000;
+    padding-top: 6px;
+}
+
+/* Basic Details */
+.basic-details {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: nowrap; /* ✅ never stacks */
+    gap: 10px;
+    font-size: 12px;
+    margin-top: 8px;
+}
+
+/* Item Details */
+.item-details table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    margin-top: 8px;
+}
+
+.item-details th,
+.item-details td {
+    border: 1px solid #ccc;
+    padding: 4px 6px;
+    text-align: left;
+}
+
+.item-details th {
+    background: #f4f4f4;
+    font-weight: bold;
+}
+
+/* Payment & Shipping */
+.payment-shipping,
+.shipping-transport {
+    margin-top: 15px;
+    font-size: 12px;
+}
+
+.shipping-transport {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: nowrap; /* ✅ never stacks */
+    gap: 10px;
+}
+
+/* Summary */
+.summary {
+    margin-top: 15px;
+    border-top: 1px solid #000;
+    padding-top: 6px;
+    text-align: right;
+    font-size: 12px;
+}
+
+/* Signatory */
+.signatory {
+    margin-top: 15px;
+    text-align: left;
+    font-size: 12px;
+}
+
+/* Buttons */
+.button-container {
+    margin-top: 12px;
+    display: flex;
+    justify-content: flex-end; 
+    gap: 10px;
+}
+
+    .button-container .btn {
+        width: 70px;
+        padding: 5px;
+        border: none;
+        border-radius: 4px;
+        background-color: var(--fourth-color, #007bff);
+        color: #fff;
+        cursor: pointer;
+        font-size: 12px;
+    }
+
+        .button-container .btn:hover {
+            background-color: #0056b3;
+        }
+
+/* ✅ Remove Responsive Overrides */
+@media (max-width: 768px), (max-width: 480px) {
+    .receiver-consignee,
+    .basic-details,
+    .shipping-transport,
+    .button-container {
+        flex-direction: row !important; /* force same as desktop */
+        flex-wrap: nowrap !important;
+    }
+}

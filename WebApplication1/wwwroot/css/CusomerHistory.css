@@ -1,0 +1,54 @@
+﻿.history-list-item {
+    display: flex;
+    background: white;
+    border: 1px solid #e0e0e0;
+    margin-bottom: 15px;
+    padding: 0 7.5px;
+    border-left-width: 3px;
+    border-left-style: solid;
+  
+
+
+}
+
+.message {
+    width: 70%;
+}
+
+&.latest {
+    padding: 15px;
+}
+
+&.open {
+    border-left-color: green;
+}
+
+&.closed {
+    border-left-color: red;
+}
+
+&.pending {
+    border-left-color: yellow;
+}
+
+&.created {
+    border-left-color: lightblue;
+}
+
+.date {
+    font-weight: 700;
+}
+
+}
+
+
+em {
+    font-weight: 700;
+}
+/* add status indicators */
+
+
+
+p {
+    margin: 8px auto;
+}

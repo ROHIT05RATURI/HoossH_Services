@@ -1,0 +1,120 @@
+﻿
+
+.action-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top : 10px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 6px 12px;
+    border-radius: 5px;
+    font-size: 12px;
+    cursor: pointer;
+    border: none;
+}
+
+.btn-success {
+    background-color: #3f6791;
+    color: white;
+}
+
+.btn-info {
+    background-color: #3f6791;
+    color: white;
+}
+
+.invoice-container {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    background: #fff;
+}
+
+    .invoice-container h4 {
+        margin-top : 20px;
+        font-weight: bold;
+        font-size: 14px;
+    }
+
+.header {
+    text-align: center;
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+    .header div {
+        font-weight: normal;
+        font-size: 12px;
+    }
+
+.company-info,
+.details-section,
+.payment {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-top: 10px;
+    border-bottom: 1px solid #000;
+    padding-bottom: 8px;
+    gap: 10px;
+}
+
+table.widthmin {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 12px;
+}
+
+    table.widthmin th,
+    table.widthmin td {
+        border: 1px solid #ccc;
+        padding: 6px;
+        text-align: center;
+        word-wrap: break-word;
+    }
+
+    table.widthmin th {
+        font-weight: bold;
+        background-color: #3f6791;
+        color: #fff;
+    }
+
+.signatory {
+    margin-top: 20px;
+    text-align: right;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.button-container-top {
+    top: 30px;
+    right: 20px;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+    margin-right: 10px;
+    gap: 10px;
+}
+
+    .button-container-top button {
+        padding: 6px 12px;
+        background-color: #3f6791;
+        border: none;
+        color: white;
+        border-radius: 5px;
+        + cursor: pointer;
+        font-size: 12px;
+    }
+
+        .button-container-top button:hover {
+            background-color:  #3f6791 ;
+        }

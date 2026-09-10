@@ -1,0 +1,1172 @@
+﻿
+
+
+/* 🔹 Toggle Dropdown Container */
+.custom-input-group {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 270px;
+    flex-grow: 1;
+}
+
+#table-container {
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+#example-table-theme {
+    table-layout: auto;
+    min-width: 700px;
+    min-height: 400px;
+    overflow: visible !important;
+}
+
+/* Large screens (desktops > 1200px) */
+@media (min-width: 1200px) {
+    #example-table-theme {
+        min-width: 900px;
+        font-size: 12px;
+    }
+}
+
+/* Medium screens (laptops & tablets landscape 768px–1199px) */
+@media (min-width: 768px) and (max-width: 1199px) {
+    #example-table-theme {
+        min-width: 600px;
+        font-size: 12px;
+        overflow-x: auto; /* enable horizontal scroll */
+    }
+}
+
+/* Small tablets & large phones (480px–767px) */
+@media (min-width: 480px) and (max-width: 767px) {
+    #example-table-theme {
+        min-width: 100%; /* fit to screen */
+        font-size: 12px;
+        overflow-x: auto; /* scroll if too wide */
+    }
+}
+
+/* Mobile phones (< 480px) */
+@media (max-width: 479px) {
+    #example-table-theme {
+        min-width: 100%;
+        font-size: 12px;
+        overflow-x: auto; /* allow swipe scroll */
+    }
+
+        #example-table-theme .tabulator-header .tabulator-col {
+            white-space: nowrap; /* keep headers on one line */
+        }
+}
+
+
+
+.search-input {
+    height: 30px;
+    width: 100%;
+    font-size:12px;
+    padding: 4px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px 0 0 4px;
+    outline: none;
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+.input-icon {
+    height: 30px;
+    width: 34px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-left: none;
+    border-radius: 0 4px 4px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Download buttons */
+.custom-download-btn-wrapper {
+    display: flex;
+    gap: 10px;
+    margin-right: 10px;
+    margin-top: 0;
+    flex-shrink: 0;
+}
+
+.download-btn {
+    margin-top: 15px;
+    height: 25px !important;
+    width: 43px !important;
+    background-color: #edf5e6;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 11px !important;
+    line-height: 26px;
+    cursor: pointer;
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Column Dropdown */
+.column-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 99999;
+    background: white;
+    padding: 5px;
+    border: 1px solid #ccc;
+    width: 130px;
+    min-height: 100px;
+    overflow-y: auto;
+    font-size: 12px;
+/*    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);*/
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+
+
+.tabulator-title {
+    font-size: 12px;
+    opacity: 0.6;
+    font-family: var(--font-family);
+    font-weight: normal;
+    margin: 0;
+    padding-left: 6px;
+    vertical-align: middle;
+}
+
+.tabulator .tabulator-col .tabulator-col-title {
+    color: white !important;
+    font-weight: normal !important;
+    font-size: 12px !important;
+}
+
+/* 🔷 Alternate row coloring */
+.tabulator .tabulator-row:nth-child(even) {
+    background-color: #e9ecef !important;
+
+}
+
+
+
+/* 🔷 Table cell font */
+.tabulator .tabulator-cell {
+    font-size: 12px !important;
+    font-family: var(--font-family) !important;
+    padding: 6px 10px;
+}
+
+
+/* 🔷 Footer Pagination Styling */
+.tabulator .tabulator-footer {
+    background-color: white !important;
+    font-size: 12px !important;
+    font-weight: normal !important;
+    padding: 8px;
+    border-top: 1px solid #ccc;
+    color:black ;
+}
+
+    .tabulator .tabulator-footer .tabulator-page,
+    .tabulator .tabulator-footer .tabulator-pages {
+      
+        font-size: 12px !important;
+        font-weight: normal !important;
+    }
+
+        /* Optional: To make pagination buttons white text */
+        .tabulator .tabulator-footer .tabulator-page.active {
+            background-color: white !important;
+        }
+
+        .tabulator .tabulator-footer .tabulator-page:not(.active):hover {
+            background-color: rgba(255,255,255,0.2) !important;
+        }
+
+#customer-table .tabulator-header,
+#customer-table .tabulator-col {
+    background-color: #edf5e6 !important;
+    border-color: #edf5e6 !important;
+    font-weight: normal !important;
+}
+
+/* Hover effect */
+.tabulator .tabulator-row:hover {
+    background-color: #edf5e6 !important;
+    color: white !important;
+}
+
+
+.total-heading {
+    margin-top: 43px !important;
+    margin-bottom: 10px !important;
+    padding: 0;
+    font-size: 1px !important;
+    font-weight: normal;
+    font-family: var(--font-family);
+    line-height: 1;
+    display: inline-block;
+    opacity: 0.7;
+}
+
+/* search bar and buttons */
+.custom-form-container {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.custom-form-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0;
+}
+
+.dropdown-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.custom-customer-dropdown {
+    margin-top: 10px;
+    height: 28px !important;
+    width: 150px;
+    font-size: 12px;
+    border: 1px solid #edf5e6;
+    border-radius: 6px;
+    margin-left: 8px;
+    padding: 0 6px;
+    opacity: 0.4;
+}
+
+
+/* toggle icons and wrapper alignment */
+
+.column-toggle-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    flex-wrap: nowrap !important;
+    overflow: visible; /* allow dropdown to overflow */
+    white-space: nowrap;
+    position: relative;
+    z-index: 10; /*  enough to show above Tabulator tables */
+}
+
+    .column-toggle-wrapper svg {
+        flex-shrink: 0;
+        z-index: 11;
+    }
+
+
+
+.total-heading {
+    margin-top: 30px !important;
+    margin-bottom: 10px !important;
+    padding: 0;
+    font-size: 12px;
+    font-weight: normal;
+    font-family: var(--font-family);
+    line-height: 1;
+    display: inline-block;
+    opacity: 0.7;
+}
+
+
+
+.download-btn:hover {
+    background-color: #2ca194 !important;
+    color: white !important;
+}
+
+.time-placeholder {
+    opacity: 0.6;
+    font-family: var(--font-family)
+}
+
+
+.button-wrapper {
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 5px !important;
+}
+
+.table-wrapper {
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+
+
+
+.tabulator {
+    height: auto !important;
+    width: 100% !important;
+    border: none !important;
+    border-collapse: collapse;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+}
+
+    .tabulator .tabulator-header {
+        background-color: #edf5e6 !important;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+        border-bottom: 1px solid #ccc;
+        color: white;
+        font-size: 12px;
+        font-weight: normal;
+        font-family: var(--font-family);
+    }
+
+    .tabulator .tabulator-col .tabulator-col-content .tabulator-col-title {
+        white-space: normal !important;
+        overflow: visible !important;
+        text-overflow: unset !important;
+        font-weight: bold;
+        font-size: 12px;
+        padding: 6px 10px;
+        vertical-align: middle;
+    }
+
+
+    .tabulator .tabulator-cell:last-child {
+        border-right: none;
+    }
+
+    .tabulator .tabulator-row {
+        font-size: 12px;
+        padding: 0px;
+    }
+
+        .tabulator .tabulator-row:hover {
+            background-color: #edf5e6 !important;
+            color: white !important;
+        }
+
+.tabulator-page {
+    opacity: 0.6;
+}
+
+
+.tabulator .tabulator-col {
+    color: white !important;
+    font-size: 12px !important;
+    font-weight: normal !important;
+    background-color: #7b9dc2 !important;
+}
+
+    .tabulator .tabulator-col .tabulator-col-content {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 12px !important;
+        font-weight: normal !important;
+        background-color: #7b9dc2 !important;
+    }
+
+    .tabulator .tabulator-col .tabulator-col-title {
+        white-space: nowrap !important;
+        overflow: visible !important;
+        text-overflow: unset !important;
+        font-weight: bold;
+        font-size: 12px;
+        font-family: var(--font-family) !important;
+        font-weight: normal !important;
+    }
+
+
+.time-select {
+    width: 160px !important;
+    flex: none !important;
+    max-width: unset !important;
+    height: 30px !important;
+    border: 1px solid #edf5e6;
+    border-radius: 6px;
+    font-size: 12px;
+    opacity: 0.6;
+    font-family: var(--font-family, sans-serif);
+}
+
+.tabulator-paginator label,
+.tabulator-paginator select {
+    font-size: 12px !important;
+    font-weight: normal !important;
+    font-family: var(--font-family) !important;
+}
+
+.time-select option:nth-child(even) {
+    background-color: #e9ecef;
+}
+
+
+.tabulator .tabulator-cell {
+    border-right: 1px solid #e0e0e0;
+    padding: 6px 10px;
+    font-size: 12px !important;
+    font-weight: normal !important;
+}
+
+/* Table alternate rows & footer */
+.time-select option:nth-child(even) {
+    background-color: #e9ecef;
+}
+/* Hover effect */
+
+select.form-control {
+    appearance: none; /* hide default arrow */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background: white url("data:image/svg+xml;utf8,<svg fill='%235F6368' height='16' viewBox='0 0 24 24' width='16' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>") no-repeat right 10px center;
+    background-size: 14px 14px;
+    padding-right: 30px; /* space for the arrow */
+    border-radius: 6px; /* optional: for rounded corners */
+}
+
+.clean-select {
+    width: 100%;
+    padding: 8px 36px 8px 14px;
+    font-size: 12px;
+    font-weight: normal;
+    font-family: var(--font-family);
+    color: #000;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    box-sizing: border-box;
+    opacity: 0.7;
+    background-image: url("data:image/svg+xml,%3Csvg%20width%3D'12'%20height%3D'8'%20viewBox%3D'0%200%2012%208'%20xmlns%3D'http%3A//www.w3.org/2000/svg'%3E%3Cpath%20d%3D'M1%201l5%205%205-5'%20stroke%3D'%23000'%20stroke-width%3D'1.5'%20fill%3D'none'%20fill-rule%3D'evenodd'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 12px 8px;
+}
+
+
+
+.custom-search-bar {
+    display: flex;
+    align-items: center;
+    margin-top: 0;
+    flex-grow: 1;
+    min-width: 0;
+}
+
+
+
+.tabulator-row .tabulator-cell {
+    display: inline-block;
+    position: relative;
+    box-sizing: border-box;
+    padding: 4px;
+    border-right: none !important;
+    vertical-align: middle;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tabulator-row {
+    position: relative;
+    box-sizing: border-box;
+    min-height: 45px;
+    background-color: #fff;
+}
+
+
+
+#myTable {
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+    #myTable thead tr {
+        border-radius: 12px 12px 0 0;
+    }
+
+    #myTable th,
+    #myTable td {
+        border: 1px solid #ccc;
+    }
+
+#receipts {
+    padding: 0; /* Optional: remove padding if any */
+    background-color: transparent; /* Remove background if any */
+    border: none; /* ✅ Remove outer border */
+    border-radius: 0; /* ✅ Remove outer border-radius */
+}
+
+#receipts {
+    max-height: 400px; /* Adjust height as needed */
+    overflow-y: auto;
+}
+
+#myTable thead th {
+    position: sticky;
+    top: 0;
+    background:  #edf5e6 ;
+    color: ghostwhite;
+    z-index: 2;
+}
+
+
+.custom-table {
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    overflow: hidden;
+    font-family : var(--font-family) !important;
+}
+
+    .custom-table th, .custom-table td {
+        border: 1px solid #ccc;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .custom-table thead th {
+        background-color: #edf5e6;
+        color: white;
+        font-size: 12px;
+        font-weight: normal;
+    }
+
+    .custom-table tbody tr:nth-child(even) {
+        background-color: #e9ecef;
+    }
+
+
+#enquiry-tabulator .tabulator-header .tabulator-col {
+    background-color: #edf5e6 !important;
+    font-weight: normal !important;
+    font-size: 12px !important;
+    color: white !important;
+}
+
+/* ⚪ Tabulator Footer */
+#enquiry-tabulator .tabulator-footer {
+    background-color: white !important;
+    color: black !important;
+    font-size: 12px;
+    border-top: 1px solid #ccc;
+}
+
+
+/* 🔁 Alternate Row Background */
+#enquiry-tabulator .tabulator-row:nth-child(even) {
+    background-color: #e9ecef !important;
+}
+
+
+
+/* Table Styling */
+.custom-payment-table {
+    width: 100%;
+    min-width: 1000px;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+    /* Rounded corners for table */
+    .custom-payment-table thead th:first-child {
+        border-top-left-radius: 12px;
+    }
+
+    .custom-payment-table thead th:last-child {
+        border-top-right-radius: 12px;
+    }
+
+    /* Sticky thead */
+    .custom-payment-table thead th {
+        position: sticky;
+        top: 0;
+        background-color: var(--theme-color, #00bcd4);
+        color: ghostwhite;
+        font-weight: 400;
+        text-align: left;
+        z-index: 2;
+        padding: 10px;
+        border-bottom: 1px solid #ccc;
+    }
+
+    /* Body Cells */
+    .custom-payment-table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        font-size: 12px;
+        font-family: var(--font-family);
+        color: #212121;
+        background-color: white;
+    }
+
+
+.btn-submit-custom {
+    height: 30px;
+    margin-bottom: 10px;
+    padding: 6px;
+    background-color: #edf5e6 !important;
+    border-style: none;
+    font-family: var(--font-family);
+    color: white;
+}
+
+
+#product-tabulator {
+    height: 400px;
+    font-family: var(--font-family);
+    font-size: 12px;
+}
+
+
+    #product-tabulator .tabulator-header,
+    #product-tabulator .tabulator-col {
+        background-color: #edf5e6 !important;
+        color: white !important;
+        font-size: 12px !important;
+        font-weight: normal !important;
+        font-family: var(--font-family) !important;
+        border-right: 1px solid #dee2e6;
+    }
+
+
+    #product-tabulator .tabulator-row:nth-child(even) {
+        background-color: #e9ecef;
+    }
+
+
+    #product-tabulator .tabulator-cell {
+        font-size: 12px;
+        font-family: var(--font-family);
+        padding: 8px 10px;
+    }
+
+
+    #product-tabulator .tabulator-row:hover {
+        background-color: #d3dce6;
+    }
+
+
+    #product-tabulator .tabulator-footer {
+        background-color: white !important;
+        border-top: 1px solid #dee2e6;
+        font-family: var(--font-family);
+        font-size: 12px;
+    }
+
+
+
+/* Tabulator Header */
+#attendance-tabulator-table .tabulator-header {
+    background-color: #edf5e6 !important;
+}
+
+
+
+#attendance-tabulator-table .tabulator-col {
+    background-color: #edf5e6 !important;
+    color: white !important;
+    font-weight: normal !important;
+    font-size: 12px !important;
+}
+
+    #attendance-tabulator-table .tabulator-col .tabulator-col-title {
+        color: white !important;
+        font-weight: normal !important;
+        font-size: 12px !important;
+    }
+
+/* Alternate Row Background */
+#attendance-tabulator-table .tabulator-row:nth-child(even) {
+    background-color: #e9ecef !important;
+}
+
+/* Hover Effect */
+#attendance-tabulator-table .tabulator-row:hover {
+    background-color: #edf5e6 !important;
+    color: white !important;
+}
+
+
+/* Footer */
+#attendance-tabulator-table .tabulator-footer {
+    background-color: white !important;
+    color: black !important;
+    font-weight: normal !important;
+    font-size: 12px !important;
+}
+
+
+    #attendance-tabulator-table .tabulator-footer .tabulator-page-size,
+    #attendance-tabulator-table .tabulator-footer .tabulator-pages button {
+        font-size: 12px !important;
+        font-weight: normal !important;
+        color: black !important;
+    }
+
+
+.ManagerAttendenceApproveContainer,
+.table-view,
+#attendance-tabulator-table {
+    width: 100% !important;
+}
+
+
+
+@media (min-width: 1000px) {
+    .column-toggle-wrapper {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        margin-bottom: 0 !important;
+    }
+
+    .custom-search-bar,
+    .custom-download-btn-wrapper {
+        margin-top: 0 !important;
+    }
+
+    .action-buttons-wrapper {
+        display: flex !important;
+        align-items: flex-end;
+        justify-content: flex-end;
+        margin-right: 10px;
+        margin-top: 50px;
+        gap: 10px;
+        margin-bottom: 0 !important;
+    }
+
+    .btn-danger,
+    .btn-primary {
+        margin: 0 !important;
+        width: 85px;
+        padding: 4px;
+        align-self: center;
+    }
+}
+
+
+
+#leaveHistoryTable .tabulator-header,
+#leaveHistoryTable .tabulator-col {
+    background-color: #edf5e6 !important;
+    border-color: #edf5e6 !important;
+}
+
+#leaveHistoryTableHidden .tabulator-header,
+#leaveHistoryTableHidden .tabulator-col {
+    background-color: #edf5e6 !important;
+    border-color: #edf5e6 !important;
+}
+
+#leaveHistoryTable .tabulator-header .tabulator-col .tabulator-col-title {
+    color: white !important;
+    font-weight: normal !important;
+    font-size: 12px !important;
+}
+
+#leaveHistoryTableHidden .tabulator-header .tabulator-col .tabulator-col-title {
+    color: white !important;
+    font-weight: normal !important;
+    font-size: 12px !important;
+}
+
+.custom-toggle-btn-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 8px 16px;
+    margin-bottom: 12px;
+    width: 100%;
+}
+
+.custom-toggle-btn {
+    background-color: #edf5e6;
+    border: 2px solid  #edf5e6 ;
+    color: white;
+    height: 45px;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 12px;
+    width: 100%;
+    max-width: 1200px;
+    border-radius: 12px;
+    text-align: center;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+    .custom-toggle-btn:hover {
+        background-color:  #edf5e6 w;
+        color: white;
+    }
+
+
+    /*modify customer css*/
+select.select-input option:nth-child(even) {
+    background-color: #e9ecef;
+}
+
+select.form-control {
+    appearance: none; /* hide default arrow */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background: white url("data:image/svg+xml;utf8,<svg fill='%235F6368' height='16' viewBox='0 0 24 24' width='16' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>") no-repeat right 10px center;
+    background-size: 14px 14px;
+    padding-right: 30px; /* space for the arrow */
+    border-radius: 6px; /* optional: for rounded corners */
+}
+
+.CustomerDetails {
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.custome-input {
+    font-size: 12px;
+    opacity: 0.6;
+}
+
+/* HEADER STYLING */
+.tabulator .tabulator-header .tabulator-col,
+.tabulator .tabulator-header {
+    background-color: #edf5e6 !important;
+    color: white !important;
+    font-weight: normal !important;
+    font-size: 12px !important;
+}
+
+    /* Header cell title */
+    .tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-col-title {
+        color: black !important;
+    }
+
+/* ALTERNATE ROW BACKGROUND */
+.tabulator .tabulator-row:nth-child(even) {
+    background-color: #e9ecef !important;
+}
+
+/* FOOTER STYLING */
+.tabulator .tabulator-footer {
+    background-color: white !important;
+    color: white !important;
+}
+
+
+.visit-heading {
+    font-size: 12px;
+    font-weight: normal;
+    font-family: var(--font-family);
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.ddHeader1 {
+    font-size: 16px;
+    font-weight: 550;
+    font-family: var(--font-family);
+    background-color: #edf5e6;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 60px;
+}
+
+.section-toggle {
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    margin: 15px 0;
+    background: #e3f2fd;
+    color: #138496;
+    border: 1.5px solid #138496;
+    border-radius: 8px;
+    box-shadow: 2px 2px 4px #13849650;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background 0.3s ease;
+    width: 94%;
+    margin-inline: 35px;
+}
+
+    .section-toggle:hover {
+        background: #d0ecff;
+    }
+
+    .section-toggle i {
+        transition: transform 0.3s ease;
+    }
+
+    .section-toggle.active {
+        background-color: #138496;
+        color: white;
+    }
+
+        .section-toggle.active i {
+            transform: rotate(180deg);
+        }
+
+.form-section {
+    padding-inline: 30px;
+}
+
+
+/* Consistent styling */
+.custom-input {
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    font-size: 12px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Toggle style */
+.other-info-toggle {
+    color: #edf5e6;
+    font-weight: 600;
+    text-decoration: underline;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: color 0.3s;
+}
+
+    .other-info-toggle:hover {
+        color: #269c9e;
+    }
+
+/* Submit button */
+.custom-submit {
+    background-color: #edf5e6;
+    border-color: #edf5e6;
+    color: #fff;
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+
+    .custom-submit:hover {
+        background-color: #28a59e;
+        border-color: #28a59e;
+    }
+
+/* Responsive text fields and label */
+.field-label {
+    font-weight: 500;
+    margin-bottom: 5px;
+    color: #444;
+}
+
+/* 🔷 Uniform Button Style */
+.ddHeader1 {
+    width: 100%;
+    margin: 10px 0;
+    padding: 10px 15px;
+    background-color: #e3f2fd;
+    border: 2px solid  #edf5e6 ;
+    border-radius: 10px;
+    font-weight: bold;
+    color: #138496;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 16px;
+}
+
+    .ddHeader1:hover,
+    .ddHeader1.active {
+        background-color:  #edf5e6 ;
+        color: white;
+    }
+
+/* Basic Information heading styled like toggle buttons */
+.basic-info-toggle {
+    width: 100%;
+    padding: 10px 15px;
+    background-color: #e3f2fd;
+    border: 2px solid  #edf5e6 ;
+    border-radius: 10px;
+    font-weight: bold;
+    color: #138496;
+    text-align: center;
+    font-size: 16px;
+    margin: 20px 0 10px 0;
+}
+
+
+
+/**headings*/
+
+
+.order-header {
+    font-size: 12px;
+    font-weight: normal;
+    opacity: 0.7;
+}
+
+/**support css*/
+/* Contact Us Section */
+.ContactUs {
+    margin-top:20px;
+    max-width: 900px;
+
+}
+
+    .ContactUs h4 {
+        text-align: center;
+        font-size: 20px;
+        color: #222;
+        margin-bottom: 20px;
+        font-weight: 600;
+    }
+
+.ContactContainer {
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+}
+
+.contact-block {
+    flex: 1;
+    margin-bottom:10px;
+}
+
+    .contact-block h5 {
+        font-size: 1.1rem;
+        color: #edf5e6;
+        margin-bottom: 8px;
+    }
+
+    .contact-block span {
+        display: block;
+        font-size: 0.95rem;
+        color: #444;
+        margin-bottom: 6px;
+    }
+
+        .contact-block span:hover {
+            color: #edf5e6;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+/* ✅ Responsive for small screens */
+@media (max-width: 768px) {
+    .ContactContainer {
+        flex-direction: column; /* stack vertically */
+        align-items: center;
+        text-align: center;
+    }
+
+    .contact-block {
+        width: 100%; /* take full width */
+    }
+}
+/* ✅ Responsive for small screens */
+@media (max-width:500px) {
+    @media (max-width:500px) {
+        .ContactContainer {
+            flex-direction: column; /* stack vertically */
+            align-items: center;
+            text-align: center;
+        }
+
+        .contact-block {
+            width: 100%; /* take full width */
+        }
+    }
+
+    /* Hide default ugly file input */
+    input[type="file"] {
+        display: none;
+    }
+
+
+    /**input file css */
+
+    .file-upload {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        background: #f9fafc;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: "Segoe UI", Tahoma, sans-serif;
+    }
+
+        .file-upload:hover {
+            background: #eef6ff;
+            border-color: #005bb5;
+            transform: scale(1.02);
+        }
+
+        /* Icon for upload */
+        .file-upload::before {
+            content: "📂";
+            font-size: 1.5rem;
+        }
+
+        /* File upload text */
+        .file-upload span {
+            font-size: 1rem;
+            color: #333;
+            font-weight: 500;
+        }
+
+    /**report sales invoice*/
+    /* Responsive text size */
+    @media (max-width: 600px) {
+        .invoice-container {
+            font-size: 12px;
+            padding: 15px;
+        }
+
+        .invoice-table th, .invoice-table td {
+            font-size: 12px;
+            padding: 6px;
+        }
+    }
+
+
+    /*ViewInvoice css*/
+
+    .table-striped > tbody > tr:nth-of-type(odd) {
+        --bs-table-accent-bg: #ece9ef !important;
+        background-color: #ece9ef !important;
+    }
+
+    /* 📱 Mobile / Small Screens */
+    @media (max-width: 768px) {
+        .fixed-bottom-buttons {
+            left: 0 !important;
+            width: 100% !important;
+            padding-left: 10px !important;
+        }
+    }

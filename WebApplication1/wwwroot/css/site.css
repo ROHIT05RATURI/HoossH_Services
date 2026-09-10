@@ -1,31 +1,2141 @@
 html {
-  font-size: 14px;
+    font-size: 14px;
+    position: relative;
+}
+    html body {
+        min-height: 100vh;
+        min-width: 100vw;
+        background-color: #d3d3d37a;
+        font-family: 'Microsoft Sans Serif';
+        padding-bottom: 60px !important;
+    }
+
+.back-to-top {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #007bff; /* Bootstrap primary blue */
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 14px;
+    display: none; /* Initially hidden */
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease-in-out;
+}
+
+.back-to-top:hover {
+    background-color: #0056b3;
+}
+
+.back-to-top i {
+    margin-right: 5px;
+}
+
+.form-control:focus {
+   
+}
+
+.content-wrapper, .main-header, .main-footer {
+    margin-left: 0 !important;
+    transition: none !important;
+    width:100%;
+}
+
+#ajax-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    z-index: 9999; /* Ensure it's on top */
+    display: none; /* Hide by default */
+}
+
+.page-item.active .page-link {
+    z-index: 3;
+    color: #fff;
+    background-color: #349769;
+    border-color: #0d6efd;
+}
+
+.pagination > li > a,
+.pagination > li > span {
+    color: #30694F !important;
+}
+.full-width-anchor {
+    display: flex; /* Flexbox for precise alignment */
+    align-items: flex-start; /* Aligns content to the top */
+    justify-content: flex-start; /* Aligns content to the left */
+    width: 100%;
+    height: 100px; /* Optional: Specify height if needed */
+}
+
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width:100%;
+}
+
+.userSelect{
+    font-size:small;
+}
+
+.row {
+    margin-right: 0px !important;
+    margin-left: 0px !important;
+    --bs-gutter-x: 0px !important;
+    --bs-gutter-y: 0px !important;
+}
+
+
+.navbarmid {
+    display: flex;
+    justify-content: space-evenly;
+    background-color:  #3f6791 ;  
+    padding: 10px;
+    color: white;
+}
+
+
+
+.navbarmid a {
+    color: white;
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius:10px;
+}
+
+.nanavbarmidvbar a:hover {
+    background-color: var(--secondary-color);
+    border-radius: 4px;
+}
+
+.navbarmid a.active {
+    background-color: #30694f75;
+    font-weight: bold;
+}
+
+:root {
+    --theme-color:  #3f6791 ; /* Primary theme color  #3f6791 ; */
+    --secondary-color: #6c757d; /* Secondary color var(--secondary-color); */
+    --third-color: #5bc0de; /* Danger color var(--third-color); */
+    --fourth-color: #28a745; /* Danger color #3f6791; */
+    --fifth-color: #fd7e14; /* Danger color var(--fifth-color); */
+
+
+    --firstbackgound-color: #e3f7fb; /*  color var(--firstbackgound-color); */
+    --secondbackground-color: #f8f9fa; /* Secondary color var(--secondbackground-color); */
+
+
+    --dangerbackground-color: #f8d7da; /* third color  var(--dangerbackground-color); */
+
+
+    --text-color: #333; /* Text color */
+    --background-color: #f4f4f4; /* Background color */
+}
+
+#DisplaySelectManager {
+    margin-bottom: 30px;
+    margin-top: 30px;
+  /*  max-width: 1100px;
+    margin-left: 210px;*/
+}
+
+#staticDiv table tbody th {
+    padding: 5px !important;
+}
+
+#staticDiv table tbody td {
+    padding: 5px !important;
+}
+
+
+
+.navbar-brand {
+    margin-left: 100px;
+    padding-top: 5px !important;
+}
+
+/* code to freeze the column in a table*/
+.table-container {
+    position: relative;
+    max-height: 400px; /* Set the desired height for your table */
+    overflow: auto;
+}
+
+
+.freeze-table th {
+    background-color:  #3f6791 ;
+    position: sticky;
+    top: 0; /* Freeze the first row */
+    z-index: 2;
+}
+
+
+.freeze-table thead tr:nth-child(2) th {
+    background-color:  #3f6791 ;
+    position: sticky;
+    top: 42px; /* Adjust this value to match the height of the first row */
+    /* Lower z-index for the second row */
+}
+
+.freeze-table td:first-child {
+    position: sticky;
+    left: 0; /* Freeze the first column */
+    background-color: #fff; /* Set the background for the sticky column */
+    z-index: 1;
+}
+
+
+.freeze-table th:first-child {
+    left: 0; /* Ensure the first column's header is also frozen */
+    z-index: 3;
+}
+
+
+.customer-table th {
+    background-color:  #3f6791 ;
+    position: sticky;
+    top: 0; /* Freeze the first row */
+    z-index: 2;
+}
+
+
+.customer-table thead tr:nth-child(2) th {
+    background-color:  #3f6791 ;
+    position: sticky;
+    top: 42px; /* Adjust this value to match the height of the first row */
+    /* Lower z-index for the second row */
+}
+
+.customer-table td:first-child {
+    position: sticky;
+    left: 0; /* Freeze the first column */
+    background-color: #fff; /* Set the background for the sticky column */
+    z-index: 2;
+}
+
+.customer-table th:nth-child(2),
+.customer-table td:nth-child(2) {
+    position: sticky;
+    left: 40px; /* Freeze the second column */
+    background-color:#fff; /* Set the background for the sticky column */
+ 
+}
+
+
+.customer-table th {
+    z-index: 1;
+    background-color:  #3f6791  !important;
+}
+.customer-table th:first-child {
+    left: 0; /* Ensure the first column's header is also frozen */
+    z-index: 3;
+}
+
+/* code to freeze the column in a table*/
+
+footer {
+    display: flex;
+    width: 100%; 
+   position:relative;
+}
+
+
+
+
+.DBContainer {
+    position: relative;
+    height: 70px;
+}
+
+.centered-span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.pb-3,
+.py-3 {
+    padding-bottom: 1rem;
+    margin-bottom: 5vh;
+}
+
+input[readonly] {
+    background-color: white;
+}
+
+#content {
+    margin-right: 300px;
+}
+
+/*Progress Bar Code Starts Here*/
+.progress-container {
+    position: relative;
+    width: 90%;
+    background-color: red !important;
+    border-radius: 25px;
+    overflow: hidden;
+    margin-bottom: 30px;
+    margin-left: 0px;
+}
+
+.progress-bar-custom {
+    height: 30px !important;
+    width: 0;
+    background-color: green !important;
+    border-radius: 25px 0 0 25px !important;
+    text-align: center;
+    line-height: 30px;
+    color: white !important;
+    transition: width 0.4s ease !important;
+}
+
+.progress-values {
+    display: flex;
+    justify-content: space-between;
+    margin-top: -10px;
+    margin-left: 0px;
+    width: 90%;
+}
+
+.progress-value {
+    color: #000;
+}
+
+.current-value {
+    margin-top: 10px;
+    text-align: center;
+    font-weight: bold;
+}
+
+/*Progress Bar Code Ends Here*/
+
+.SalesFilter {
+    display: block;
+    max-width: 1100px;
+    margin-left: 150px;
+    margin-bottom: 50px
+}
+
+#DisplaySelect {
+    display: flex;
+    margin-top: 40px;
+    margin-bottom: 20px;
+}
+
+#nxtbtn {
+    position: static;
+    top: 150px;
+    right: 90px;
+    width: 220px;
+    justify-content: center;
+    z-index: 9999;
+    border-radius: 5px;
+}
+
+.pb65LinearMain {
+    border-radius: 6px;
+    background-color: #e9e9eb;
+    height: 10px;
+}
+
+.fullWidth {
+    width: 100%;
+}
+
+.pb65CicleFiller,
+.pb65LinearFiller {
+    display: none;
+    transition: all 1s ease-in-out;
+}
+
+.pb65LinearFiller {
+    text-align: right;
+    animation-name: pb65LinearAnim;
+    animation-duration: 1s;
+}
+
+
+/*CSS for Navigation Bar*/
+
+* {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+
+
+nav {
+    background-color: white
+   
+}
+
+.MainNav {
+    width: 100%;
+    list-style: none;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.1);
+    padding: 0 20px;
+}
+
+
+/*nav li {
+    height: 50px;
+        --theme-color: #349769; /* Primary theme color  #3f6791 ; 
+--secondary-color: #30694F; /* Secondary color var(--secondary-color); 
+--third-color: #15D47C; /* Danger color var(--third-color); 
+    
+}*/
+
+nav li a {
+
+    padding: 0 5px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+  
+}
+
+nav a:hover {
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+.navicons {
+    height: 30px;
+}
+
+.logo {
+    height: 40px;
+}
+
+.candidatename {
+    color: #5f6368;
+}
+
+.profilepicture {
+    height: 40px;
+    width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 25px;
+    font-family: sans-serif;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.122);
+    color: white;
+    background-color:  #3f6791 ;
+    font-weight: 700;
+}
+
+
+nav .MainNav li:nth-child(2) {
+    margin-right: auto;
+}
+
+/*nav .MainNav li:nth-child(4) {
+    margin-left: auto;
+}
+*/
+/*.sidebar {
+    position: fixed;
+    top: 0px;
+    right: 0;
+    height: 100vh;
+    width: 250px;
+    z-index: 9999;
+    background-color:  #3f6791 ;;
+    box-shadow: -10px 0 15px rgba(0, 0, 0, 0.122);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    overflow: auto;
+    font-size:small;
+    color :white;
+}
+    */
+.SidebarContainer {
+    position: fixed;
+    top: 0px;
+    height: 100vh;
+    width: 100vw;
+    background-color: #cccccc94;
+    display: none;
+    z-index: 9999;
+}
+
+.notificationbar {
+    position: fixed;
+    top: 50px;
+    right: 0;
+    height: 100vh;
+    width: 100vw;
+    z-index: 9999;
+    background-color: rgba(225, 225, 210, 0.056);
+    box-shadow: -10px 0 15px rgba(0, 0, 0, 0.122);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar li {
+    width: 100%;
+    list-style-type: none;
+}
+
+.sidebar a {
+    width: 100%;
+
+}
+
+    .sidebar a h5 {
+        color: white;
+    }
+
+.firstnotification {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 60%;
+    height: 60%;
+    background-color: rgba(195, 195, 28, 0.056);
+    box-shadow: inset 5px 5px 150px  #3f6791 ;
+    border-radius: 25%;
+}
+
+.topleft {
+    position: absolute;
+}
+
+.firstnotification img {
+    position: absolute;
+    top: 8px;
+    left: 3%;
+}
+
+
+
+
+
+.OptionDivider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+
+.n1 {
+    border-radius: 24px;
+    border: none;
+}
+
+
+.NavOptions {
+    width: 100%;
+    list-style: none;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    margin-bottom: 0px;
+    padding: 0px;
+    height: 40px;
+}
+
+    .NavOptions li {
+        width: 200px;
+    }
+
+    .NavOptions a {
+        text-transform: uppercase;
+        color: black;
+        display: flex;
+        text-align: center;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        width: 100%;
+        font-weight: bold;
+    }
+
+
+/*nav li {
+    height: 50px;
+        --theme-color: #349769; /* Primary theme color  #3f6791 ; 
+--secondary-color: #30694F; /* Secondary color var(--secondary-color); 
+--third-color: #15D47C; /* Danger color var(--third-color); 
+    
+}*/
+ @media(min-width: 300px) and (max-width: 414px){
+    .NavOptions a{
+        font-size: 13px;
+        font-weight : bold;
+    }
+    .NavOptions li{
+        width: 100px;
+        padding: 0px;
+    }
+
+    .navicons {
+        height: 25px;
+    }
+
+    .logo {
+        height: 30px;
+    }
+
+    .profilepicture {
+        height: 30px;
+        width: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 20px;
+        font-family: sans-serif;
+        box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.122);
+        color: white;
+        background-color:  #3f6791 ;
+        font-weight: 700;
+        font-size:14px;
+    }
+
+   /* .sidebar {
+        position: fixed;
+        top: 0px;
+        right: 0;
+        height: 100vh;
+        width: 180px;
+        z-index: 9999;
+        background-color:  #3f6791 ;
+        box-shadow: -10px 0 15px rgba(0, 0, 0, 0.122);
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+        overflow: auto;
+        font-size: small;
+        color: white;
+    }
+
+    .SidebarContainer {
+        position: fixed;
+        top: 0px;
+        height: 100vh;
+        width: 100vw;
+        background-color: #cccccc94;
+        display: none;
+        z-index: 9999;
+    }
+*/
+    .notificationbar {
+        position: fixed;
+        top: 50px;
+        right: 0;
+        height: 100vh;
+        width: 100vw;
+        z-index: 9999;
+        background-color: rgba(225, 225, 210, 0.056);
+        box-shadow: -10px 0 15px rgba(0, 0, 0, 0.122);
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+  /*  .sidebar li {
+        width: 100%;
+        list-style-type: none;
+    }
+
+    .sidebar a {
+        width: 100%;
+    }
+
+        .sidebar a h5 {
+            color: white;
+        }*/
+
+    .firstnotification {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 60%;
+        height: 60%;
+        background-color: rgba(195, 195, 28, 0.056);
+        box-shadow: inset 5px 5px 150px  #3f6791 ;
+        border-radius: 25%;
+    }
+
+    .topleft {
+        position: absolute;
+    }
+
+    .firstnotification img {
+        position: absolute;
+        top: 8px;
+        left: 3%;
+    }
+
+
+
+
+
+    .OptionDivider {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+
+    .n1 {
+        border-radius: 24px;
+        border: none;
+    }
+
+
+    .NavOptions {
+        width: 100%;
+        list-style: none;
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+        margin-bottom: 0px;
+        padding: 0px;
+        height: 40px;
+    }
+
+        .NavOptions li {
+            width: 200px;
+        }
+
+        .NavOptions a {
+            text-transform: uppercase;
+            color: black;
+            display: flex;
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            width: 100%;
+            font-weight: bold;
+        }
+
+} 
+
+
+/*CSS for Support Page*/
+/*start*/
+.Support {
+    width: 100%;
+    height: 100%;
+}
+
+.SupportContainer {
+    width: 100%;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.s1 {
+    width: 100%;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.s2 {
+    width: 100%;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 18px;
+}
+
+.ItemContainer {
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.s2 .ItemContainer {
+    border: 0.5px solid grey;
+    box-shadow: 0px 0px 3px 0px;   
+    padding: 0px 10px;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+.SupportItems {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 33px;
+    margin: 10px 10px;
+}
+
+.Ticket {
+    width: 100%;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 10px;
+}
+
+.TicketList {
+    height: 55%;
+    width: 80%;
+    border: 4px solid  #3f6791 ;
+    display: flex;
+    flex-direction: column;
+    padding: 10px 0px;
+    overflow-y: scroll;
+    border-radius: 10px;
+}
+
+.TicketListContainer {
+    width: 100%;
+    height: 10%;
+    list-style: none;
+    padding: 0px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+    .TicketListContainer li {
+        height: 100px;
+        width: 98%;
+        border: 2px solid black;
+        background-color: #00000008;
+        border-radius: 10px;
+        padding: 5px;
+        margin: 4px 0px;
+    }
+
+        .TicketListContainer li div {
+            height: 100px;
+        }
+
+    .TicketListContainer p {
+        font-size: 12px;
+    }
+
+.ContactUs {
+    width: 100%;
+    height: 20%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 10px;
+}
+
+    .ContactUs h3 {
+        text-align: center;
+    }
+
+.contact1 p, .contact2 p {
+    font-size: 12px;
+}
+
+.ContactContainer {
+    width: 100%;
+    height: 80%;
+    display: flex;
+}
+
+.contact1, .contact2 {
+    width: 50%;
+    height: 80%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.contact1, .contact p {
+    font-size: 12px;
+}
+/*end*/
+.DisplayData {
+    border: 1px solid #e9e9eb;
+}
+
+@media (max-width: 600px) {
+    /* .NavOptions a{
+        font-size: 10px;
+        
+    } */
+
+    .NavOptions li {
+        width: 150px;
+        padding: 0px;
+    }
+}
+
+@media (max-width:414px) {
+    .NavOptions li {
+        width: 110px;
+    }
+
+        .NavOptions li a {
+            font-size: 12px;
+        }
+}
+
+@media (min-width: 600px) and (max-width: 1200px) {
+    #DisplaySelectManager {
+        margin-bottom: 30px;
+        margin-top: 30px;
+        max-width: 1100px;
+        margin-left: 80px;
+    }
 }
 
 @media (min-width: 768px) {
-  html {
+    html {
+        font-size: 16px;
+    }
+
+
+    .header {
+        background-color: #808080;
+        width: 100%;
+    }
+
+
+    .SalesFilter {
+        max-width: 1100px;
+        margin-left: 150px;
+    }
+
+    .WebDesign {
+        max-width: 1100px;
+        width: 100%;
+        margin-left: 100px;
+    }
+
+    #Dashboard,
+    #WorkStation {
+        position: relative;
+        width: 220px;
+        justify-content: center;
+        z-index: 9999;
+        border-radius: 10%;
+    }
+
+    #WorkStation {
+        margin-left: 32%;
+        margin-right: 6%;
+    }
+
+    .Maincontent {
+        flex: 1;
+    }
+
+    .DivWrapper {
+        border-radius: 8px;
+        border: 1px solid #e9e9eb;
+        padding: 30px;
+    }
+
+    #staticDiv {
+        position: fixed;
+        top: 110px;
+        right: 15px;
+        width: 300px;
+        padding: 10px;
+        height: 80vh;
+        border: 2px solid  #3f6791 ;
+        z-index: 0;
+    }
+
+    #nxtbtn {
+        display: flex;
+        margin-top: 0;
+        float: right;
+        width: 220px;
+        text-align: center;
+        height: 40px;
+        margin-right: 42px;
+        background:  #3f6791 ;
+        border-radius: 5px;
+    }
+
+    #editBtn {
+        position: absolute;
+        bottom: 15px;
+        width: 220px;
+        background-color: #c9302c;
+        margin-left: 25px;
+        border-radius: 5px;
+    }
+
+    .DivWrapperbt,
+    .DivWrapperHistory,
+    .DivWrapperEdit {
+        border-radius: 8px;
+        border: 1px solid #e9e9eb;
+        margin-top: 20px;
+        padding-top: 50px;
+    }
+
+    .DivWrapperEdit {
+        border: 1px solid black;
+        margin-left: 100px;
+        margin-right: 100px;
+    }
+
+    .Ordergraph,
+    .VisitOrderData,
+    .stkF56Graph,
+    .ddWraper {
+        margin-left: 125px;
+        margin-right: 150px;
+    }
+
+    #divVisit,
+    .Data_Wrapper {
+        max-width: 1100px;
+        padding-top: 50px;
+        display: block;
+    }
+
+    .DataCircle {
+        border-radius: 0%;
+        width: 100px;
+        height: 90px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .absolute-center {
+        align-items: center;
+        justify-content: center;
+    }
+
+    .width100 {
+        display: block;
+        width: 100%;
+        padding-left: 50px;
+    }
+
+    .stkP12Section {
+        margin-top: 80px;
+    }
+
+    .WorkStationDiv {
+        display: flex;
+        border: grey solid 0.5px;
+        border-radius: 10px;
+        background: #FFFFFF;
+       
+        box-shadow: 0px 0px 3px 0px;
+        max-width: 550px;
+        position: relative;
+        padding: 2%;
+        margin: auto;
+        margin-top: 2%;
+    }
+
+    .shp76Row {
+        height: 75px;
+        margin-top: 5px;
+        padding-left: 10px;
+    }
+}
+/*CSS form ShowEnquiry*/
+.EnquiryData, .OrderData, .CustomerData,#CustomerData{
+    overflow-x: auto;
+}
+
+
+
+/* Styles for screens larger than 901px */
+@media only screen and (min-width: 901px) {
+
+
+
+
+    .SalesFilter {
+        display: block;
+        max-width: 1100px;
+        margin-left: 150px;
+        margin-bottom: 50px
+    }
+
+    .WebDesign {
+        max-width: 870px;
+        width: 100%;
+        margin-left: 100px;
+    }
+
+    #Dashboard {
+        position: relative;
+        width: 220px;
+        justify-content: center;
+        z-index: 9999;
+        border-radius: 10%;
+    }
+
+    #WorkStation {
+        position: relative;
+        width: 220px;
+        justify-content: center;
+        z-index: 9999;
+        border-radius: 10%;
+        margin-left: 32%;
+        margin-right: 6%;
+    }
+
+    .Maincontent {
+        flex: 1;
+    }
+
+
+    .header {
+        background-color: #808080;
+        width: 100%;
+    }
+
+    .DivWrapper {
+        border-radius: 8px;
+        border: 1px solid #e9e9eb;
+        padding: 30px;
+    }
+
+    #staticDiv {
+        position: fixed;
+        top: 90px;
+        right: 5px;
+        width: 300px;
+        padding: 10px;
+        height: 85vh;
+        border: 2px solid  #3f6791 ;
+        z-index: 0;
+    }
+
+    #nxtbtn {
+        display: flex;
+        margin-top: 0px;
+        float: right;
+        width: 220px;
+        text-align: center;
+        height: 40px;
+        margin-right: 42px;
+        background:  #3f6791 ;
+        border-radius: 5px;
+    }
+
+    #editBtn {
+        position: relative;
+        float: right;
+        width: 220px;
+        background-color: #c9302c;
+        border-radius: 5px;
+    }
+
+    .DivWrapperbt {
+        border-radius: 8px;
+        border: 1px solid #e9e9eb;
+        margin-top: 20px;
+        padding-top: 50px;
+    }
+
+    .DivWrapperHistory {
+        border: 1px solid #e9e9eb;
+        margin-left: 125px;
+        margin-right: 125px;
+    }
+
+    .DivWrapperEdit {
+        border-radius: 8px;
+        border: 1px solid black;
+        margin-top: 20px;
+        padding-top: 50px;
+        margin-left: 100px;
+        margin-right: 100px;
+    }
+
+
+    .Ordergraph {
+        margin-left: 110px;
+    }
+
+    #divVisit {
+        max-width: 1100px;
+        padding-top: 50px;
+        display: block;
+    }
+
+    .Data_Wrapper {
+        display: flex;
+        align-items: center;
+        padding-top: 50px;
+    }
+
+    .DataCircle {
+        border-radius: 0%;
+        width: 100px;
+        height: 90px;
+        display: flex;
+        align-items: center;
+        align-content: center;
+        justify-content: center;
+    }
+
+    .Data-center {
+        align-items: center;
+        justify-content: center;
+    }
+
+    .width100 {
+        display: block;
+        width: 100%;
+        padding-left: 50px;
+    }
+
+    .stkP12Section {
+        margin-top: 80px;
+    }
+
+    .VisitOrderData {
+        margin-left: 125px;
+        margin-right: 150px;
+    }
+
+    .stkF56Graph {
+        max-width: 1100px;
+    }
+
+    .ddWraper {
+        margin-left: 150px;
+        margin-right: 150px;
+    }
+    #submuit {
+     
+        background-color:  #3f6791 ;
+        color: white;
+        margin-top:25px !important;
+        BORDER-RADIUS: 5px;
+        border: 1px solid;
+    }
+
+    .WorkStationDiv {
+        display: flex;
+        border: grey solid 0.5px;
+        border-radius: 10px;
+        background: #FFFFFF;
+    
+        box-shadow: 0px 0px 3px 0px;
+        max-width: 550px;
+        position: relative;
+        padding-top: 2%;
+        padding-bottom: 2%;
+        padding-left: 2%;
+        padding-right: 2%;
+        margin: auto;
+        margin-top: 2%;
+    }
+
+    .shp76Row {
+        height: 75px;
+        margin-top: 5px;
+        padding-left: 10px;
+    }
+}
+
+/* Styles for screens between 601px and 900px */
+@media only screen and (min-width: 601px) and (max-width: 900px) {
+
+    #Dashboard, #WorkStation {
+        position: relative;
+        width: 180px;
+        justify-content: center;
+        z-index: 9999;
+        border-radius: 10%;
+    }
+
+    #WorkStation {
+        margin-left: 22%;
+        margin-right: 6%;
+    }
+
+    .SalesFilter {
+        max-width: 1100px;
+        margin-left: 150px;
+    }
+
+    .Maincontent {
+        flex: 1;
+    }
+
+    .DivWrapper {
+        border-radius: 8px;
+        border: 1px solid #e9e9eb;
+    }
+
+    #nxtbtn {
+        display: flex;
+        margin-top: -30px;
+        float: right;
+        width: 80px;
+        text-align: center;
+        height: 30px;
+        border-radius: 5px;
+    }
+
+    #editBtn {
+        position: absolute;
+        bottom: 15px;
+        width: 220px;
+        background-color: #c9302c;
+        margin-left: 25px;
+        border-radius: 5px;
+    }
+
+    .DivWrapperbt {
+        border-radius: 8px;
+        border: 1px solid #e9e9eb;
+        margin-top: 100px;
+        padding-top: 50px;
+        margin-left: 0px;
+        margin-right: 0px;
+    }
+
+    .Ordergraph {
+        margin-left: 40px;
+    }
+
+    #divVisit {
+        max-width: 400px;
+        padding-top: 50px;
+        display: block;
+        margin-left: 6px;
+        margin-right: -16px;
+        padding-left: 25px;
+    }
+
+    .Data_Wrapper {
+        display: flex;
+        align-items: center;
+        padding-top: 50px;
+    }
+
+    .DataCircle {
+        border-radius: 0%;
+        width: 100px;
+        height: 90px;
+        display: flex;
+        align-items: center;
+        align-content: center;
+        justify-content: center;
+    }
+
+    .absolute-center {
+        align-items: center;
+        justify-content: center;
+    }
+
+    .width100 {
+        display: block;
+        width: 100%;
+        padding-left: 50px;
+    }
+
+    .stkP12Section {
+        margin-top: 80px;
+    }
+
+    .VisitOrderData {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    h3 {
+        font-size: 16px;
+    }
+
+    .stkF56Graph {
+        width: 560px;
+    }
+
+    .ddWraper {
+        margin-left: 150px;
+        margin-right: 150px;
+    }
+
+    .WorkStationDiv {
+        display: flex;
+        border: grey solid 0.5px;
+        border-radius: 10px;
+        background: #FFFFFF;
+    
+        box-shadow: 0px 0px 3px 0px;
+        max-width: 550px;
+        position: relative;
+        padding-top: 2%;
+        padding-bottom: 2%;
+        padding-left: 2%;
+        padding-right: 2%;
+        margin: auto;
+        margin-top: 5%;
+    }
+
+    .shp76Row {
+        height: 75px;
+        margin-top: 5px;
+        padding-left: 10px;
+    }
+}
+
+
+@media only screen and (max-width: 600px) {
+
+
+    #DisplaySelectManager {
+        margin-bottom: 30px;
+        margin-top: 30px;
+        max-width: 1100px;
+        margin-left: 50px;
+    }
+
+    #Dashboard {
+        position: relative;
+        width: 115px;
+        justify-content: center;
+        z-index: 9999;
+        border-radius: 10%;
+    }
+
+    #WorkStation {
+        position: relative;
+        width: 115px;
+        justify-content: center;
+        z-index: 9999;
+        border-radius: 10%;
+        margin-left: 11%;
+        margin-right: 11%;
+    }
+
+    /* .Maincontent {} */
+
+    .SalesFilter {
+        display: block;
+        max-width: 1100px;
+        margin-left: 150px;
+        margin-bottom: 50px
+    }
+
+    .header {
+        background-color: #808080;
+        width: 100%;
+    }
+
+    .DivWrapper {
+        border-radius: 8px;
+        border: 1px solid #e9e9eb;
+    }
+
+    p {
+        margin-top: 10px;
+        font-size: 13px;
+    }
+
+    .Ordergraph {
+        margin: 0px;
+    }
+
+
+    #staticDiv {
+        position: relative;
+        top: 30px;
+        left: 25px;
+        width: 345px;
+        height: 70vh;
+        border: 2px solid  #3f6791 ;
+        z-index: 0;
+    }
+
+
+
+    #VisitOrderChart {
+        max-height: 500px;
+        display: block;
+        height: 300px;
+        width: 365px;
+    }
+
+    #CustDetailTable {
+        width: 100%;
+        margin-bottom: 80px;
+    }
+
+    #nxtbtn {
+        display: flex;
+        float: right;
+        width: 220px;
+        text-align: center;
+        height: 30px;
+        margin-right: 60px;
+        margin-top: 15px;
+        justify-content: center;
+        background-color:  #3f6791 ;
+        border-radius: 5px;
+    }
+
+    #editBtn {
+        position: absolute;
+        bottom: 15px;
+        width: 220px;
+        background-color: #c9302c;
+        margin-left: 25px;
+        border-radius: 5px;
+    }
+
+    .DivWrapperbt {
+        border-radius: 8px;
+        border: 1px solid #e9e9eb;
+       
+     
+        margin-left: 0px;
+        margin-right: 0px;
+    }
+
+    .Ordergraph {
+        margin-left: 0px;
+    }
+
+    .divDisplay {
+        max-width: 380px;
+        padding-top: 20px;
+        display: block;
+        
+    }
+
+
+
+    .Data_Wrapper {
+        max-width: 360px;
+        display: flex;
+        align-items: center;
+        padding-top: 25px;
+    }
+
+    .DataCircle {
+        border-radius: 0%;
+        width: 90px;
+        height: 74px;
+        display: flex;
+        align-items: center;
+        align-content: center;
+        justify-content: center;
+    }
+
+    .absolute-center {
+        align-items: center;
+        justify-content: center;
+    }
+
+    .width100 {
+        display: block;
+        width: 100%;
+        padding-left: 20px;
+    }
+
+    .stkP12Section {
+        margin-top: 20px;
+    }
+
+    .stkF56Graph {
+        width: 360px;
+    }
+
+    .ddWraper {
+        margin-left: 15px;
+        margin-right: 15px;
+    }
+
+    .WorkStationDiv {
+        display: flex;
+        border: grey solid 0.5px;
+        border-radius: 10px;
+        background: #FFFFFF;
+     
+        box-shadow: 0px 0px 3px 0px;
+        max-width: 90%;
+        position: relative;
+        padding-top: 2%;
+        padding-bottom: 2%;
+        padding-left: 2%;
+        padding-right: 2%;
+        margin: auto;
+        margin-top: 5%;
+    }
+
+    .shp76Row {
+        height: 75px;
+        margin-top: 5px;
+        padding-left: 10px;
+        width: 350px;
+    }
+}
+
+@media only screen and (max-width: 400px) {
+
+
+    .navbar-brand {
+        margin-left: 0px;
+        padding-left: 0px !important;
+    }
+
+    .content {
+        padding-top: 18px;
+        width: 98%;
+        margin: 0 auto;
+    }
+
+    #DisplaySelectManager {
+        margin-bottom: 10px;
+        margin-top: 20px;
+        max-width: 1100px;
+        margin-left: 20px;
+    }
+
+    .SalesFilter {
+        display: block;
+        margin-bottom: 50px;
+    }
+
+    #Dashboard {
+        position: relative;
+        padding: 6px 0px;
+        width: 95px;
+        justify-content: center;
+        z-index: 9999;
+        border-radius: 10%;
+    }
+
+    #WorkStation {
+        position: relative;
+        width: 115px;
+        justify-content: center;
+        z-index: 9999;
+        border-radius: 10%;
+        margin-left: 11%;
+        margin-right: 11%;
+    }
+
+    .Maincontent {
+        flex: 1;
+    }
+
+    .header {
+        background-color: #808080;
+        width: 100%;
+    }
+
+    .DivWrapper {
+        border-radius: 8px;
+        border: 1px solid #e9e9eb;
+    }
+
+    p {
+        margin-top: 10px;
+        font-size: 18px;
+    }
+
+    .Ordergraph {
+        margin: 0px;
+    }
+
+
+    #staticDiv {
+        position: relative;
+        top: 30px;
+        left: 25px;
+        width: 340px;
+        height: 90vh;
+        border: 2px solid  #3f6791 ;
+        z-index: 0;
+    }
+
+    #myChart {
+        max-height: 500px;
+        display: block;
+        width: 365px;
+        height: 300px;
+    }
+
+    #VisitOrderChart {
+        max-height: 500px;
+        display: block;
+        height: 300px;
+        width: 365px;
+    }
+
+    #CustDetailTable {
+        width: 100%;
+        margin-bottom: 80px;
+    }
+
+    #nxtbtn {
+        position: absolute;
+        top: 21px;
+        left: 50px;
+        width: 220px;
+        text-align: center;
+        height: 37px;
+        justify-content: center;
+        background-color:  #3f6791 ;
+        display: flex;
+        float: right;
+        border-radius: 5px;
+    }
+
+    #editBtn {
+        position: absolute;
+        bottom: 15px;
+        width: 220px;
+        background-color: #c9302c;
+        left: 50px;
+        border-radius: 5px;
+    }
+
+    .DivWrapperbt {
+        border-radius: 8px;
+        border: 1px solid #e9e9eb;
+        
+        margin-left: 0px;
+        margin-right: 0px;
+    }
+
+    .Ordergraph {
+        margin-left: 0px;
+    }
+
+    .divDisplay {
+        max-width: 380px;
+        padding-top: 20px;
+        display: block;
+        
+    }
+
+
+
+    .Data_Wrapper {
+        max-width: 360px;
+        display: flex;
+        align-items: center;
+        padding-top: 25px;
+    }
+
+    .DataCircle {
+        border-radius: 0%;
+        width: 90px;
+        height: 74px;
+        display: flex;
+        align-items: center;
+        align-content: center;
+        justify-content: center;
+    }
+
+    .absolute-center {
+        align-items: center;
+        justify-content: center;
+    }
+
+    .width100 {
+        display: block;
+        width: 100%;
+        padding-left: 20px;
+    }
+
+    .stkP12Section {
+        margin-top: 20px;
+    }
+
+    .stkF56Graph {
+        width: 360px;
+    }
+
+    .ddWraper {
+        margin-left: 15px;
+        margin-right: 15px;
+    }
+
+    .WorkStationDiv {
+        display: flex;
+        border: grey solid 0.5px;
+        border-radius: 10px;
+        background: #FFFFFF;
+  
+        box-shadow: 0px 0px 3px 0px;
+        max-width: 90%;
+        position: relative;
+
+        padding: 2%;
+        margin: auto;
+        margin-top: 5%;
+    }
+
+    .shp76Row {
+        height: 75px;
+        margin-top: 5px;
+        padding-left: 10px;
+        width: 350px;
+    }
+
+
+    .VisitAnalysis {
+        max-width: 380px;
+        width: 100%;
+        margin: 0 0;
+    }
+}
+
+
+
+
+
+
+
+#hideValuesOnSelect {
+    display: none;
+}
+
+.hidden {
+    display: none;
+}
+
+.borderless-button {
+    background: none;
+    border: none;
+    color: #333;
     font-size: 16px;
-  }
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 18px;
+    letter-spacing: .18px;
+    border-radius: 5px;
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+
+    .borderless-button:hover {
+        text-decoration: underline;
+        color: #b8e2d6;
+    }
+
+    .borderless-button.active {
+        background-color:  #3f6791 ;
+        color: white;
+    }
+
+
+.popup {
+    display: none;
+    /* Initially hide the popup */
+    position: absolute;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-html {
-  position: relative;
-  min-height: 100%;
+
+.expertsRating_linearBar {
+    height: 8px;
+    max-width: 600px;
+    border-radius: 2px;
 }
 
-body {
-  margin-bottom: 60px;
+
+@media only screen and (max-width: 414 px) {
+
+    .expertsRating_linearBar {
+        height: 8px;
+        max-width: 200px;
+        border-radius: 2px;
+    }
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+
+
+.VisitAnalysis {
+    max-width: 1150px;
+    width: 100%;
+    margin: 0 0;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+.Data_Wrapper {
+    display: flex;
+    align-items: center;
+    padding-top: 50px;
+}
+
+
+.valign-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.contentSecondary {
+    color: #7c7e8c
+}
+
+.bodyLarge,
+.bodyLargeHeavy {
+    font-size: 1.53rem;
+    line-height: 1.375rem;
+}
+
+.bodyLarge {
+    font-weight: 435;
+}
+
+.left-align {
+    text-align: left;
+}
+
+.row .col {
+    float: left;
+    box-sizing: border-box;
+    min-height: 1px;
+}
+
+@media only screen and (min-width: 800px) {
+    .row .col l12 {
+        width: 100%;
+    }
+}
+
+
+
+
+
+.stkF56Top {
+    position: relative;
+}
+
+
+.tabs8Container {
+    position: relative;
+    max-height: 55px;
+}
+
+.tabs8Line {
+    position: absolute;
+    bottom: 0;
+    height: 3px;
+    background:  #3f6791 ;
+    will-change: left, width;
+    transition: left .2s linear, width .2s linear;
+}
+
+.stkF56TabText {
+    padding: 20px 25px 0 20px;
+    font-size: 15px;
+    letter-spacing: .2px;
+    color: #7c7e8c;
+    border-bottom: 1px solid #e9e9eb;
+}
+
+.backgroundPrimary {
+    background-color: #fff;
+}
+
+.stkF56SubDiv {
+    margin-top: 24px;
+}
+
+
+.stkF56TabDiv {
+    line-height: 15px;
+    padding-right: 45px;
+    height: 30px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.tabs8TextActive {
+    color:  #3f6791 ;
+}
+
+.stkF56InfoDiv {
+    font-size: 14px;
+    color: #7c7e8c;
+    margin: 6px 0;
+    padding-right: 20px;
+    text-align: right;
+}
+
+@media only screen and (min-width: 800px) {
+    .row .col.l12 {
+        width: 100%;
+    }
+}
+
+#shpStockMainDiv {
+    min-height: 100px;
+}
+
+.headingLarge {
+    font-size: 3.25rem;
+    line-height: 1.25rem;
+}
+
+.headingBase,
+.headingLarge {
+    font-weight: 535;
+}
+
+#shpStockMainDiv .shp76Wr {
+    background: #fff;
+    margin-top: 24px;
+    padding: 10px 15px 20px;
+    border-radius: 8px;
+    border: 1px solid #e9e9eb;
+}
+
+.shp76TabText {
+    padding: 18px 0;
+    font-size: 15px;
+    letter-spacing: .2px;
+}
+
+.shp76ToggleActive {
+    background-color: #ebf9f5;
+    color:  #3f6791 ;
+    border-radius: 20px;
+}
+
+.shp76ToggleActive,
+.shp76ToggleInactive {
+    height: 30px;
+    width: 80px;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 500;
+    justify-content: center;
+}
+
+.shp76ToggleInactive {
+    color: #7c7e8c;
+    cursor: pointer;
+}
+
+@media only screen and (min-width: 800px) {
+    .row .col.l12 {
+        width: 100%;
+    }
+}
+
+@media only screen and (min-width: 800px) {
+
+    .row .col.l11,
+    .row .col.l12 {
+        margin-left: auto;
+        left: auto;
+        right: auto;
+    }
+}
+
+
+
+@media only screen and (max-width: 280px) {
+    .WorkStationDiv {
+        margin: 0;
+        margin-left: 10px;
+        max-width: 250px;
+    }
+}
+
+
+
+
+
+.vspace-between {
+    justify-content: space-between;
+}
+
+.shp76TextRight {
+    letter-spacing: .27px;
+    color: #44475b;
+    font-size: 16px;
+    margin-right: 16px;
+    font-weight: 500;
+}
+
+.backgroundTertiary {
+    background-color: #f0f0f2;
+}
+
+.web-align {
+    max-width: 1110px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.fm77Disclaimer {
+    padding-top: 40px;
+    text-align: justify;
+}
+
+.fm77Container {
+    margin-bottom: 20px;
+}
+
+.ddHeader {
+    display: flex;
+    cursor: pointer;
+    background-color: dimgrey;
+    padding: 10px;
+    border: 1px solid black;
+    margin-bottom: 15px;
+    align-items: center;
+    justify-content: center;
+    background-color: lightgray;
+    color: black;
+    border-radius: 5px;
+    cursor:pointer;
+    touch-action:manipulation;
+}
+
+.dropdown-content {
+    display: none;
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: #fff;
 }

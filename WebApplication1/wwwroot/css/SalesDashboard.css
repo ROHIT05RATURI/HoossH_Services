@@ -1,0 +1,459 @@
+﻿
+
+@media only screen and (min-width: 1200px) {
+   /* .h4, h4 {
+        font-size: 1.5rem;
+        text-align: center;
+        margin-left: 100px;
+    }*/
+
+    #myChart {
+        max-height: 1030px;
+        display: block;
+        max-height: 500px;
+    }
+
+    #SalesDashboard {
+        max-width: 1070px;
+        margin-left: 0px;
+        background-color: #fff;
+    }
+
+    #searchInput {
+        width: 270px;
+    }
+
+    #SelectFy {
+        display: flex;
+        margin-left: 70px;
+    }
+
+    #displayContainer {
+        max-width: 1100px;
+        margin-left: 230px;
+        margin-top: 150px
+    }
+
+    /*#DisplaySelectManager {
+        margin-top: 40px;
+        max-width: 1100px;
+        margin-left: 250px;
+    }*/
+
+    #FirstDiv {
+        padding-right: 10px;
+        padding-left: 10px;
+        margin-left: 25px;
+        margin-right: 10px;
+        margin-top: 10px;
+        cursor: pointer;
+    }
+
+    #SecondDiv {
+        padding-right: 10px;
+        padding-left: 10px;
+        margin-left: 30px;
+        margin-right: 10px;
+        margin-top: 10px;
+        cursor: pointer;
+    }
+
+    #report {
+        position: inherit;
+        width: 255px;
+        background-color:  #3f6791 ;
+        margin-left: 22%;
+        border-radius: 15%;
+        color: white;
+    }
+
+    #WorkStation {
+        position: relative;
+        width: 255px;
+        justify-content: center;
+        z-index: 9999;
+        border-radius: 10%;
+        margin-left: 12%;
+        margin-right: 0%;
+        background-color: #20b2aa;
+        color: white;
+    }
+
+    #Summary {
+        position: relative;
+        width: 255px;
+        justify-content: center;
+        z-index: 9999;
+        border-radius: 10%;
+        margin-left: 4%;
+        margin-right: 0%;
+        background-color: #5f9ea0;
+        color: white;
+    }
+
+    th {
+        width: 130px;
+    }
+
+    td {
+        text-align: justify;
+    }
+
+    #BoxView {
+        max-width: 1100px;
+        margin-left: 275px;
+        margin-top: 40px;
+    }
+}
+/* Styles for screens larger than 901px */
+@media only screen and (min-width: 901px) and (max-width:1200px) { 
+
+    /*#DisplaySelectManager {
+        margin-top: 40px;
+        max-width: 1100px;
+        margin-left: 250px;
+    }*/
+    #displayContainer {
+        max-width: 900px;
+        margin-left: 70px;
+        margin-top: 70px;
+    }
+    #BoxView {
+        max-width: 900px;
+        margin-left: 150px;
+        margin-top:40px;
+        
+    }
+    #FirstDiv {
+        padding-right: 10px;
+        padding-left: 10px;
+        margin-left: 25px;
+        margin-right: 10px;
+        cursor:pointer;
+        
+    }
+
+    #SecondDiv {
+        padding-right: 10px;
+        padding-left: 10px;
+        margin-left: 30px;
+        margin-right: 10px;
+        cursor:pointer;
+
+    }
+   
+    #SalesFilter {
+        display: block;
+        max-width: 1100px;
+        margin-left: 150px;
+        margin-bottom: 50px
+    }
+
+    #fyselect {
+        width: 160px;
+        text-align: center;
+        margin-left: 5px
+    }
+
+    #searchInput {
+        width: 270px
+    }
+    #report {
+        position: inherit;
+        width: 255px;
+        background-color:  #3f6791 ;
+        margin-left: 6px;
+        border-radius: 15%;
+        color: white;
+    }
+
+    #WorkStation {
+        position: relative;
+        width: 255px;
+        justify-content: center;
+        z-index: 9999;
+        border-radius: 10%;
+        margin-left: 12%;
+        margin-right: 0%;
+        background-color: #20b2aa;
+    }
+
+    #Summary {
+        position: relative;
+        width: 255px;
+        justify-content: center;
+        z-index: 9999;
+        border-radius: 10%;
+        margin-left: 4%;
+        margin-right: 3.5%;
+        background-color: #5f9ea0;
+        color: white;
+    }
+    #SelectFy {
+        display: flex;
+      float:right;
+    }
+
+   
+}
+
+/* Styles for screens between 601px and 900px */
+@media only screen and (min-width: 601px) and (max-width: 900px) {
+
+    #searchInput {
+        width: 270px
+    }
+    #displayContainer {
+        max-width: 700px;
+        margin-left: 50px;
+        margin-top: 60px
+    }
+    #BoxView {
+        max-width: 900px;
+        margin-left: 150px;
+        margin-top: 40px;
+    }
+    #Dashboard {
+        position: relative;
+        width: 180px;
+        justify-content: center;
+        z-index: 9999;
+        border-radius: 10%;
+    }
+
+    #WorkStation {
+        position: relative;
+        width: 180px;
+        justify-content: center;
+        z-index: 9999;
+        border-radius: 10%;
+        margin-left: 22%;
+        margin-right: 6%;
+    }
+
+    .SalesFilter {
+        display: block;
+        max-width: 1100px;
+        margin-left: 150px;
+        margin-bottom: 50px
+    }
+    #SelectFy {
+        display: flex;
+        margin-left: 70px;
+    }
+    #report {
+        position: inherit;
+        width: 255px;
+        background-color:  #3f6791 ;
+        margin-left: 22%;
+        border-radius: 15%;
+        color: white;
+    }
+
+    #WorkStation {
+        position: relative;
+        width: 255px;
+        justify-content: center;
+        z-index: 9999;
+        border-radius: 10%;
+        margin-left: 12%;
+        margin-right: 0%;
+        background-color: #20b2aa;
+    }
+
+    #Summary {
+        position: relative;
+        width: 255px;
+        justify-content: center;
+        z-index: 9999;
+        border-radius: 10%;
+        margin-left: 4%;
+        margin-right: 0%;
+        background-color: #5f9ea0;
+        color: white;
+    }
+#
+   
+}
+
+
+@media only screen and (min-width:400px) and (max-width: 600px) {
+
+    #searchInput {
+        width: 270px
+    }
+    #SelectFy {
+        display: flex;
+        margin-left: 70px;
+    }
+    #displayContainer {
+        max-width: 500px;
+        margin-left: 20px;
+        margin-top: 50px;
+    }
+
+    #Dashboard {
+        position: relative;
+        width: 115px;
+        justify-content: center;
+        z-index: 9999;
+        border-radius: 10%;
+    }
+
+    #WorkStation {
+        position: relative;
+        width: 115px;
+        justify-content: center;
+        z-index: 9999;
+        border-radius: 10%;
+        margin-left: 11%;
+        margin-right: 11%;
+    }
+    #BoxView {
+        max-width: 600px;
+        margin-left: 100px;
+        margin-top: 40px;
+    }
+    
+}
+
+@media only screen and (max-width: 400px) {
+
+    #displayContainer {
+       /* max-width: 300px;*/
+       /* margin-left: 20px;*/
+        margin-top: 40px;
+        margin-top: 30px;
+        height:300px;
+    }
+    .content {
+        padding-top: 0px;
+    }
+    #searchInput {
+        margin-left: 30px;
+        width: 225px;
+        margin-top: 1px;
+    }
+
+    #BoxView {
+        
+        margin-top: 40px;
+        padding-left:24px;
+    } 
+    #BoxView h3{
+        margin-top: 15px;
+        margin-bottom:30px;
+    }
+
+    
+
+    #SalesFilter {
+        display: block;
+        margin-bottom: 50px;
+        margin-top: 51px;
+    }
+
+    #fyselect {
+        width: 180px;
+        text-align: center;
+        margin-left: 11px;
+    }
+
+    #SelectFy {
+        display: flex;
+        margin-left: 50px;
+        margin-top:20px;
+    }
+
+    #report {
+        position: relative;
+        display: flex;
+        float: right;
+        border-radius: 0;
+        background-color: #337ab7;
+        margin-bottom: 10px;
+        width: 117px;
+        margin-right:25px;
+    }
+
+    #Dashboard {
+        position: relative;
+        width: 115px;
+        justify-content: center;
+        z-index: 9999;
+        border-radius: 10%;
+    }
+
+    #WorkStation {
+        position: relative;
+        display: flex;
+        float: left;
+        border-radius: 0;
+        background-color:  #3f6791 ;
+        margin-bottom: 10px;
+        margin-left:90px;
+    }
+
+    #Summary {
+        position: relative;
+        width: 255px;
+        justify-content: center;
+        z-index: 9999;
+        border-radius: 10%;
+        margin-left: 4%;
+        margin-right: 0%;
+        background-color: #5f9ea0;
+        color: white;
+    }
+
+      
+    
+
+    #DashboardSales {
+        max-width: 400px;
+      padding-left:40px;
+    }
+
+
+
+    
+    #displayContainer {
+        
+     
+        margin-top: 100px;
+    }
+    #myPieChart {
+        max-height: 365px;
+        display: block;
+        width: 411px !important;
+        height: 250px !important;
+       
+    }
+    #myBarChart {
+        max-height: 500px;
+        /*margin-top: 90px;*/
+        width: 95vw !important;
+    }
+    #DisplaySelect {
+        display: flex;
+        margin-bottom: 0px;
+        margin-top: 120px;
+    }
+
+     
+
+    #SalesDashboard {
+        background-color: #fff;
+    }
+    footer{
+        margin-top:30vh !important;
+    }
+    .back-to-top {
+        margin-top: 400px !important;
+    }
+   /* .col-md-11, .col-lg-11 {
+        padding-right: 0px;
+        padding-left: 0px;*/
+}
+} 
+ 

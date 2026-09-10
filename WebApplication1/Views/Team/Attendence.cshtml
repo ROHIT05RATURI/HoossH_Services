@@ -1,0 +1,272 @@
+﻿@{
+    ViewBag.Title = "Attendance Dashboard";
+    Layout = "~/Views/Shared/_LayoutINV.cshtml";
+}
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+<link rel="stylesheet" href="~/css/HRMS.css">
+
+<!-- Clean Sub Navigation bar matching HRMS flow -->
+<div class="d-flex gap-2 mb-4">
+    <a href="/User/HRMS/Attendance" class="btn btn-primary btn-sm rounded-pill px-3 active shadow-sm">
+        <i class="fas fa-plus-circle me-1"></i> Mark Attendance
+    </a>
+    <a href="/User/HRMS/Leave" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+        <i class="fas fa-list-ul me-1"></i> Attendance History
+    </a>
+</div>
+
+<div class="row g-4">
+    <!-- Check-In / Check-Out Card -->
+    <div class="col-12">
+        <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                <div>
+                    <h3 id="greetingText" class="fw-bold text-dark mb-1">Good Morning! ☀️</h3>
+                    <p id="subGreeting" class="text-muted mb-3">
+                        <span id="status-desc">Ready to start your day?</span>
+                    </p>
+
+                    <form id="attendanceForm">
+                        <input type="hidden" id="location" name="location" />
+                        <div id="buttonContainer" class="d-flex gap-2">
+                            <button type="button" class="btn btn-primary px-4 rounded-pill fw-semibold shadow-sm" id="submitPresent" onclick="openCustomPopup('Present')">
+                                <i class="fas fa-sign-in-alt me-2"></i> Check-In
+                            </button>
+
+                            <button type="button" class="btn btn-danger px-4 rounded-pill fw-semibold shadow-sm" id="submitAbsent" onclick="openCustomPopup('Checkout')" style="display:none;">
+                                <i class="fas fa-sign-out-alt me-2"></i> Check-Out
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="d-flex align-items-center bg-light p-3 rounded-4 shadow-sm align-self-start align-self-md-center">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3652/3652191.png" width="55" alt="calendar" class="me-3" />
+                    <div id="calendarTimerContainer" class="text-start" style="display: none;">
+                        <span class="badge bg-success mb-1">Live Shift</span>
+                        <div id="workTimer" class="fw-bold fs-5 text-dark font-monospace">00:00:00</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Calendar View Card -->
+    <div class="col-12">
+        <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <h4 id="monthAndYear" class="fw-bold text-secondary mb-0"></h4>
+                <div style="display: none;" aria-hidden="true">
+                    <select id="month">
+                        @for (int i = 0; i < 12; i++)
+                        {
+                            <option value="@i">@System.Globalization.DateTimeFormatInfo.CurrentInfo.GetMonthName(i + 1).Substring(0, 3)</option>
+                        }
+                    </select>
+                    <select id="year"></select>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-bordered text-center align-middle" id="calendar">
+                    <thead id="thead-month" class="table-light"></thead>
+                    <tbody id="calendar-body"></tbody>
+                </table>
+            </div>
+
+            <!-- Legends -->
+            <div class="d-flex flex-wrap gap-4 mt-4 justify-content-center text-muted small">
+                <div class="d-flex align-items-center gap-1"><span class="badge bg-success rounded-circle p-2"></span> Present</div>
+                <div class="d-flex align-items-center gap-1"><span class="badge bg-warning rounded-circle p-2"></span> Pending</div>
+                <div class="d-flex align-items-center gap-1"><span class="badge bg-danger rounded-circle p-2"></span> Absent</div>
+                <div class="d-flex align-items-center gap-1"><span class="badge bg-secondary rounded-circle p-2"></span> Leave</div>
+                <div class="d-flex align-items-center gap-1"><span class="badge bg-light text-dark border rounded-circle p-2"></span> Weekend</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Popup Modal -->
+<div id="customPopupModal" class="popup-modal-overlay">
+    <div class="popup-content-card animate__animated bg-white p-4 rounded-4 shadow text-center" style="max-width: 400px; width: 90%;">
+        <button type="button" class="btn-close ms-auto mb-2 d-block" onclick="closeCustomPopup()"></button>
+        <div id="dynamicIcon" class="mb-3"></div>
+        <h3 id="popupTitle" class="fw-bold">Ready to start?</h3>
+        <p id="popupTime" class="text-muted">Time: <b>00:00 AM</b></p>
+        <p id="popupSubText" class="text-secondary small mb-3">Confirm to proceed</p>
+        <button type="button" class="btn btn-primary w-100 rounded-pill py-2" onclick="confirmPopupAction()">Yes, Let's Go</button>
+    </div>
+</div>
+
+<!-- Past Date Selection Modal -->
+<div id="pastDatePopupModal" class="popup-modal-overlay">
+    <div class="popup-content-card animate__animated bg-white p-4 rounded-4 shadow text-center" style="max-width: 400px; width: 90%;">
+        <button type="button" class="btn-close ms-auto mb-2 d-block" onclick="closePastDatePopup()"></button>
+        <div class="mb-3">
+            <i class="fas fa-calendar-check fs-1 text-primary"></i>
+        </div>
+        <h3 class="fw-bold fs-5">Past Attendance</h3>
+        <p id="pastDateDisplay" class="badge bg-info text-dark p-2 w-100 mb-3"></p>
+
+        <div class="text-start mb-3">
+            <label class="form-label small fw-bold text-muted">CHECK-IN TIME</label>
+            <input type="time" id="pastCheckInTime" class="form-control form-control-lg font-monospace">
+        </div>
+
+        <input type="hidden" id="pastDateHiddenValue" />
+        <button type="button" class="btn btn-primary w-100 rounded-pill py-2" onclick="submitPastAttendance()">Mark Present</button>
+    </div>
+</div>
+
+<!-- Loader Overlay -->
+<div id="customLoader" class="custom-loader-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center; flex-direction:column;">
+    <div class="spinner-border text-light mb-2" role="status"></div>
+    <div class="loader-text text-white fw-semibold">Marking Attendance...</div>
+</div>
+
+<!-- Success Modal -->
+<div id="customSuccessModal" class="custom-success-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;">
+    <div class="success-content-card animate__animated bg-white p-4 rounded-4 shadow text-center" style="max-width:350px;">
+        <h3 id="successTitle" class="fw-bold text-success mb-1">Checked-In!</h3>
+        <p id="successTime" class="text-muted small mb-0">Recorded successfully</p>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="/js/Attendence.js"></script>
+<script src="/js/geolocation.js"></script>
+<script>
+    let currentAction = 'Present';
+    let timerInterval;
+
+    function applyAttendanceStyles() {
+       
+        const currentMonth = parseInt(document.getElementById("month").value);
+        const currentYear = parseInt(document.getElementById("year").value);
+        const today = new Date();
+
+        const joinDateStr = '@ViewBag.JoinDate';
+        const joinDate = new Date(joinDateStr);
+        joinDate.setHours(0, 0, 0, 0);
+
+        document.querySelectorAll('#calendar-body td').forEach(cell => {
+            const day = parseInt(cell.getAttribute('data-date'));
+            if (!day) return;
+            const cellDate = new Date(currentYear, currentMonth, day);
+            cellDate.setHours(0, 0, 0, 0);
+
+            if (cellDate < joinDate) {
+                cell.className = 'table-secondary text-muted';
+                cell.innerHTML = `<div>${day}</div>`;
+                return;
+            }
+
+            if (cellDate.getDay() === 0) cell.classList.add('table-light');
+            if (day === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear()) {
+                cell.classList.add('border', 'border-primary', 'fw-bold');
+            }
+        });
+    }
+
+    function openCustomPopup(action) {
+        currentAction = action;
+        const now = new Date();
+        const currentTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        document.getElementById("popupTime").innerHTML = `Time: <b>${currentTime}</b>`;
+        document.getElementById("customPopupModal").style.display = "flex";
+    }
+
+    function closeCustomPopup() {
+        document.getElementById("customPopupModal").style.display = "none";
+    }
+
+    async function confirmPopupAction() {
+        closeCustomPopup();
+        const now = new Date();
+        const currentTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const loader = document.getElementById("customLoader");
+        loader.style.display = "flex";
+
+        try {
+            const location = await GeoService.getLocation();
+            const latLong = location.latitude + "," + location.longitude;
+            const localISO = new Date(now - (now.getTimezoneOffset() * 60000)).toISOString().slice(0, 19);
+
+            $.post("/Team/MarkAttendence", {
+                Status: currentAction,
+                AttendenceDate: localISO,
+                location: latLong,
+                description: "User " + currentAction
+            }, function() {
+                loader.style.display = "none";
+                document.getElementById("customSuccessModal").style.display = "flex";
+                setTimeout(() => window.location.reload(), 1500);
+            });
+        } catch (err) {
+            loader.style.display = "none";
+            Swal.fire('GPS Required', 'Please enable location access to mark attendance.', 'warning');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const todayDate = new Date().toLocaleDateString('en-CA');
+       
+
+        const btnIn = document.getElementById("submitPresent");
+        const btnOut = document.getElementById("submitAbsent");
+
+    //     if (recordToday && !recordToday.isCheckedout) {
+    //         btnIn.style.display = "none";
+    //         btnOut.style.display = "inline-block";
+    //     }
+    //     setTimeout(applyAttendanceStyles, 400);
+    });
+
+    document.getElementById('calendar-body').addEventListener('click', function(e) {
+        const cell = e.target.closest('td');
+        if (!cell) return;
+        const day = cell.getAttribute('data-date');
+        if (!day) return;
+
+        const currentMonth = parseInt(document.getElementById("month").value);
+        const currentYear = parseInt(document.getElementById("year").value);
+        const clickedDate = new Date(currentYear, currentMonth, parseInt(day));
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        if (clickedDate < today) {
+            openPastDatePopup(clickedDate.toLocaleDateString('en-CA'));
+        }
+    });
+
+    function openPastDatePopup(dateStr) {
+        document.getElementById("pastDateDisplay").innerHTML = `Date: <b>${dateStr}</b>`;
+        document.getElementById("pastDateHiddenValue").value = dateStr;
+        document.getElementById("pastCheckInTime").value = "09:30";
+        document.getElementById("pastDatePopupModal").style.display = "flex";
+    }
+
+    function closePastDatePopup() {
+        document.getElementById("pastDatePopupModal").style.display = "none";
+    }
+
+    async function submitPastAttendance() {
+        const dateStr = document.getElementById("pastDateHiddenValue").value;
+        const timeStr = document.getElementById("pastCheckInTime").value;
+        if (!timeStr) return;
+
+        closePastDatePopup();
+        const localISO = `${dateStr}T${timeStr}:00`;
+
+        $.post("/Team/MarkAttendence", {
+            Status: "Present",
+            AttendenceDate: localISO,
+            location: "Manual Entry",
+            description: "Past Attendance"
+        }, function() {
+            window.location.reload();
+        });
+    }
+</script>

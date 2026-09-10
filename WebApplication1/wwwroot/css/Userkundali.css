@@ -1,0 +1,170 @@
+﻿
+:root {
+    --primary-blue: #3f6791;
+    --light-blue: #eff6ff;
+    --success-green: #28a745;
+    --bg-slate: #f8fafc;
+    --border-radius-lg: 20px;
+    --premium-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+/* Premium Card Styling */
+.premium-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--premium-shadow);
+    transition: transform 0.3s ease;
+}
+
+.section-title {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--primary-blue);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Basic Info Section */
+.profile-pic-container {
+    position: relative;
+    width: 110px;
+    height: 110px;
+    border-radius: 25px;
+    padding: 5px;
+    background: linear-gradient(135deg, var(--primary-blue), #6c8ebf);
+}
+
+.profile-pic-modern {
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    object-fit: cover;
+    border: 3px solid white;
+}
+
+.info-label {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.info-value {
+    font-size: 0.9rem;
+    color: #1e293b;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+/* Stats Cards Customization */
+.stat-card-premium {
+    background: var(--bg-slate);
+    border-radius: 18px;
+    padding: 20px;
+    border: 1px solid #eef2f6;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.stat-icon-box {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.bg-sales {
+    background: #ecfdf5;
+    color: #10b981;
+}
+
+.bg-clients {
+    background: #eff6ff;
+    color: #3b82f6;
+}
+
+.bg-visits {
+    background: #fff7ed;
+    color: #f59e0b;
+}
+
+.bg-dues {
+    background: #fef2f2;
+    color: #ef4444;
+}
+
+/* HRMS - Progress & Items */
+.inner-hrms-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 18px;
+    border: 1px solid #f1f5f9;
+}
+
+.premium-progress {
+    height: 10px;
+    border-radius: 50px;
+    background-color: #f1f5f9;
+    overflow: visible;
+}
+
+.premium-progress-bar {
+    border-radius: 50px;
+    background: linear-gradient(90deg, var(--primary-blue), #6c8ebf);
+    position: relative;
+}
+
+.pending-leave-item {
+    background: var(--bg-slate);
+    border-radius: 12px;
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    border-left: 4px solid var(--primary-blue);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.status-badge-pill {
+    background: #fffbeb;
+    color: #b45309;
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 4px 12px;
+    border-radius: 50px;
+    text-transform: uppercase;
+}
+
+/* Heatmap legend */
+.attendance-legend {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding-top: 15px;
+}
+
+.legend-box {
+    border-radius: 4px;
+    width: 14px;
+    height: 14px;
+}
+
+@@media (max-width: 768px) {
+    .profile-pic-container {
+        margin: 0 auto 20px auto;
+    }
+
+    .text-center-mobile {
+        text-align: center;
+    }
+
+    .stat-card-premium {
+        padding: 15px 10px;
+    }
+}

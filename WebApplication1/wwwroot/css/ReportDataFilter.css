@@ -1,0 +1,151 @@
+﻿/* ==========================
+   REPORT FILTER
+========================== */
+
+.report-filter-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    overflow: visible !important;
+    z-index: 10000;
+}
+
+/* Filter Button */
+
+.mini-filter-btn {
+    width: 43px;
+    height: 43px;
+    background: #f1f5f9; /* Halka gray-blue background */
+    border: 1px solid #cbd5e1; /* Soft border jisse ye input/filter lage */
+    border-radius: 30px;
+    color: #3f6791;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    /* Heavy shadow hata diya hai taki toggle jaisa float karta hua na lage */
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px; /* Agar text aur icon dono hue to unke beech space */
+}
+
+/*    .mini-filter-btn:hover {
+        background: #3f6791;
+        color: #fff;
+        transform: translateY(-2px);
+    }*/
+
+/* Filter Popup */
+
+.date-filter-panel {
+    display: none;
+    position: absolute;
+    top: 58px;
+    right: 0;
+    z-index: 10001;
+    min-width: 340px;
+    background: #fff;
+    border-radius: 16px;
+    padding: 18px;
+    box-shadow: 0 15px 40px rgba(0,0,0,.12);
+}
+
+    /* Arrow */
+
+    .date-filter-panel::before {
+        content: '';
+        position: absolute;
+        top: -8px;
+        right: 18px;
+        width: 16px;
+        height: 16px;
+        background: #fff;
+        border-top: 1px solid #eef2f7;
+        border-left: 1px solid #eef2f7;
+        transform: rotate(45deg);
+    }
+
+/* Fields Row */
+
+.filter-row {
+    display: flex;
+    gap: 12px;
+    align-items: end;
+}
+
+/* Field */
+
+.filter-group {
+    flex: 1;
+}
+
+    .filter-group label {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #64748b;
+    }
+
+    .filter-group input {
+        height: 42px;
+        border-radius: 10px;
+        border: 1px solid #dbe3ec;
+        font-size: 13px;
+    }
+
+        .filter-group input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(63,103,145,.12);
+        }
+
+/* Apply Button */
+
+.filter-btn-area {
+    flex-shrink: 0;
+}
+
+.btn-apply-report-filter {
+    height: 42px;
+    border: none;
+    border-radius: 10px;
+    background: var(--primary);
+    color: #fff;
+    padding: 0 18px;
+    font-size: 13px;
+    font-weight: 600;
+    transition: .25s;
+}
+
+    .btn-apply-report-filter:hover {
+        background: var(--primary-hover);
+    }
+
+/* Mobile */
+
+@media(max-width:768px) {
+
+    .mini-filter-btn {
+        width: 45px;
+        height: 43px;
+        border-radius: 30px; 
+    }
+
+    .date-filter-panel {
+        min-width: unset;
+        width: 57vw;
+        max-width: 370px;
+        right: 0;
+    }
+
+    .filter-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .btn-apply-report-filter {
+        width: 100%;
+    }
+}

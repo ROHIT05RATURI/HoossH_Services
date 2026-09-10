@@ -1,0 +1,231 @@
+﻿
+#right {
+    
+    width: 800px; /* set the  width to 800px */
+    margin: 0 auto; /* Center align if the width is less than 100% */
+}
+
+@media screen and (max-width: 900px) {
+    #right {
+        width: 100%; /* For smaller screens, take full width */
+    }
+}
+
+:root {
+    --theme-color:  #3f6791 ; /* Primary theme color  #3f6791 ; */
+    --secondary-color: #3f6791; /* Secondary color var(--secondary-color); */
+    --third-color: #edf5e6; /* Danger color var(--third-color); */
+    --fourth-color: #3f6791; /* Danger color #3f6791; */
+    --fifth-color: #edf5e6; /* Danger color var(--fifth-color); */
+
+
+    --firstbackgound-color: #3f6791; /*  color var(--firstbackgound-color); */
+    --secondbackground-color: #3f6791; /* Secondary color var(--secondbackground-color); */
+
+
+    --dangerbackground-color: #edf5e6; /* third color  var(--dangerbackground-color); */
+
+
+    --text-color: #333; /* Text color */
+    --background-color: #3f6791; /* Background color */
+    --font-family: Arial, sans-serif;
+}
+
+.wrapper {
+    margin: 15px auto;
+}
+
+/* Calendar container */
+.container-calendar {
+    background: #ffffff;
+    padding: 10px;
+    max-width: 900px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+tbody, td, tfoot, th, thead, tr {
+    border-color: inherit;
+    border-style: solid;
+    border-width: 0;
+    height: 45px;
+}
+/* Buttons in the calendar */
+.button-container-calendar button {
+    cursor: pointer;
+    background:  #3f6791 ;
+    color: #fff;
+    border: 1px solid var(--secondary-color);
+    border-radius: 5px;
+    padding: 5px 10px;
+}
+
+/* Calendar table */
+.table-calendar {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+    .table-calendar td,
+    .table-calendar th {
+        padding: 5px;
+        border: 1px solid #b1a8a894;
+        text-align: center;
+        vertical-align: top;
+        font-size: 15px;
+    }
+
+/* Date picker */
+.date-picker.selected {
+    background-color: #3f6791;
+    outline: 1px solid #b1a8a894;
+    color: black !important;
+    font-size: 14px;
+}
+
+/* Date picker when user is present */
+.date-picker.present {
+    font-size: 14px;
+    outline: 1px solid #b1a8a894;
+    color: #3f6791;
+}
+/* Date picker when user is absent */
+.date-picker.absent {
+    font-size: 14px;
+    background-color: #D5D99E !important;
+    outline: 1px solid #b1a8a894;
+    color: black !important;
+}
+/* Date picker when user is Leave */
+.date-picker.Leave {
+    font-size: 14px;
+    outline: 1px solid #b1a8a894;
+
+}
+
+.date-picker.selected span {
+    /*  border-bottom: 2px solid currentColor;*/
+}
+
+
+.date-picker:nth-of-type(1) {
+    background-color: #edf5e6;
+    color: black;
+    font-size: 15px;
+}
+
+
+
+/* Hover effect for date cells */
+.date-picker:hover {
+    background-color:  #3f6791 ;
+    color: black;
+    cursor: pointer;
+}
+
+/* Header for month and year */
+#monthAndYear {
+    text-align: center;
+    margin-top: 0;
+}
+
+/* Navigation buttons */
+.button-container-calendar {
+    position: relative;
+    margin-bottom: -1em;
+    overflow: hidden;
+    clear: both;
+    border-radius: 5px;
+}
+
+#previous {
+    float: left;
+}
+
+#next {
+    float: right;
+}
+
+/* Footer styling */
+.footer-container-calendar {
+    margin-top: 1em;
+    border-top: 1px solid #dadada;
+    padding: 10px 0;
+}
+
+    .footer-container-calendar select {
+        cursor: pointer;
+        background: #ffffff;
+        color: #585858;
+        border: 1px solid #bfc5c5;
+        border-radius: 3px;
+        padding: 5px 1em;
+    }
+#submitPresent:hover {
+    background-color:  #3f6791  !important;
+}
+
+#submitAbsent:hover {
+    /* background-color: #edf5e6 !important;*/
+    background-color: #c0d1d0 !important;
+}
+select.form-control {
+    appearance: none; /* hide default arrow */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background: black url("data:image/svg+xml;utf8,<svg fill='%235F6368' height='16' viewBox='0 0 24 24' width='16' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>") no-repeat right 10px center;
+    background-size: 14px 14px;
+    padding-right: 30px; /* space for the arrow */
+    border-radius: 6px; /* optional: for rounded corners */
+}
+
+
+/**attendance css user*/
+tbody, td, tfoot, th, thead, tr {
+    border-color: inherit;
+    border-style: solid;
+    border-width: 0;
+    height: 45px;
+}
+
+.warning-modal {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+.warning-content {
+    background-color: #fff;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 300px;
+    text-align: center;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.warning-btn {
+    background-color: #f44336;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+    .warning-btn:hover {
+        background-color: #d32f2f;
+    }
+/**end*/

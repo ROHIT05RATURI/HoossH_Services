@@ -1,0 +1,72 @@
+﻿
+
+.row1 {
+    display: flex;
+    flex-wrap: wrap; 
+    margin-top: 20px;
+    padding:10px;
+    height:60px;
+}
+
+
+.drop-menu {
+    display: flex;
+    align-items: center;
+    padding: 0 15px; 
+}
+
+
+#submittionbutton {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+/* Form and Button Styling */
+.btn-primary {
+    color: white;
+    background-color:  #3f6791 ;
+    padding: 6px 20px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+}
+
+
+input[type="date"], select.form-control {
+    width: 100%;
+    padding: 7px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#CustomRange {
+    display: none;
+}
+
+
+.navbarmid {
+    background-color:  #3f6791 ;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+
+/* Grid system for responsive layout */
+.drop-menu {
+    flex: 1 1 33.33%; /* Default 33.33% width for larger screens */
+}
+
+@media (max-width: 768px) {
+    /* For medium-sized screens (e.g., tablets), make the width 50% */
+    .drop-menu {
+        flex: -1 0 50%;
+    }
+}
+
+@media (max-width: 576px) {
+    /* For small screens (e.g., mobile), the columns will stack */
+    .drop-menu {
+        flex: -1 0 100%;
+    }
+}

@@ -1,0 +1,602 @@
+﻿footer {
+    display: flex;
+    height: 40px;
+    width: 100%;
+    padding: 25px;
+    position: Relative !important;
+    bottom: 0;
+}
+
+/*css form timeline input customer page*/
+/*start*/
+.TimelineContainerBox {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.TimelineContainer {
+    overflow-y: scroll;
+    font-family: 'Roboto', sans-serif;
+    height: 390px;
+    display: flex;
+    flex-wrap: wrap;
+    width: 80%;
+    min-width: 350px;
+    margin: 0;
+}
+
+.single-box {
+    display: flex;
+    height: 130px;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+}
+
+.date-area {
+    display: flex;
+    background: linear-gradient(to right, #e7e7e7 45%, #000 45%, #000 45%, #e7e7e7 50%);
+    order: 2;
+    text-align: center;
+    color: #fff;
+    font-size: 18px;
+    flex-basis: 35px;
+}
+
+    .date-area > span {
+        font-size: 12px;
+        /* line-height: 70px; */
+        margin: auto;
+        background:  #3f6791 ;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+    }
+
+.TimelineContentContainer {
+    width: 45%;
+    display: flex;
+    flex-direction: column;
+    /* align-items: center; */
+    justify-content: center;
+    height: 100%;
+    order: 3;
+}
+
+.TimelineContent {
+    text-align: center;
+    padding: 15px;
+    border-radius: 25px;
+    color: black;
+    background:  #3f6791 ;
+}
+
+    .TimelineContent .right {
+        text-align: start;
+        margin: 0;
+        font-size: 12px;
+        color: #000;
+        /* text-transform: uppercase; */
+    }
+
+    .TimelineContent .left {
+        margin: 0;
+        text-align: end;
+        font-size: 12px;
+        color: #000;
+    }
+
+.Reverse {
+    flex-direction: row-reverse;
+}
+.swal2-styled {
+    padding:5px !important;
+}
+    .swal2-styled.swal2-confirm {
+        background-color:#3f6791 !important;
+    }
+        /*end*/
+
+
+        /***customer repport new css*/
+
+.relative {
+    position: relative;
+}
+
+.absolute-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.text-center {
+    text-align: center;
+}
+
+p {
+    font-size: 1.5rem;
+}
+
+/* Timeline & Content */
+.TimelineContent h6 {
+    font-size: 14px;
+    color: white;
+}
+
+.timeline-wrapper {
+    position: relative;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+    .timeline-wrapper::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 50%;
+        width: 4px;
+        background: #ccc;
+        transform: translateX(-50%);
+    }
+
+.timeline-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 40px;
+    position: relative;
+}
+
+.timeline-date {
+    width: 30%;
+    text-align: right;
+    padding-right: 40px; /* spacing from line */
+}
+
+    .timeline-date .date {
+        font-size: 14px;
+        font-weight: normal;
+    }
+
+    .timeline-date .time {
+        font-size: 14px;
+        color: gray;
+    }
+
+.timeline-dot {
+    width: 14px;
+    height: 14px;
+    background-color: #00a5b5;
+    border-radius: 50%;
+    position: relative;
+    top: 8px;
+    margin: 0 20px; /* spacing on both sides of dot */
+    z-index: 1;
+    border: 3px solid white;
+}
+
+.timeline-content {
+    width: 50%;
+    background-color: #00a5b5;
+    color: white;
+    padding: 15px 20px;
+    border-radius: 20px;
+    margin-left: 10px; /* spacing from dot */
+}
+
+.datetime-section .visit-date .visit-time {
+    margin-top: 10px;
+}
+
+.datetime-section {
+    margin-top: 50px;
+    margin-right: 20px;
+}
+
+.TimelineContentContainer {
+    margin-left: 20px;
+}
+
+/* Sections */
+.month, .enquiry, .order, .payment, .visitTable {
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.month {
+    margin-top: 30px;
+}
+
+.visitTable {
+    margin-bottom: 40px;
+    max-width: 1200px;
+}
+
+    .month h3, .enquiry h3, .order h3, .payment h3, .visitTable h3, h4 {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 19px;
+        margin-bottom: 18px;
+        margin-top: 10px;
+        font-weight: 550;
+    }
+
+.month h3 {
+    margin-top: 10px;
+}
+
+.cuts {
+    font-size: 25px;
+    color: #605d67;
+    font-weight: 550;
+    font-family: var(--font-family);
+    margin-left: 40px;
+}
+
+.TotalAmount {
+    font-size: 14px;
+    color:  #3f6791 ;
+    font-weight: 550;
+    font-family: var(--font-family);
+}
+
+.tabulator-tableholder {
+    background-color: white;
+}
+
+/* Fixed Bottom Buttons */
+.fixed-bottom-buttons {
+    position: fixed;
+    bottom: 60px;
+    left: 250px;
+    color : black !important;
+    right: 0;
+    z-index: 999;
+    background-color: #fff;
+    padding: 10px;
+ 
+    border-top: 1px solid #ccc;
+    transition: left 0.5s ease, width 0.5s ease;
+    width: calc(100% - 250px);
+}
+    .fixed-bottom-buttons button{
+        color : black;
+    }
+
+    @media(min-width: 600px) {
+        .fixed-bottom-buttons {
+        color : black !important;
+        bottom: 0;
+        
+    }
+}
+
+
+
+body.sidebar-collapse .fixed-bottom-buttons {
+    left: 0;
+    width: 1526px;
+  
+}
+
+.button-row {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+    .button-row button {
+        flex: 1 1 33%;
+        min-width: 0;
+    }
+
+.Content-Wrapper {
+    padding-bottom: 50px;
+}
+
+/* Extra from 2nd CSS */
+.custname {
+    padding-left: 20px;
+}
+
+    .custname p {
+        color: #3f6791;
+        font-size: 20px !important;
+    }
+
+.btn-primary {
+    background-color: #3f6791;
+    font-size: 12px;
+    border: none;
+}
+
+    .btn-primary:hover {
+        background-color: #3f6791 !important;
+        color: white;
+    }
+
+table td {
+    font-size: 12px;
+}
+
+.TimelineContent h6 {
+    font-size: 12px;
+}
+
+.visit-date {
+    font-size: 12px;
+}
+
+.visit-time {
+    font-size: 12px;
+}
+
+
+
+/**view invoice css*/
+/* --------------------
+   Overlay + Modal
+-------------------- */
+.invoice-modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 95%;
+    max-width: 900px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: #fff;
+    padding: 16px;
+    border-radius: 8px;
+    font-size:11px !important;
+    z-index: 10001;
+}
+
+    .invoice-modal::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: -1;
+    }
+
+/* --------------------
+   Wrapper + Box
+-------------------- */
+.invoice-wrapper {
+    border: 1px solid #d6d6d6;
+    border-radius: 6px;
+    padding: 14px;
+    background: #fff;
+}
+
+.invoice-box {
+    width: 100%;
+}
+
+/* --------------------
+   Header
+-------------------- */
+.invoice-title {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.company-header {
+    text-align: center;
+    font-weight: 700;
+    font-size: 11px;
+    margin-bottom: 6px;
+}
+
+.company-subheader {
+    font-weight: 400;
+    font-size: 11px;
+    margin-top: 4px;
+}
+
+/* --------------------
+   Company Info
+-------------------- */
+.company-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    border-bottom: 1px solid #000;
+    padding-bottom: 6px;
+    margin-bottom: 6px;
+}
+
+    .company-info .text-right {
+        text-align: right;
+    }
+
+/* --------------------
+   Sections
+-------------------- */
+.invoice-sections {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 10px 0;
+}
+
+    .invoice-sections > div {
+        width: 14%;
+        font-size: 11px;
+    }
+
+/* --------------------
+   Section Titles + Boxes
+-------------------- */
+.section-title {
+    text-align: center;
+    font-weight: 700;
+    font-size: 11px;
+    margin: 12px 0;
+    border-top: 1px solid #bfbfbf;
+    border-bottom: 1px solid #bfbfbf;
+    padding: 6px 0;
+}
+
+.section-box {
+    padding: 8px 0;
+}
+
+.flex-between {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+/* Divider line */
+.divider {
+    height: 1px;
+    background: #ccc;
+    margin: 6px 0;
+}
+
+/* --------------------
+   Table
+-------------------- */
+.invoice-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+    margin-top: 6px;
+    /* removed box-shadow */
+}
+
+    .invoice-table th,
+    .invoice-table td {
+        border: 1px solid #dedede;
+        padding: 8px 6px;
+        vertical-align: middle;
+    }
+
+    .invoice-table th {
+        font-weight: 700;
+        text-align: center;
+        background: #fafafa;
+    }
+
+    .invoice-table td:nth-child(1),
+    .invoice-table td:nth-child(3),
+    .invoice-table td:nth-child(4),
+    .invoice-table td:nth-child(5),
+    .invoice-table td:nth-child(6) {
+        text-align: center;
+        white-space: nowrap;
+    }
+
+/* --------------------
+   Payment + Summary
+-------------------- */
+.payment-section {
+    margin-top: 10px;
+    font-size: 11px;
+}
+
+.summary {
+    margin-top: 12px;
+    border-top: 1px solid #000;
+    padding-top: 6px;
+    text-align: right;
+}
+
+    .summary div {
+        margin: 4px 0;
+    }
+
+    .summary strong:last-child {
+        font-weight: 700;
+    }
+
+/* --------------------
+   Footer
+-------------------- */
+.signatory {
+    margin-top: 18px;
+    font-size: 11px;
+}
+
+/* --------------------
+   Buttons
+-------------------- */
+.button-container {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+    .button-container button {
+        min-width: 64px;
+        padding: 6px 8px;
+        font-size: 11px;
+        border-radius: 4px;
+        border: 1px solid #cfcfcf;
+        background: var(--fourth-color, #444);
+        color: #fff;
+        cursor: pointer;
+    }
+
+        .button-container button:hover {
+            opacity: 0.9;
+        }
+
+.button-group {
+    display: flex;
+    gap: 8px;
+}
+
+/* --------------------
+   Responsive - Keep same layout as desktop
+-------------------- */
+@media (max-width: 768px) {
+    .invoice-modal {
+        width: 95%;
+        max-width: 95%;
+        padding: 10px;
+        font-size: 11px;
+    }
+
+    /* Keep company info & sections side by side on mobile */
+    .company-info,
+    .invoice-sections,
+    .flex-between {
+        flex-direction: row; /* force row layout */
+        flex-wrap: wrap;
+        align-items: flex-start;
+    }
+
+        .invoice-sections > div {
+            width: 32%; /* same width as desktop */
+        }
+
+    .button-container {
+        flex-direction: row; /* keep buttons side by side */
+    }
+
+        .button-container button {
+            width: auto; /* do not stretch buttons */
+        }
+
+    .invoice-table th,
+    .invoice-table td {
+        font-size: 11px;
+        padding: 6px 4px;
+    }
+}

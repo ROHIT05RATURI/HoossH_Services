@@ -1,0 +1,133 @@
+﻿/* premium-forms.css */
+:root {
+    --primary-brand: #3f6791;
+    --soft-bg: #f8fafc;
+    --card-bg: #ffffff;
+    --input-border: #e2e8f0;
+    --text-dark: #1e293b;
+    --success-green: #10b981;
+}
+
+body {
+    background-color: var(--soft-bg);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.hub-container {
+    padding: 30px 20px;
+    max-width: 1200px;
+    margin: auto;
+}
+
+.action-card {
+    background: white;
+    border-radius: 12px;
+    padding: 40px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.04);
+    border: 1px solid #edf2f7;
+    margin-bottom: 50px;
+}
+
+.section-title {
+    font-weight: 800;
+    color: var(--text-dark);
+    font-size: 22px;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+    .section-title i {
+        color: var(--primary-brand);
+    }
+
+.sub-heading {
+    font-size: 14px;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    border-bottom: 2px dashed #f1f5f9;
+    padding-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.p-label {
+    font-weight: 700;
+    color: #475569;
+    font-size: 13px;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.p-input {
+    border: 2px solid #f1f5f9;
+    border-radius: 14px;
+    padding: 12px 18px;
+    background: #f8fafc;
+    font-weight: 600;
+    transition: 0.3s;
+    width: 100%;
+    font-size: 14px;
+}
+
+    .p-input:focus {
+        border-color: var(--primary-brand);
+        outline: none;
+        background: white;
+        box-shadow: 0 0 0 4px rgba(63, 103, 145, 0.1);
+    }
+
+    .p-input:disabled, .p-input[readonly] {
+        background: #e2e8f0;
+        cursor: not-allowed;
+    }
+
+.btn-finalize {
+    background: var(--primary-brand);
+    color: white;
+    border: none;
+    padding: 14px 40px;
+    border-radius: 14px;
+    font-weight: 700;
+    transition: 0.4s;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+    .btn-finalize:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 25px rgba(63, 103, 145, 0.3);
+        color: white;
+    }
+
+.btn-cancel {
+    background: white;
+    color: #64748b;
+    border: 2px solid #e2e8f0;
+    padding: 12px 30px;
+    border-radius: 14px;
+    font-weight: 700;
+    transition: 0.3s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+}
+
+    .btn-cancel:hover {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+        color: #475569;
+    }
+
+@media (max-width: 768px) {
+    .action-card {
+        padding: 25px 20px;
+    }
+}

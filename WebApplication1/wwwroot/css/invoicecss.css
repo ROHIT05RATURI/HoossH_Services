@@ -1,0 +1,207 @@
+﻿/* Base */
+body {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    background: #f5f5f5;
+    margin: 0;
+    padding: 20px;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Invoice card */
+.invoice-container {
+    background: #fff;
+    margin: 0 auto;
+    padding: 20px;
+    width: 100%;
+    max-width: 950px; /* keeps a pleasant max width on desktop */
+    border-radius: 10px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.10);
+    /* IMPORTANT: no min-width here — let the container shrink on small screens */
+}
+
+/* Headings */
+h4 {
+    margin-top: 15px;
+    font-size: 15px;
+    border-bottom: 1px solid #000;
+    padding-bottom: 5px;
+}
+
+.header {
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+    .header div {
+        font-weight: normal;
+        font-size: 14px;
+    }
+
+/* Info blocks */
+.company-info,
+.details-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 10px;
+    align-items: flex-start;
+}
+
+.company-info {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+/* Make wide tables scroll horizontally on small screens */
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto; /* horizontal scrolling */
+    -webkit-overflow-scrolling: touch; /* smooth scrolling on iOS */
+    margin-top: 15px;
+    border-radius: 8px;
+    position: relative;
+}
+
+    /* optional: subtle right fade to hint horizontal content (pure CSS) */
+    .table-wrapper::after {
+        content: "";
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: 40px;
+        height: 100%;
+        pointer-events: none;
+        background: linear-gradient(to right, rgba(255,255,255,0), rgba(245,245,245,1));
+    }
+
+/* Table styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+    table th,
+    table td {
+        border: 1px solid #e0e0e0;
+        padding: 8px;
+        text-align: center;
+        white-space: nowrap; /* prevents cells from wrapping — forces horizontal scroll when needed */
+    }
+
+/* Make the table physically wide so it will scroll on narrow screens.
+   Adjust min-width to fit your actual column content (10 columns -> ~900px works well). */
+.widthmin {
+    min-width: 900px;
+}
+
+/* Sticky header for better mobile UX when scrolling horizontally */
+table th {
+    background: #3f6791;
+    color: #fff;
+    position: sticky;
+    top: 0;
+    z-index: 3;
+}
+
+/* Buttons and utilities */
+.button-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+button {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 6px;
+    background: #1a73e8;
+    color: #fff;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
+
+    button:hover {
+        transform: translateY(-1px);
+        opacity: 0.95;
+    }
+
+/* Layout niceties */
+.payment, .transport {
+    margin-top: 20px;
+}
+
+.totals {
+    margin-top: 20px;
+    border-top: 1px solid #000;
+    padding-top: 10px;
+    text-align: right;
+}
+
+.signatory {
+    margin-top: 25px;
+    text-align: right;
+}
+
+/* Responsive tweaks for small screens */
+@media (max-width: 640px) {
+    body {
+        padding: 12px;
+        font-size: 13px;
+    }
+
+    .company-info, .details-section {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .button-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .signatory {
+        text-align: left;
+    }
+    /* keep table min-width large to trigger horizontal scrolling on mobile,
+       but you can reduce this value if your content fits smaller */
+    .widthmin {
+        min-width: 820px;
+    }
+}
+
+/* Print */
+@media print {
+    .button-container {
+        display: none;
+    }
+
+    body {
+        background: #fff;
+        padding: 0;
+    }
+
+    .invoice-container {
+        box-shadow: none;
+        border-radius: 0;
+        max-width: 100%;
+    }
+
+    .table-wrapper::after {
+        display: none;
+    }
+}
+
+/* small webkit scrollbar polish (optional) */
+.table-wrapper::-webkit-scrollbar {
+    height: 8px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,0.15);
+    border-radius: 8px;
+}

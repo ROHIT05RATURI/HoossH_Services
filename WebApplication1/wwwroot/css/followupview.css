@@ -1,0 +1,133 @@
+﻿
+
+.F {
+    
+    display: grid;
+    width: 1000px;
+    border: solid #3f6791 1px;
+    height: 500px;
+   
+}
+
+.FS {
+    width: 1000px;
+    font-size: 14px;
+    /*    border: solid #198754 .5px;*/
+}
+
+th {
+    background-color: #198754;
+    border-collapse: collapse;
+    border: solid black .5px;
+    color: white;
+}
+
+table {
+    height: 70px;
+    width: 100%;
+    /*    border: solid black .5px;*/
+    border-collapse: collapse;
+    font-size: small;
+}
+
+td {
+    border: solid black .5px;
+    text-align: center;
+}
+
+.FST3 {
+    display: flex;
+    justify-content: space-around;
+    padding: 10px;
+    margin: 40px;
+}
+
+.abc {
+    display: flex;
+    justify-content: space-between;
+ 
+}
+.form-group label {
+    font-weight: normal !important;
+    font-size: 14px !important;
+    font-family: var(--font-family);
+    opacity: 0.8;
+    margin: 0;
+}
+.form-group select {
+    font-weight: normal !important;
+    font-size: 14px !important;
+    font-family: var(--font-family);
+    opacity: 0.8;
+  
+}
+
+
+
+.FS label {
+    font-weight: normal !important;
+    font-size: 14px !important;
+    font-family: var(--font-family);
+    opacity: 0.8;
+    margin : 0;
+}
+.FS input {
+    font-weight: normal !important;
+    font-size: 14px !important;
+    font-family: var(--font-family);
+    opacity: 0.7;
+   
+}
+
+button {
+    width: 150px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    background-color: #3f6791;
+    height: 30px;
+    display : flex;
+    align-items : center;
+    justify-content : center;
+    border-radius: 6px;
+    display : felx;
+    justify-content : center;
+    align-items :center center;
+    border : none;
+    margin-top : 20px;
+    margin-bottom : 20px;
+    color: white;
+    font-size: 16px;
+}
+
+/*header {
+    display: flex;
+    height: 75px;
+    box-shadow: 0px 0px 10px rgba(163, 162, 162, 0.968);
+    margin: 20px;
+    width: 1000px;
+    background-color: #198754;
+    justify-content: center;
+    color: white;
+    font-size: 25px;
+    border-radius: 10px;
+}*/
+
+#myTable1 {
+    display: none;
+}
+
+.btn {
+    display: flex;
+    justify-content: space-between;
+    padding: 50px;
+    /* border-bottom: solid #198754 .5px; */
+}
+
+#dis {
+    display: flex;
+    text-align: center;
+    justify-self: center;
+}
+
+p {
+    font-size: small;
+}

@@ -1,0 +1,55 @@
+﻿#support-form-modal {
+    .form-group-lg
+
+{
+    margin: 10px 0;
+}
+
+.modal-content {
+    padding: 20px;
+}
+
+.required {
+    color: red;
+}
+
+.modal-content {
+    background: linear-gradient(#00B55D, #F9E11B);
+}
+
+h1 {
+    color: #FFF;
+    margin: 0 0 10px;
+}
+
+.well {
+    margin-bottom: 0;
+    padding: 0 20px;
+    background-color: #DDD;
+}
+    h5{
+    margin-top: 0;
+}
+
+label {
+    color: #323B43;
+}
+
+form {
+    background-color: #eaeff3;
+    // rgba(255, 255, 255, 0.8) border-radius: 5px;
+    padding: 20px;
+}
+
+button {
+    background-color: #1BC0D3;
+    width: 100%;
+    height: 50px;
+    font-size: 25px;
+    color: #FFF;
+}
+
+    button:hover {
+        background-color: #24ce7b;
+    }
+}

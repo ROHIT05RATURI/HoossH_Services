@@ -1,0 +1,450 @@
+﻿
+:root {
+    --theme-color:  #3f6791 ; /* Primary theme color  #3f6791 ; */
+    --secondary-color: #6c757d; /* Secondary color var(--secondary-color); */
+    --third-color: #5bc0de; /* Danger color var(--third-color); */
+    --fourth-color: #3f6791; /* Danger color #3f6791; */
+    --fifth-color: #fd7e14; /* Danger color var(--fifth-color); */
+
+
+    --firstbackgound-color: #e3f7fb; /*  color var(--firstbackgound-color); */
+    --secondbackground-color: #f8f9fa; /* Secondary color var(--secondbackground-color); */
+
+
+    --dangerbackground-color: #f8d7da; /* third color  var(--dangerbackground-color); */
+
+
+    --text-color: #333; /* Text color */
+    --background-color: #f4f4f4; /* Background color */
+    --font-family: Arial, sans-serif;
+}
+
+
+/*.navbarmid {
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: nowrap;
+    overflow-x: hidden;*/ /*/No horizontal scroll ;*/
+    /*display: flex;
+    width: 100%;
+    height: 34px;
+    padding: 4px;
+    color : white;
+    gap: 2px;
+    background-color: #3f6791;
+    font-family: var(--font-family);
+}
+
+    .navbarmid a {
+        color: white;
+        text-decoration: none;
+        justify-content: space-evenly;
+        white-space: nowrap;
+        flex: 1 1 auto;
+    }*/
+
+
+    /** Active tag css **/
+    /*.navbarmid .tab {
+        background-color:  #3f6791 ;
+        color: white;
+        border-radius: 5px;
+        text-decoration: none;
+        display: flex;
+        padding: 2px;
+        height: 25px;
+    }
+
+    .navbarmid button {
+        font-size: 14px;
+        font-family: var(-font-family);
+        border-style: none;
+    }
+
+.tab.active {
+    background-color: # !important;
+    color: white;
+    height: 25px;
+}*/
+
+    td select {
+        width: 100%;
+        height: 100%;
+        text-align: center;
+    }
+
+    td textarea {
+        text-align: center;
+    }
+
+.ManagerAttendenceApproveContainer {
+    width: 100%;
+}
+
+.ManagerAttendenceAttable {
+    margin: 0 auto;
+  
+    width: 95%;
+  
+    background-color: #00000008;
+   
+    
+    /*     border: 2px solid  #3f6791 ; */
+}
+
+.AttendenceHeadingLines {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .AttendenceHeadingLines > h3 {
+        background-color:  #3f6791 ;
+        
+        margin: 10px;
+        width: 150px;
+        text-align: center;
+    }
+
+        .AttendenceHeadingLines > h3 > a {
+            color: white;
+            text-decoration-color: white;
+        }
+
+
+/* Leaderboard Table Styles */
+
+
+.leaderboard-container {
+   
+   
+    background-color: white;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.your-rank-container {
+    width: 95%;
+    
+    background-color: white;
+    overflow-x:auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-height: 300px; /* Set a max-height for scrolling */
+    overflow-y: auto; /* Enables vertical scroll if content exceeds max-height */
+    position: relative; /* Allow sticky positioning inside this container */
+}
+
+.leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    overflow: scroll;
+    overflow-y: auto;
+}
+
+    .leaderboard-table th {
+        padding: 10px;
+        text-align: Center;
+    /*    border-bottom: 1px solid #ddd;*/
+    }
+
+    .leaderboard-table td {
+        width: 90px !important;
+        text-align: Center;
+   /*     border-bottom: 1px solid #ddd;*/
+    }
+
+    .leaderboard-table th {
+        background-color: #30694F;
+        color: white;
+    }
+
+    .leaderboard-table tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    .leaderboard-table tr:hover {
+        background-color: #eaeaea;
+    }
+
+
+.your-rank-title {
+    text-align: center;
+    font-size: 20px;
+    color: #30694F;
+    font-weight: bold;
+    margin-top: 30px;
+}
+
+.btnContain {
+    display: flex;
+    justify-content: space-between;
+    width: 30%;
+    border-radius: 5px;
+}
+
+/* ------------------------------------ */
+/* 🌐 Base Form Styling */
+form {
+    background-color: white;
+}
+
+.form-group {
+    width: 100%;
+}
+
+/* 📅 Input & Dropdown Styling */
+input[type="date"],
+select#LeaveType {
+    width: 350px !important;
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: normal;
+    font-family: var(--font-family);
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    opacity: 0.9;
+    display: block;
+    margin: 0 auto;
+}
+
+/* Placeholder */
+input::placeholder,
+select option:first-child {
+    opacity: 0.6;
+    color: #888;
+}
+
+/* 🏷️ Label Styling */
+label[for="role"],
+label[for="StartDate"],
+label[for="EndDate"] {
+    display: block;
+    text-align: left;
+    width: 250px;
+    margin: 10px auto 5px auto;
+    font-size: 14px;
+    font-family: var(--font-family);
+}
+
+/* 🆗 Submit Button Wrapper (default) */
+#submitWrapper {
+    margin-top: 3px;
+    margin-bottom: 13px;
+    max-width: 250px;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* 🟢 Submit Button */
+#submitButton {
+    width: 70px;
+    height: 30px;
+    font-family: var(--font-family);
+    color: white;
+    font-size : 16px;
+    background-color: #3f6791;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* ------------------------------------ */
+/* 📊 Table Styling (Fixed Header, Layout) */
+.backlog-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    font-family: var(--font-family);
+    font-size: 14px;
+}
+
+    .backlog-table thead {
+        background-color: #3f6791;
+        color: white;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+
+        .backlog-table thead th {
+            padding: 12px 8px;
+            font-weight: bold;
+            text-align: left;
+        }
+
+    .backlog-table td {
+        padding: 10px 8px;
+        font-size: 14px;
+        color: black;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    /* ♻️ Alternate Rows */
+    .backlog-table tbody tr:nth-child(odd) {
+        background-color: #ffffff;
+    }
+
+    .backlog-table tbody tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    /* 🟦 Rounded Corners */
+    .backlog-table thead th:first-child {
+        border-top-left-radius: 6px;
+    }
+
+    .backlog-table thead th:last-child {
+        border-top-right-radius: 6px;
+    }
+
+/* 📦 Table Scroll */
+.backlog-table-scroll {
+    max-height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    margin-top: 10px;
+    width: 100%;
+}
+
+/* 🔠 Column Specific Align */
+.backlog-table .th-left {
+    text-align: left;
+}
+
+.backlog-table .th-right {
+    text-align: right;
+}
+
+/* 🧾 Days Column Fix (padding + min-width) */
+.backlog-table th:nth-child(5),
+.backlog-table td:nth-child(5) {
+    min-width: 40px;
+    padding: 8px 6px;
+}
+
+/* ------------------------------------ */
+/* 📱 Media Queries */
+
+/* 💻 501px - 770px */
+@media (min-width: 501px) and (max-width: 770px) {
+    #submitWrapper {
+        margin-top: 6px;
+        display: flex;
+        justify-content: flex-end;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+/* 🖥️ Above 770px */
+@media (min-width: 771px) {
+    #submitWrapper {
+        margin-top: 6px;
+        display: flex;
+        justify-content: flex-end;
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+/* 📏 Tablet View (up to 768px) */
+@media (max-width: 768px) {
+    .backlog-table th,
+    .backlog-table td {
+        padding: 8px;
+        font-weight: normal;
+    }
+}
+
+/* 📱 Mobile View (up to 500px) */
+@media (max-width: 500px) {
+    .backlog-table th,
+    .backlog-table td {
+        padding: 6px;
+        font-size: 14px;
+        font-weight: normal;
+    }
+}
+
+/* 📉 Ultra Narrow View (up to 460px) */
+@media (max-width: 460px) {
+    .backlog-table {
+        table-layout: fixed;
+        width: 100%;
+    }
+
+        .backlog-table th,
+        .backlog-table td {
+            padding: 4px 2px;
+            font-size: 13px;
+            word-break: break-word;
+        }
+
+            .backlog-table th:nth-child(1),
+            .backlog-table td:nth-child(1) {
+                width: 30px;
+            }
+
+            .backlog-table th:nth-child(2),
+            .backlog-table td:nth-child(2) {
+                width: 35px;
+            }
+
+            .backlog-table th:nth-child(3),
+            .backlog-table td:nth-child(3),
+            .backlog-table th:nth-child(4),
+            .backlog-table td:nth-child(4) {
+                width: 75px;
+            }
+
+            .backlog-table th:nth-child(5),
+            .backlog-table td:nth-child(5) {
+                width: 40px;
+            }
+
+            .backlog-table th:nth-child(6),
+            .backlog-table td:nth-child(6) {
+                width: 70px;
+            }
+}
+
+/* 📏 Input Field Adjustments */
+
+/* 🧩 Below 500px */
+@media screen and (max-width: 500px) {
+    input[type="date"],
+    select#LeaveType,
+    label[for="role"],
+    label[for="StartDate"],
+    label[for="EndDate"] {
+        width: 340px;
+    }
+}
+
+/* 📋 501px - 769px */
+@media screen and (min-width: 501px) and (max-width: 769px) {
+    input[type="date"],
+    select#LeaveType,
+    label[for="role"],
+    label[for="StartDate"],
+    label[for="EndDate"] {
+        width: 450px;
+    }
+}
+
+/* 🖥️ Above 770px */
+@media screen and (min-width: 770px) {
+    input[type="date"],
+    select#LeaveType,
+    label[for="role"],
+    label[for="StartDate"],
+    label[for="EndDate"] {
+        width: 400px !important;
+        opacity : 0.7;
+    }
+}

@@ -1,0 +1,47 @@
+﻿
+<style >
+.flex-2field-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.flex-2field {
+    flex: 1 1 48%;
+    min-width: 48%;
+}
+
+.btn-primary {
+    background-color: #3f6791 !important;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+.custom-table-container {
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    overflow: hidden;
+    width: max-content;
+    min-width: 100%;
+}
+
+.custom-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0;
+}
+
+    .custom-table th,
+    .custom-table td {
+        white-space: nowrap;
+        padding: 8px;
+    }
+
+.hidden-field {
+    display: none !important;
+}
+
+</style >

@@ -1,0 +1,265 @@
+﻿<style>
+.relative {
+    position: relative;
+}
+
+.absolute-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.text-center {
+    text-align: center;
+}
+
+p {
+    font-size: 1.5rem;
+}
+
+
+/*box and timing*/
+
+.TimelineContent h6 {
+    font-size: 14px;
+    color: white;
+}
+
+.timeline-wrapper {
+    position: relative;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+    .timeline-wrapper::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 50%;
+        width: 4px;
+        background: #ccc;
+        transform: translateX(-50%);
+    }
+
+.timeline-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 40px;
+    position: relative;
+}
+
+.timeline-date {
+    width: 30%;
+    text-align: right;
+    padding-right: 40px; /* spacing from line */
+}
+
+    .timeline-date .date {
+        font-size: 14px;
+        font-weight: normal;
+    }
+
+    .timeline-date .time {
+        font-size: 14px;
+        color: gray;
+    }
+
+.timeline-dot {
+    width: 14px;
+    height: 14px;
+    background-color: #00a5b5;
+    border-radius: 50%;
+    position: relative;
+    top: 8px;
+    margin: 0 20px; /* spacing on both sides of dot */
+    z-index: 1;
+    border: 3px solid white;
+}
+
+.timeline-content {
+    width: 50%;
+    background-color: #00a5b5;
+    color: white;
+    padding: 15px 20px;
+    border-radius: 20px;
+    margin-left: 10px; /* spacing from dot */
+}
+
+.datetime-section .visit-date .visit-time {
+    margin-top: 20px;
+}
+
+.datetime-section {
+    margin-top: 45px;
+    margin-right: 20px;
+}
+
+.TimelineContentContainer {
+    margin-left: 20px;
+}
+
+
+.month {
+    margin-top: 50px;
+    margin-bottom: 30px;
+}
+
+    .month h3 {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 19px;
+        margin-bottom: 18px;
+        margin-top: 60px;
+   
+        font-weight: 550;
+    }
+
+.enquiry {
+    margin-top: 100px;
+    margin-bottom: 30px;
+}
+
+    .enquiry h3 {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 19px;
+        margin-bottom: 18px;
+        margin-top: 100px;
+
+        font-weight: 550;
+    }
+
+.order {
+    margin-top: 100px;
+    margin-bottom: 30px;
+}
+
+    .order h3 {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 19px;
+        margin-bottom: 18px;
+        margin-top: 100px;
+
+        font-weight: 550;
+    }
+
+.payment {
+    margin-top: 100px;
+    margin-bottom: 30px;
+}
+
+    .payment h3 {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 19px;
+        margin-bottom: 18px;
+        margin-top: 100px;
+
+        font-weight: 550;
+    }
+
+.visitTable {
+    margin-top: 100px;
+    margin-bottom: 40px;
+    max-width: 1200px;
+}
+
+    .visitTable h3 {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 19px;
+        margin-bottom: 18px;
+        margin-top: 100px;
+
+        font-weight: 550;
+    }
+
+.cuts {
+    font-size: 25px;
+    color: #605d67;
+    font-weight: 550;
+    font-family: var(--font-family);
+    margin-left: 40px;
+}
+
+.TotalAmount {
+    font-size: 16px;
+    color:  #3f6791 ;
+    font-weight: 550;
+    font-family: var(--font-family);
+    margin-left: 40px;
+}
+
+.tabulator-tableholder {
+    background-color: white;
+}
+
+.fixed-bottom-buttons {
+    position: fixed;
+    bottom: 0;
+    left: 250px; 
+    right: 0;
+    z-index: 999;
+    background-color: #fff;
+    padding: 10px;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    border-top: 1px solid #ccc;
+    transition: left 0.5s ease, width 0.5s ease;
+    width: calc(100% - 250px); 
+}
+
+body.sidebar-collapse .fixed-bottom-buttons {
+    left: 75px; 
+    width: calc(100% - 75px);
+    padding-left: 5px !important;
+}
+
+
+
+.button-row {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+    .button-row button {
+        flex: 1 1 33%;
+        min-width: 0;
+    }
+
+.Content-Wrapper {
+    padding-bottom: 50px;
+}
+
+.custname {
+    margin-top: -60px;
+    padding-left: 20px;
+}
+
+    .custname p {
+        color: #3f6791;
+    }
+
+.btn-primary {
+    background-color: #3f6791;
+    font-size: 14px;
+    border: none
+}
+
+    .btn-primary:hover {
+        background-color: #3f6791 !important;
+        color : white;
+
+    }
+
+
+</style >
