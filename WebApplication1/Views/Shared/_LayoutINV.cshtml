@@ -6,108 +6,248 @@
     <title>@ViewBag.Title - HoossH Service</title>
 
     <!-- Favicon & Fonts -->
-    <link rel="icon" href="~/images/logo.png" type="image/x-icon" />
+    <link rel="icon" href="~/Images/Icon.ico" type="image/x-icon" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <!-- Bootstrap 5 & AdminLTE Styles -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="~/css/adminlte.min.css">
+    <link rel="stylesheet" href="~/css/Userkundali.css">
     <link rel="stylesheet" href="~/css/site.css">
 
-    <link rel="stylesheet" href="~/css/Shared/LayoutINV.css" />
-</head>
-<body class="hold-transition sidebar-mini layout-fixed">
-    <div class="wrapper">
+    <style>
+        :root {
+            --primary-brand: #3f6791;
+            --brand-light: #f0f4f8;
+            --text-main: #334155;
+            --bg-body: #f8fafc;
+        }
 
-        <!-- Navbar -->
-        <nav class="main-header navbar navbar-expand navbar-light fixed-top">
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-size: 14px;
+        }
+
+        /* Navbar Customization */
+        .main-header {
+            background-color: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        /* Sidebar Clean Modern Styling */
+        .main-sidebar {
+            background-color: #ffffff !important;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.03);
+            border-right: 1px solid #e2e8f0;
+        }
+
+        .brand-link {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .sidebar-menu-container {
+            padding: 10px 15px;
+            height: calc(100vh - 70px);
+            overflow-y: auto;
+        }
+
+        /* Menu Headings & Items */
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 14px;
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: 500;
+            border-radius: 8px;
+            margin-bottom: 4px;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .menu-item i {
+            color: var(--primary-brand);
+            font-size: 16px;
+            width: 25px;
+            text-align: center;
+            margin-right: 10px;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            background-color: var(--brand-light);
+            color: var(--primary-brand);
+        }
+
+        /* Collapsible Submenus */
+        .menu-dropdown-toggle {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            color: var(--text-main);
+            font-weight: 500;
+            border-radius: 8px;
+            margin-bottom: 4px;
+            transition: background 0.2s;
+        }
+
+        .menu-dropdown-toggle:hover {
+            background-color: var(--brand-light);
+            color: var(--primary-brand);
+        }
+
+        .menu-dropdown-container {
+            display: none;
+            padding-left: 20px;
+            margin-bottom: 5px;
+        }
+
+        .menu-dropdown-container .menu-item {
+            font-size: 13.5px;
+            padding: 8px 12px;
+        }
+
+        /* Content Wrapper */
+        .content-wrapper {
+            background-color: var(--bg-body);
+            padding: 20px;
+            min-height: 100vh;
+        }
+    </style>
+</head>
+
+<body class="hold-transition sidebar-mini sidebar-collapse layout-navbar-fixed">
+
+    @* @if (role == "SalesPerson" || role == "SalesManager")
+    {
+        <partial name="_BottomNavigation" />
+        <div class="bottom-nav justify-content-around align-items-center fixed-bottom" id="mainBottomNav">
+            <div id="dynamic-nav-container" class="d-flex justify-content-around flex-grow-1"></div>
+            <a asp-controller="Flow" asp-action="CustomerReport" class="text-center text-decoration-none text-dark" style="min-width: 60px;">
+                <div class="btn btn-light rounded-circle shadow-sm mx-auto mb-1 d-flex align-items-center justify-content-center"
+                     style="width: 38px; height: 38px; color: var(--primary-color);">
+                    <i class="fa-solid fa-handshake"></i>
+                </div>
+                <div style="font-size: 10px;">Meeting</div>
+            </a>
+        </div>
+    } *@
+
+    <div id="global-loader" class="loader-overlay" style="display: none;">
+        <div class="spinner"></div>
+    </div>
+
+    <div class="wrapper w-100">
+        <!-- Top Navbar -->
+        <nav class="main-header navbar navbar-expand navbar-light shadow-sm fixed-top">
             <div class="container-fluid">
-                <ul class="navbar-nav">
+                <ul class="navbar-nav align-items-center">
                     <li class="nav-item">
-                        <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars text-secondary"></i></a>
-                    </li>
-                    <li class="nav-item d-none d-sm-inline-block">
-                        <span class="nav-link font-weight-bold text-dark">@ViewBag.Title</span>
+                        <a class="nav-link text-secondary" data-widget="pushmenu" href="#" role="button">
+                            <i class="fas fa-bars fs-5"></i>
+                        </a>
                     </li>
                 </ul>
 
-                <!-- Right Navbar Links -->
-                <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-user-circle fs-5 text-primary me-2"></i>
-                            <span></span>
+                <div class="navbar-title-center">
+                    <h6 class="m-0">@ViewBag.Title</h6>
+                </div>
+
+                <ul class="navbar-nav align-items-center ms-auto">
+                    <li class="nav-item me-3">
+                        <a href="javascript:history.back()" class="nav-link text-secondary" title="Go Back">
+                            <i class="fas fa-arrow-left fs-5"></i>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0" aria-labelledby="userDropdown">
-                            <li><a class="dropdown-item" href="/User/Profile"><i class="fas fa-user me-2"></i> Profile</a></li>
-                            <li><a class="dropdown-item" href="/User/ChangePassword"><i class="fas fa-key me-2"></i> Change Password</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item text-danger" href="/Auth/Login"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
-                        </ul>
+                    </li>
+                    <li class="nav-item position-relative">
+                        <i class="fa-solid fa-user-circle fs-4 text-secondary cursor-pointer profile-icon" id="profileMenuTrigger"></i>
+                        <div id="profileDropdown" class="profile-dropdown shadow-sm">
+                            <a href="/Flow/NewKundaliOverView" class="dropdown-item"><i class="fas fa-scroll me-2"></i> Kundali</a>
+                            <a href="/home/Index" class="dropdown-item text-danger"><i class="fas fa-sign-out-alt me-2"></i> Logout</a>
+                        </div>
                     </li>
                 </ul>
             </div>
         </nav>
 
-        <!-- Main Sidebar Container based on Project Structure -->
-        <aside class="main-sidebar sidebar-light-primary elevation-1">
-            <a href="/" class="brand-link text-decoration-none">
-                <img src="~/images/logo.png" alt="HoossH Logo" style="height: 32px;" class="me-2">
-                <span class="font-weight-bold text-dark" style="font-size: 18px;">HoossH</span>
-            </a>
+        <!-- Sidebar Navigation -->
+        <aside class="main-sidebar">
+            <div class="sidebar" style="height: 100vh;">
+                <div class="grow-nav-header">
+                    <a class="nav-link text-secondary d-flex justify-content-between p-0" data-widget="pushmenu" href="#" role="button">
+                        <i class="fas fa-bars fs-5"></i>
+                    <img src="/images/Icon.png" alt="HoossH Service" style="height: 28px;" />
+                    </a>
+                </div>
 
             <div class="sidebar-menu-container">
-
-                <!-- STANDARD USER / EMPLOYEE MENU -->
-                <div class="text-muted small fw-bold px-3 mb-2 text-uppercase">Workspace</div>
-                <a href="/User/Dashboard" class="menu-item @(ViewContext.RouteData.Values["action"]?.ToString() == "Dashboard" ? "active" : "")">
-                    <i class="fas fa-tachometer-alt"></i> Dashboard
-                </a>
-
-                <!-- HRMS Dropdown -->
-                <div class="menu-dropdown-toggle" onclick="toggleMenu('hrmsSub')">
-                    <span><i class="fas fa-users-cog"></i> HRMS</span>
-                    <i class="fas fa-chevron-down small"></i>
-                </div>
-                <div id="hrmsSub" class="menu-dropdown-container">
-                    <a href="/Team/Attendence" class="menu-item"><i class="fas fa-clock"></i> Attendance</a>
-                    <a href="/User/HRMS/Leave" class="menu-item"><i class="fas fa-calendar-minus"></i> Leaves</a>
-                </div>
-
-                <!-- Client Management -->
-                <div class="menu-dropdown-toggle" onclick="toggleMenu('clientSub')">
-                    <span><i class="fas fa-user-tie"></i> Clients</span>
-                    <i class="fas fa-chevron-down small"></i>
-                </div>
-                <div id="clientSub" class="menu-dropdown-container">
-                    <a href="/User/Client/ClientList" class="menu-item"><i class="fas fa-list"></i> Client List</a>
-                    <a href="/User/Client/AddClient" class="menu-item"><i class="fas fa-user-plus"></i> Add Client</a>
-                </div>
-
-                <!-- Visit Management -->
-                <div class="menu-dropdown-toggle" onclick="toggleMenu('visitSub')">
-                    <span><i class="fas fa-map-marked-alt"></i> Visits</span>
-                    <i class="fas fa-chevron-down small"></i>
-                </div>
-                <div id="visitSub" class="menu-dropdown-container">
-                    <a href="/User/Visit/VisitList" class="menu-item"><i class="fas fa-route"></i> Visit List</a>
-                    <a href="/User/Visit/AddVisit" class="menu-item"><i class="fas fa-plus-circle"></i> Add Visit</a>
-                </div>
-
-                <!-- Product Catalogue -->
-                <div class="menu-dropdown-toggle" onclick="toggleMenu('productSub')">
-                    <span><i class="fas fa-box-open"></i> Products</span>
-                    <i class="fas fa-chevron-down small"></i>
-                </div>
-                <div id="productSub" class="menu-dropdown-container">
-                    <a href="/User/Product/ProductList" class="menu-item"><i class="fas fa-boxes"></i> Catalogue</a>
-                    <a href="/User/Product/AddProduct" class="menu-item"><i class="fas fa-folder-plus"></i> Add Product</a>
-                </div>
-
                 
-                <hr class="my-3 text-muted">
+                    <!-- MANAGER MENU -->
+                    <div class="text-muted small fw-bold px-3 mb-2 text-uppercase">Manager Navigation</div>
+                    <a href="/Manager/Dashboard" class="menu-item @(ViewContext.RouteData.Values["action"]?.ToString() == "Dashboard" ? "active" : "")">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                    <a href="/Manager/Users" class="menu-item">
+                        <i class="fas fa-users"></i> Team Users
+                    </a>
+                    <a href="/Manager/Reports" class="menu-item">
+                        <i class="fas fa-chart-line"></i> Reports
+                    </a>
+  <!-- STANDARD USER / EMPLOYEE MENU -->
+                    <div class="text-muted small fw-bold px-3 mb-2 text-uppercase">Workspace</div>
+                    <a href="/User/Dashboard" class="menu-item">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
 
+                    <!-- HRMS Dropdown -->
+                    <div class="menu-dropdown-toggle" onclick="toggleMenu('hrmsSub')">
+                        <span><i class="fas fa-users-cog"></i> HRMS</span>
+                        <i class="fas fa-chevron-down small"></i>
+                    </div>
+                    <div id="hrmsSub" class="menu-dropdown-container">
+                        <a href="/Team/Attendence" class="menu-item"><i class="fas fa-clock"></i> Attendance</a>
+                        <a href="/User/HRMS/Leave" class="menu-item"><i class="fas fa-calendar-minus"></i> Leaves</a>
+                    </div>
+
+                    <!-- Client Management -->
+                    <div class="menu-dropdown-toggle" onclick="toggleMenu('clientSub')">
+                        <span><i class="fas fa-user-tie"></i> Clients</span>
+                        <i class="fas fa-chevron-down small"></i>
+                    </div>
+                    <div id="clientSub" class="menu-dropdown-container">
+                        <a href="/User/Client/ClientList" class="menu-item"><i class="fas fa-list"></i> Client List</a>
+                        <a href="/User/Client/AddClient" class="menu-item"><i class="fas fa-user-plus"></i> Add Client</a>
+                    </div>
+
+                    <!-- Visit Management -->
+                    <div class="menu-dropdown-toggle" onclick="toggleMenu('visitSub')">
+                        <span><i class="fas fa-map-marked-alt"></i> Visits</span>
+                        <i class="fas fa-chevron-down small"></i>
+                    </div>
+                    <div id="visitSub" class="menu-dropdown-container">
+                        <a href="/User/Visit/VisitList" class="menu-item"><i class="fas fa-route"></i> Visit List</a>
+                        <a href="/User/Visit/AddVisit" class="menu-item"><i class="fas fa-plus-circle"></i> Add Visit</a>
+                    </div>
+
+                    <!-- Product Catalogue -->
+                    <div class="menu-dropdown-toggle" onclick="toggleMenu('productSub')">
+                        <span><i class="fas fa-box-open"></i> Products</span>
+                        <i class="fas fa-chevron-down small"></i>
+                    </div>
+                    <div id="productSub" class="menu-dropdown-container">
+                        <a href="/User/Product/ProductList" class="menu-item"><i class="fas fa-boxes"></i> Catalogue</a>
+                        <a href="/User/Product/AddProduct" class="menu-item"><i class="fas fa-folder-plus"></i> Add Product</a>
+                    </div>
+                
+
+                <hr class="my-3 text-muted">
+                
                 <div class="text-muted small fw-bold px-3 mb-2 text-uppercase">System</div>
                 <a href="/User/Notifications" class="menu-item">
                     <i class="fas fa-bell"></i> Notifications
@@ -118,36 +258,36 @@
             </div>
         </aside>
 
-        <!-- Content Wrapper -->
-        <div class="content-wrapper" style="margin-top: 56px;">
-            <section class="content">
-                <div class="container-fluid px-2">
+        <!-- Main Content Area -->
+        <div class="content-wrapper" style="background-color: var(--bg-light); min-height: 100vh; padding-top: 60px;">
+            <section class="content px-3 py-4">
+                <div class="container-fluid">
                     @RenderBody()
                 </div>
             </section>
         </div>
 
-        <!-- Footer -->
-        <footer class="main-footer text-center text-muted small py-3 bg-white border-top">
-            <strong>Copyright &copy; @DateTime.Now.Year <span class="text-primary">HoossH Service</span>.</strong> All rights reserved.
+        <footer class="main-footer text-muted text-center py-3 border-top bg-white">
+            <small>&copy; @DateTime.Now.Year HoossH Service. All rights reserved.</small>
         </footer>
-
     </div>
 
     <!-- Scripts -->
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/adminlte.min.js"></script>
+    <script src="~/js/adminlte.min.js">        </script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
     <script>
-            function toggleMenu(id) {
-                const element = document.getElementById(id);
-                if (element.style.display === "block") {
-                    element.style.display = "none";
-                } else {
-                    element.style.display = "block";
-                }
+        function toggleMenu(id) {
+            const element = document.getElementById(id);
+            if (element.style.display === "block") {
+                element.style.display = "none";
+            } else {
+                element.style.display = "block";
             }
+        }
     </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
