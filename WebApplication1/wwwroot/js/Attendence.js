@@ -152,48 +152,40 @@ function fillCalendar(attendanceData) {
 		const cell = document.querySelector(`[data-date="${date}"]`);
 
 		if (cell) {
-			if (record.status === "Present") {
-				cell.classList.add("present");
-				//const lineBreak = document.createElement("br");
-				const time = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
-
-				const timeText = document.createTextNode(time);
-				//cell.appendChild(lineBreak);
-
-				cell.appendChild(timeText);
+			const status = record.managerStatus || record.status;
+			if (status === "Present" || status === "Approved") {
+				cell.classList.add("present-approved-bg");
+				const time = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+				const timeSpan = document.createElement("span");
+				timeSpan.className = "attendance-time";
+				timeSpan.innerText = time;
+				cell.appendChild(timeSpan);
 			}
-
-			else if (record.status === "Absent") {
-				cell.classList.add("absent");
-
-				//const time = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
-
-				cellText = document.createTextNode("Absent");
-				cell.appendChild(cellText);
+			else if (status === "Pending") {
+				cell.classList.add("present-not-approved-bg");
+				const time = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+				const timeSpan = document.createElement("span");
+				timeSpan.className = "attendance-time";
+				timeSpan.innerText = time;
+				cell.appendChild(timeSpan);
 			}
-			else if (record.status === "Leave") {
-
-				cell.classList.add("Leave");
-				cellText = document.createTextNode("Leave");
-				cell.appendChild(cellText);
+			else if (status === "Absent") {
+				cell.classList.add("absent-bg");
+				const redDot = document.createElement("div");
+				redDot.className = "red-dot-indicator";
+				cell.appendChild(redDot);
 			}
-			else if (record.status === "Working on Leave") {
-
+			else if (status === "Leave") {
+				cell.classList.add("leave-bg");
+			}
+			else if (status === "Working on Leave") {
 				cell.classList.add("working-leave-bg");
-				const time = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
-				const timeText = document.createTextNode(time);
-				cell.appendChild(timeText);
+				const time = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+				const timeSpan = document.createElement("span");
+				timeSpan.className = "attendance-time";
+				timeSpan.innerText = time;
+				cell.appendChild(timeSpan);
 			}
-
-			//cell.classList.add(record.status === "Present" ? "present" : "absent");
-
-			// Add check-in time if available
-			//const time = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
-
-			//const timeText = document.createTextNode(time);
-
-			//cell.appendChild(lineBreak);
-			//cell.appendChild(timeText);
 		}
 	});
 }

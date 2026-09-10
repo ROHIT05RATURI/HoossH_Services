@@ -1,0 +1,463 @@
+
+@{
+    ViewBag.Title = "Attendance Tracker";
+    Layout = "~/Views/Shared/_LayoutINV.cshtml";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="stylesheet" href="/css/HRMS.css">
+<link rel="stylesheet" href="/Attendance/Attendance.css">
+
+<style>
+    .not-joined-bg {
+        background-color: #f1f5f9 !important;
+        color: #94a3b8 !important;
+        cursor: not-allowed;
+    }
+</style>
+
+<!-- Clean Sub Navigation bar matching HRMS flow -->
+<div class="d-flex gap-2 mb-4">
+    <a href="/Team/Attendence" class="btn btn-primary btn-sm rounded-pill px-3 active shadow-sm">
+        <i class="fas fa-plus-circle me-1"></i> Mark Attendance
+    </a>
+    <a href="/Team/ViewAttendence" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+        <i class="fas fa-list-ul me-1"></i> Attendance History
+    </a>
+</div>
+
+<div class="hrms-wrapper mx-lg-5">
+    <div class="stats-container my-3">
+        <div class="stat-premium span-2-rows">
+            <i class="fas fa-calendar-day" style="background: #eff6ff; color: #3b82f6;"></i>
+            <div class="stat-data"><h3></h3><p>Total Days</p></div>
+        </div>
+
+        <div class="stat-premium">
+            <i class="fas fa-check" style="background: #d1f7c4; color: #2e7d32;"></i>
+            <div class="stat-data"><h3></h3><p>Present</p></div>
+        </div>
+        <div class="stat-premium">
+            <i class="fas fa-walking" style="background: #fff9c4; color: #f59e0b;"></i>
+            <div class="stat-data"><h3></h3><p>Leaves</p></div>
+        </div>
+        <div class="stat-premium">
+            <i class="fas fa-times" style="background: #ffdce0; color: #dc2626;"></i>
+            <div class="stat-data"><h3></h3><p>Absent</p></div>
+        </div>
+        <div class="stat-premium">
+            <i class="fas fa-bed" style="background: #ebf4fa; color: #0b5ed7;"></i>
+            <div class="stat-data"><h3></h3><p>Week Offs</p></div>
+        </div>
+    </div>
+
+    <div class="calendar-card">
+        <div class="calendar-top-header">
+            <form method="get" id="filterForm" class="month-nav-wrapper">
+                <button type="button" class="month-nav-btn" onclick="navigateMonth(-1)">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+
+              @*   <select name="selectedMonth" id="selectedMonth" class="month-picker-pill" onchange="this.form.submit()">
+                    @for (int m = 1; m <= 12; m++)
+                    {
+                        var joinDateStr = ViewBag.JoinDate as string;
+                        var joinDate = string.IsNullOrEmpty(joinDateStr) ? DateTime.MinValue : DateTime.Parse(joinDateStr);
+
+                        if (selectedYear < joinDate.Year || (selectedYear == joinDate.Year && m < joinDate.Month))
+                        {
+                            continue; // Skip months before joining
+                        }
+
+                        if (m == selectedMonth)
+                        {
+                            <option value="@m" selected>@((new DateTime(selectedYear, m, 1)).ToString("MMMM yyyy"))</option>
+                        }
+                        else
+                        {
+                            <option value="@m">@((new DateTime(selectedYear, m, 1)).ToString("MMMM yyyy"))</option>
+                        }
+                    }
+                </select> *@
+                @* <input type="hidden" name="year" id="selectedYear" value="@selectedYear" /> *@
+
+                <button type="button" class="month-nav-btn" onclick="navigateMonth(1)">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </form>
+        </div>
+
+        <table class="table-calendar" id="calendar">
+            <thead>
+                <tr>
+                    <th>Sun</th>
+                    <th>Mon</th>
+                    <th>Tue</th>
+                    <th>Wed</th>
+                    <th>Thu</th>
+                    <th>Fri</th>
+                    <th>Sat</th>
+                </tr>
+            </thead>
+             @*    <tbody>    @{
+                    int currentDay = 1;
+                    for (int r = 0; r < totalRows; r++)
+                    {
+                        <tr>
+                            @for (int c = 0; c < 7; c++)
+                            {
+                                if ((r == 0 && c < startDayOfWeek) || currentDay > daysInMonth)
+                                {
+                                    <td class="empty-cell"></td>
+                                }
+                                else
+                                {
+                                    var loopDate = new DateTime(selectedYear, selectedMonth, currentDay);
+                                    var loopDateOnly = DateOnly.FromDateTime(loopDate);
+                                    var record = Model.Attendances?.FirstOrDefault(x => x.AttendanceDate == loopDateOnly);
+
+                                    string bgClass = "";
+                                    string timeStr = "";
+                                    string displayStatus = "";
+                                    bool isSunday = (c == 0);
+                                    bool showRedDot = false;
+
+                                    var joinDateStr = ViewBag.JoinDate as string;
+                                    var joinDate = string.IsNullOrEmpty(joinDateStr) ? DateTime.MinValue : DateTime.Parse(joinDateStr);
+
+                                    if (loopDate.Date < joinDate.Date)
+                                    {
+                                        bgClass = "not-joined-bg";
+                                        displayStatus = "Not Joined";
+                                    }
+                                    else if (record != null)
+                                    {
+                                        if (record.ManagerStatus == "Present")
+                                        {
+                                            bgClass = "present-approved-bg";
+                                            timeStr = record.CheckinTime;
+                                            displayStatus = "Present";
+                                        }
+                                        else if (record.ManagerStatus == "Pending")
+                                        {
+                                            bgClass = "present-not-approved-bg";
+                                            timeStr = record.CheckinTime;
+                                            displayStatus = "Pending";
+                                        }
+                                        else if (record.ManagerStatus == "Absent")
+                                        {
+                                            bgClass = "absent-bg";
+                                            displayStatus = "Absent";
+                                            showRedDot = true;
+                                        }
+                                        else if (record.ManagerStatus == "Leave")
+                                        {
+                                            bgClass = "leave-bg";
+                                            displayStatus = "Leave";
+                                        }
+                                        else if (record.ManagerStatus == "Working on Leave")
+                                        {
+                                            bgClass = "working-leave-bg";
+                                            timeStr = record.CheckinTime;
+                                            displayStatus = "Working on Leave";
+                                        }
+                                    }
+                                    else if (isSunday)
+                                    {
+                                        bgClass = "weekend-bg";
+                                        displayStatus = "Week Off";
+                                    }
+                                    else if (loopDate.Date <= DateTime.Today)
+                                    {
+                                        bgClass = "absent-bg";
+                                        displayStatus = "Absent";
+                                        showRedDot = true;
+                                    }
+
+                                    bool isToday = (loopDate.Date == DateTime.Today);
+                                    string todayClass = isToday ? "today-highlight" : "";
+
+                                    if (displayStatus == "Not Joined")
+                                    {
+                                        <td class="@bgClass @todayClass">
+                                            <span class="c-day-num">@currentDay</span>
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td class="@bgClass @todayClass" onclick="showDayDetails('@loopDate.ToString("yyyy-MM-dd")', '@displayStatus', '@timeStr', '@(record?.CheckOutTime ?? "")')">
+                                            <span class="c-day-num">@currentDay</span>
+
+                                            @if (!string.IsNullOrEmpty(timeStr))
+                                            {
+                                                <span class="attendance-time">@timeStr</span>
+                                            }
+
+                                            @if (showRedDot && string.IsNullOrEmpty(timeStr) && !isSunday)
+                                            {
+                                                <div class="red-dot-indicator"></div>
+                                            }
+                                        </td>
+                                    }
+                                    currentDay++;
+                                }
+                            }
+                        </tr>
+                    }
+                }
+            </tbody>
+        *@'
+            </table> '
+
+        <div class="legend-marquee-wrapper">
+            <div class="attendance-legend">
+
+                <div class="legend-item">
+                    <span class="legend-color present-dark"></span>
+                    <span>Present / Approved</span>
+                </div>
+
+                <div class="legend-item">
+                    <span class="legend-color pending-bg"></span>
+                    <span>Present / Not Approved</span>
+                </div>
+
+                <div class="legend-item">
+                    <span class="legend-color absent-bg"></span>
+                    <span>Absent</span>
+                </div>
+
+                <div class="legend-item">
+                    <span class="legend-color Weekoff-bg"></span>
+                    <span>Weekend</span>
+                </div>
+
+                <div class="legend-item">
+                    <span class="legend-color leave-bg"></span>
+                    <span>Leave</span>
+                </div>
+
+                <div class="legend-item">
+                    <span class="legend-color working-leave-bg"></span>
+                    <span>Working on Leave</span>
+                </div>
+
+                <div class="legend-item">
+                    <span class="legend-color not-joined-bg"></span>
+                    <span>Not Joined</span>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function showDayDetails(dateStr, status, inTime, outTime) {
+        if (!status) status = "Not Marked";
+        if (!inTime) inTime = "--:--";
+        if (!outTime) outTime = "--:--";
+
+        let headerBg = "linear-gradient(to right, #94a3b8, #cbd5e1)";
+        let icon = "fa-calendar-day";
+
+        if (status === "Present" || status === "Pending") {
+            headerBg = "linear-gradient(to right, #52a762, #68c078)";
+            if (status === "Pending") headerBg = "linear-gradient(to right, #eeba75, #facd8a)";
+            icon = "fa-check-circle";
+        } else if (status === "Absent") {
+            headerBg = "linear-gradient(to right, #ef4444, #f87171)";
+            icon = "fa-times-circle";
+        } else if (status === "Leave" || status === "Week Off") {
+            headerBg = "linear-gradient(to right, #8bbbe3, #72aae0)";
+            icon = "fa-bed";
+        } else if (status === "Working on Leave") {
+            headerBg = "linear-gradient(to right, #a855f7, #c084fc)";
+            icon = "fa-briefcase";
+        }
+
+        let d = new Date(dateStr);
+        let displayDate = d.toLocaleDateString('en-US', {
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+        });
+
+        let actionFormHtml = "";
+        let today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        let joinDateStr = '@ViewBag.JoinDate';
+        let joinDate = new Date(joinDateStr);
+        joinDate.setHours(0, 0, 0, 0);
+
+        if ((status === "Absent" || status === "Not Marked" || status === "Leave") && d <= today && d.getDay() !== 0 && d >= joinDate) {
+            actionFormHtml = `
+                        <div style="padding: 0 20px 20px;">
+                            <hr style="border: 0; height: 1px; background: #e2e8f0; margin-bottom: 15px;">
+                            <label style="font-size: 0.75rem; font-weight: 800; color: #475569; margin-bottom: 6px; display: block;">CHECK-IN TIME</label>
+                            <input type="time" id="manualCheckInTime" value="09:30" style="width: 100%; padding: 12px 15px; border-radius: 8px; border: 1px solid #cbd5e1; font-family: 'Courier New', monospace; font-weight: 700; font-size: 1rem; color: #1e293b; background: #f8fafc; outline: none; margin-bottom: 15px;">
+                            <button onclick="submitManualAttendance('${dateStr}')" style="width: 100%; background: #3b5982; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px;">
+                                <i class="fas fa-check-circle"></i> MARK PRESENT
+                            </button>
+                        </div>
+                    `;
+        }
+
+        let htmlContent = `
+                    <div class="premium-day-card">
+                        <div class="pdc-header" style="background: ${headerBg}; text-align: left;">
+                            <h4 style="margin: 0; font-weight: 800; font-size: 18px;">${displayDate}</h4>
+                            <p style="margin: 4px 0 0; opacity: 0.9; font-size: 14px; font-weight: 700;">
+                                <i class="fas ${icon} me-1"></i> ${status}
+                            </p>
+                        </div>
+                        <div class="pdc-body" style="padding-top: 15px;">
+                            <div class="pdc-row">
+                                <div style="display: flex; align-items: center;">
+                                    <div class="pdc-icon-box" style="background: #ebf4fa; color: #0b5ed7;">
+                                        <i class="fas fa-sign-in-alt"></i>
+                                    </div>
+                                    <div>
+                                        <h6 style="margin: 0; font-weight: 700; color: #1e293b; font-size: 13px;">In Time</h6>
+                                        <span style="font-size: 11px; color: #64748b; font-weight: 600;">Punch In</span>
+                                    </div>
+                                </div>
+                                <div style="font-weight: 800; color: #0f172a; font-size: 13px;">${inTime}</div>
+                            </div>
+                            <div class="pdc-row" style="margin-bottom: 0;">
+                                <div style="display: flex; align-items: center;">
+                                    <div class="pdc-icon-box" style="background: #fee2e2; color: #dc2626;">
+                                        <i class="fas fa-sign-out-alt"></i>
+                                    </div>
+                                    <div>
+                                        <h6 style="margin: 0; font-weight: 700; color: #1e293b; font-size: 13px;">Out Time</h6>
+                                        <span style="font-size: 11px; color: #64748b; font-weight: 600;">Punch Out</span>
+                                    </div>
+                                </div>
+                                <div style="font-weight: 800; color: #0f172a; font-size: 13px;">${outTime}</div>
+                            </div>
+                        </div>
+                        ${actionFormHtml}
+                    </div>
+                `;
+
+        Swal.fire({
+            html: htmlContent,
+            showConfirmButton: false,
+            showCloseButton: true,
+            customClass: {
+                popup: 'swal-premium-popup'
+            }
+        });
+    }
+    function applyWeekoffs() {
+        const rows = document.querySelectorAll('.table-calendar tbody tr');
+        rows.forEach(row => {
+            const sundayCell = row.cells[0];
+
+            if (sundayCell &&
+                !sundayCell.classList.contains('empty-cell') &&
+                !sundayCell.classList.contains('present-approved-bg') &&
+                !sundayCell.classList.contains('present-not-approved-bg') &&
+                !sundayCell.classList.contains('absent-bg') &&
+                !sundayCell.classList.contains('leave-bg') &&
+                !sundayCell.classList.contains('working-leave-bg')) {
+
+                sundayCell.classList.add('weekend-bg');
+
+                const timeSpan = sundayCell.querySelector('.attendance-time');
+                if (!timeSpan) {
+                    const span = document.createElement('span');
+                    span.className = 'attendance-time';
+                    span.innerText = 'Week Off';
+                    sundayCell.appendChild(span);
+                }
+            }
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", applyWeekoffs);
+
+    function submitManualAttendance(dateStr) {
+        let timeStr = document.getElementById("manualCheckInTime").value;
+        if (!timeStr) {
+            Swal.fire({
+                title: 'Time Missing',
+                text: 'Please select a valid time.',
+                icon: 'warning'
+            });
+            return;
+        }
+
+        let dateTimeString = `${dateStr}T${timeStr}:00`;
+        let pastDateTime = new Date(dateTimeString);
+        let localISO = new Date(pastDateTime - (pastDateTime.getTimezoneOffset() * 60000)).toISOString().slice(0, 19);
+
+        Swal.fire({
+            title: 'Updating...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        $.post("/Team/MarkAttendence", {
+            Status: "Present",
+            AttendenceDate: localISO,
+            location: "Manual Entry",
+            description: "Past Attendance Manual Entry"
+        }, function () {
+            Swal.fire({
+                title: 'Updated!',
+                text: 'Attendance has been recorded.',
+                icon: 'success',
+                timer: 2000,
+                showConfirmButton: false
+            }).then(() => {
+                window.location.reload();
+            });
+        }).fail(function () {
+            Swal.fire('Error', 'Failed to update attendance', 'error');
+        });
+    }
+
+    function navigateMonth(offset) {
+
+        let monthSelect = document.getElementById('selectedMonth');
+        let yearInput = document.getElementById('selectedYear');
+
+        let currentMonth = parseInt(monthSelect.value);
+        let currentYear = parseInt(yearInput.value);
+
+        let joinDateStr = '@ViewBag.JoinDate';
+        let joinDate = new Date(joinDateStr);
+        let joinMonth = joinDate.getMonth() + 1; // 1-12
+        let joinYear = joinDate.getFullYear();
+
+        currentMonth += offset;
+
+       
+        if (currentMonth > 12) {
+            currentMonth = 1;
+            currentYear++;
+        }
+
+        else if (currentMonth < 1) {
+            currentMonth = 12;
+            currentYear--;
+        }
+
+        if (currentYear < joinYear || (currentYear === joinYear && currentMonth < joinMonth)) {
+            // Do not navigate before joining month
+            return;
+        }
+
+        
+        monthSelect.value = currentMonth;
+        yearInput.value = currentYear;
+
+        document.getElementById('filterForm').submit();
+    }
+</script>

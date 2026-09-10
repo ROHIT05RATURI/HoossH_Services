@@ -608,7 +608,6 @@ input:checked + .slider {
 #submitPresent,
 #submitAbsent {
     height: 35px;
-    width: 80px;
     font-family: var(--font-family);
     font-size: 12px;
     color: white;

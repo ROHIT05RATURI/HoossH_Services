@@ -1,18 +1,19 @@
-﻿@{
+@{
     ViewBag.Title = "Attendance Dashboard";
     Layout = "~/Views/Shared/_LayoutINV.cshtml";
 }
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-<link rel="stylesheet" href="~/css/HRMS.css">
+<link rel="stylesheet" href="/css/HRMS.css">
+<link rel="stylesheet" href="/Attendance/Attendance.css">
 
 <!-- Clean Sub Navigation bar matching HRMS flow -->
 <div class="d-flex gap-2 mb-4">
-    <a href="/User/HRMS/Attendance" class="btn btn-primary btn-sm rounded-pill px-3 active shadow-sm">
+    <a href="/Team/Attendence" class="btn btn-primary btn-sm rounded-pill px-3 active shadow-sm">
         <i class="fas fa-plus-circle me-1"></i> Mark Attendance
     </a>
-    <a href="/User/HRMS/Leave" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+    <a href="/Team/ViewAttendence" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
         <i class="fas fa-list-ul me-1"></i> Attendance History
     </a>
 </div>
@@ -70,19 +71,44 @@
             </div>
 
             <div class="table-responsive">
-                <table class="table table-bordered text-center align-middle" id="calendar">
-                    <thead id="thead-month" class="table-light"></thead>
+                <table class="table-calendar" id="calendar">
+                    <thead id="thead-month"></thead>
                     <tbody id="calendar-body"></tbody>
                 </table>
             </div>
 
             <!-- Legends -->
-            <div class="d-flex flex-wrap gap-4 mt-4 justify-content-center text-muted small">
-                <div class="d-flex align-items-center gap-1"><span class="badge bg-success rounded-circle p-2"></span> Present</div>
-                <div class="d-flex align-items-center gap-1"><span class="badge bg-warning rounded-circle p-2"></span> Pending</div>
-                <div class="d-flex align-items-center gap-1"><span class="badge bg-danger rounded-circle p-2"></span> Absent</div>
-                <div class="d-flex align-items-center gap-1"><span class="badge bg-secondary rounded-circle p-2"></span> Leave</div>
-                <div class="d-flex align-items-center gap-1"><span class="badge bg-light text-dark border rounded-circle p-2"></span> Weekend</div>
+            <div class="legend-marquee-wrapper">
+                <div class="attendance-legend">
+                    <div class="legend-item">
+                        <span class="legend-color present-dark"></span>
+                        <span>Present / Approved</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color pending-bg"></span>
+                        <span>Present / Not Approved</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color absent-bg"></span>
+                        <span>Absent</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color Weekoff-bg"></span>
+                        <span>Weekend</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color leave-bg"></span>
+                        <span>Leave</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color working-leave-bg"></span>
+                        <span>Working on Leave</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color not-joined-bg"></span>
+                        <span>Not Joined</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

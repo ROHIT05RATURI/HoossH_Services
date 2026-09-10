@@ -14,6 +14,13 @@ namespace HoossH_Services.Controllers
         {
             return View();
         }
+
+        public IActionResult ViewAttendence()
+        {
+            return View();
+        }
+
+        
     }
 
 
