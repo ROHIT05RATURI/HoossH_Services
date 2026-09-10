@@ -1,0 +1,101 @@
+:root {
+                --primary-brand: #3f6791;
+                --brand-light: #f0f4f8;
+                --text-main: #334155;
+                --bg-body: #f8fafc;
+            }
+
+            body {
+                font-family: 'Poppins', sans-serif;
+                background-color: var(--bg-body);
+                color: var(--text-main);
+                font-size: 14px;
+            }
+
+            /* Navbar Customization */
+            .main-header {
+                background-color: #ffffff;
+                border-bottom: 1px solid #e2e8f0;
+            }
+
+            /* Sidebar Clean Modern Styling */
+            .main-sidebar {
+                background-color: #ffffff !important;
+                box-shadow: 2px 0 10px rgba(0, 0, 0, 0.03);
+                border-right: 1px solid #e2e8f0;
+            }
+
+            .brand-link {
+                padding: 15px;
+                text-align: center;
+                border-bottom: 1px solid #f1f5f9;
+            }
+
+            .sidebar-menu-container {
+                padding: 10px 15px;
+                height: calc(100vh - 70px);
+                overflow-y: auto;
+            }
+
+            /* Menu Headings & Items */
+            .menu-item {
+                display: flex;
+                align-items: center;
+                padding: 10px 14px;
+                color: var(--text-main);
+                text-decoration: none;
+                font-weight: 500;
+                border-radius: 8px;
+                margin-bottom: 4px;
+                transition: all 0.2s ease-in-out;
+            }
+
+                .menu-item i {
+                    color: var(--primary-brand);
+                    font-size: 16px;
+                    width: 25px;
+                    text-align: center;
+                    margin-right: 10px;
+                }
+
+                .menu-item:hover, .menu-item.active {
+                    background-color: var(--brand-light);
+                    color: var(--primary-brand);
+                }
+
+            /* Collapsible Submenus */
+            .menu-dropdown-toggle {
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 10px 14px;
+                color: var(--text-main);
+                font-weight: 500;
+                border-radius: 8px;
+                margin-bottom: 4px;
+                transition: background 0.2s;
+            }
+
+                .menu-dropdown-toggle:hover {
+                    background-color: var(--brand-light);
+                    color: var(--primary-brand);
+                }
+
+            .menu-dropdown-container {
+                display: none;
+                padding-left: 20px;
+                margin-bottom: 5px;
+            }
+
+                .menu-dropdown-container .menu-item {
+                    font-size: 13.5px;
+                    padding: 8px 12px;
+                }
+
+            /* Content Wrapper */
+            .content-wrapper {
+                background-color: var(--bg-body);
+                padding: 20px;
+                min-height: 100vh;
+            }

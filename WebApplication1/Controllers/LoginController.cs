@@ -12,7 +12,7 @@ namespace HoossH_Services.Controllers
         [HttpPost]
         public IActionResult Login([FromBody] HoossH_Services.Models.LoginRequest request)
         {
-            if (request != null && request.UserName == "admin" && request.Password == "admin123")
+            if (request != null && request.UserName == "admin" && request.Password == "admin")
             {
                 // Successful login
                 return Json(new { success = true, redirect = Url.Action("Index", "Home") });
