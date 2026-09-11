@@ -11,8 +11,7 @@ namespace HoossH_Services.Controllers
 
         public IActionResult AllDashboard()
         {
-            var model = new HoossH_Services.Models.Dashboard.AllDashboardViewModel();
-            return View(model);
+            return View();
         }
     }
 }

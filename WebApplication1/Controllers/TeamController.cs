@@ -12,14 +12,12 @@ namespace HoossH_Services.Controllers
 
         public IActionResult Attendence()
         {
-            var model = new HoossH_Services.Models.Team.AttendenceViewModel();
-            return View(model);
+            return View();
         }
 
         public IActionResult ViewAttendence()
         {
-            var model = new HoossH_Services.Models.Team.ViewAttendenceViewModel();
-            return View(model);
+            return View();
         }
 
         

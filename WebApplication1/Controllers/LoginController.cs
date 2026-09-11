@@ -6,8 +6,7 @@ namespace HoossH_Services.Controllers
     {
         public IActionResult Index()
         {
-            var model = new HoossH_Services.Models.Login.IndexViewModel();
-            return View(model);
+            return View();
         }
 
         [HttpPost]

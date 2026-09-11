@@ -1,4 +1,4 @@
-@model HoossH_Services.Models.Login.IndexViewModel
+
 @{
     ViewBag.Title = "Login";
     Layout = null; 
@@ -34,14 +34,14 @@
             <div class="input-group-custom">
                 <label for="userName" class="form-label">User Name</label>
                 <div class="input-wrapper">
-                    <input asp-for="UserName" id="userName" class="form-control" placeholder="Enter username" required />
+                    <input  id="userName" class="form-control" placeholder="Enter username" required />
                 </div>
             </div>
 
             <div class="input-group-custom">
                 <label for="password" class="form-label">Password</label>
                 <div class="input-wrapper">
-                    <input asp-for="Password" id="password" class="form-control" placeholder="Enter password" required />
+                    <input  id="password" class="form-control" placeholder="Enter password" required />
                     <i class="fas fa-eye-slash toggle-password" id="toggleIcon"></i>
                 </div>
                 <!-- Added Forgot Password Link -->
