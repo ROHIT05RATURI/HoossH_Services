@@ -1,0 +1,268 @@
+﻿@{
+    ViewBag.Title = "Team Leaves";
+    Layout = "~/Views/Shared/_LayoutINV.cshtml";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="/css/HRMS.css">
+
+<style>
+    /* Profile Image CSS - Same as your previous code */
+    .sp-profile-img {
+        width: 45px;
+        height: 45px;
+        object-fit: cover;
+        border-radius: 25%;
+        border: none;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .sp-Avtar-box {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+</style>
+
+<div class="d-flex gap-2 mb-4">
+    <a href="/Team/LeaveManagement" class="btn btn-primary btn-sm rounded-pill px-3 active shadow-sm">
+        <i class="fas fa-plus-circle me-1"></i> Apply Leave
+    </a>
+    <a href="/Team/ViewAttendence" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+        <i class="fas fa-list-ul me-1"></i> Leave History
+    </a>
+</div>
+<div id="pageHeaderWrapper">
+    @await Html.PartialAsync("PageHeader", new
+    {
+        Title = "Approve Leaves",
+        Description = "Total Leave Applications Generated",
+        CountText = $"",
+        ShowDetailedUI = true,
+        BadgeColorClass = "primary"
+    })
+</div>
+
+<div class="premium-container mx-lg-5 w-auto">
+    @await Html.PartialAsync("_DataToolbar2", new
+    {
+        SearchPlaceholder = "Search Employee Name, Leave Type...",
+        ControllerName = "Team",
+        ActionName = "ViewApproveLeave",
+        IsSalesManager = false,
+        
+        FilterOptions = new Dictionary<string, string> {
+            { "all", "Total Leaves" },
+            { "pending", "Pending" },
+            { "approved", "Approved" },
+            { "rejected", "Rejected" }
+        },
+        // SortOptions = new List<CIS_MIS_DAL.Model.ToolbarSortOption> {
+        //     new CIS_MIS_DAL.Model.ToolbarSortOption { Value = "date_desc", Text = "Newest First", IconClass = "fa-regular fa-clock" },
+        //     new CIS_MIS_DAL.Model.ToolbarSortOption { Value = "date_asc", Text = "Oldest First", IconClass = "fa-solid fa-clock-rotate-left" },
+        //     new CIS_MIS_DAL.Model.ToolbarSortOption { Value = "name_asc", Text = "Name (A-Z)", IconClass = "fa-solid fa-arrow-down-a-z" },
+        //     new CIS_MIS_DAL.Model.ToolbarSortOption { Value = "name_desc", Text = "Name (Z-A)", IconClass = "fa-solid fa-arrow-up-z-a" }
+        // },
+        CustomFilterHtml = @"<div class='date-range-wrapper'>
+                            <div class='date-input-group'><span>From</span><input type='date' name='fromDate' class='custom-dynamic-input' title='From Date'></div>
+                            <div class='date-input-group'><span>To</span><input type='date' name='toDate' class='custom-dynamic-input' title='To Date'></div></div>"
+    })
+
+    <div class="leave-list-container" id="leaveList">
+        @if (Model.LeavesHistory != null && Model.LeavesHistory.Count > 0)
+        {
+            var groupedLeaves = Model.LeavesHistory.GroupBy().ToList();
+
+            foreach (var group in groupedLeaves)
+            {
+                var empName = group.Key;
+                var empData = group.First();
+                var totalEmployeeLeaves = group.Count();
+
+               
+
+                <div class="record-card group-card" data-name="@empName.ToLower()">
+
+                    <div class="card-header-row" onclick="toggleDetails(this)">
+                        <div class="sp-Avtar-box">
+                            @if (empData.SalesPersonImg != null && empData.SalesPersonImg.Length > 0)
+                            {
+                                // convert byte[] image to base64 data URL
+                                var base64 = Convert.ToBase64String(empData.SalesPersonImg);
+                                var finalImgSrc = $"data:image/jpeg;base64,{base64}";
+                                <img src="@finalImgSrc" class="sp-profile-img" alt="Profile" />
+                            }
+                            else
+                            {
+                                <img src="/Images/Sadie_Sink.jpg" class="sp-profile-img" alt="Default" />
+                            }
+                        </div>
+
+                        <div class="header-left">
+                            <div class="emp-name-title">
+                                @empName
+                            </div>
+                            <div class="emp-stats">
+                                
+                                }
+                                else
+                                {
+                                    <span class="stat-pill pill-gray-outline"><i class="fa-solid fa-circle-info"></i> No Allocation Data</span>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="header-right">
+                            <div class="total-number">@totalEmployeeLeaves</div>
+                            <div class="total-label">TOTAL LEAVES</div>
+                            <i class="fas fa-chevron-down expand-icon"></i>
+                        </div>
+                    </div>
+
+                    <div class="card-body-table">
+                        <div class="table-responsive">
+                            <table class="detail-table">
+                                <thead>
+                                    <tr style="background:cornsilk">
+                                        <th>LEAVE TYPE</th>
+                                        <th style="text-align:center;">START DATE</th>
+                                        <th style="text-align:center;">END DATE</th>
+                                        <th style="text-align:center;">APPLIED ON</th>
+                                        <th style="text-align:center;">DAYS</th>
+                                        <th style="text-align:center;">ACTUAL DAYS</th> <!-- NAYA COLUMN YAHAN H -->
+                                        <th style="text-align:end;">STATUS</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var leave in group)
+                                    {
+                                        var days = Convert.ToInt32((leave.EndDate - leave.StartDate).TotalDays + 1);
+
+                                        <tr class="leave-row" data-date="@leave.CreatedDate.ToString("yyyy-MM-dd")">
+                                            <td data-label="Leave Type" class="col-primary">
+                                                @leave.name
+                                            </td>
+                                            <td data-label="Start Date" style="text-align:center;">
+                                                <span class="outline-pill outline-green">@leave.StartDate.ToString("dd MMM yyyy")</span>
+                                            </td>
+                                            <td data-label="End Date" style="text-align:center;">
+                                                <span class="outline-pill outline-red">@leave.EndDate.ToString("dd MMM yyyy")</span>
+                                            </td>
+                                            <td data-label="Applied On" style="text-align:center;">
+                                                <span class="outline-pill outline-blue">@leave.CreatedDate.ToString("dd MMM yyyy")</span>
+                                            </td>
+                                            <td data-label="Total Days" style="text-align:center;">
+                                                <span class="outline-pill outline-gray">@days Day(s)</span>
+                                            </td>
+
+                                            <td data-label="Actual Days" style="text-align:center;">
+                                                <span class="outline-pill outline-gray">@Convert.ToInt32(leave.ActualLeaves) Day(s)</span>
+                                            </td>
+
+                                            <td data-label="Status" style="text-align:end;">
+                                                <span class="status-pill status-@leave.status">@leave.status</span>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="no-data-view">
+                <i class="fas fa-calendar-times"></i>
+                <h6>No Leave Applications</h6>
+                <p class="small text-muted">There are no pending or history records available for approval.</p>
+            </div>
+        }
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function toggleDetails(el) {
+        const card = $(el).closest('.record-card');
+        $('.record-card').not(card).removeClass('open-row').find('.card-body-table').slideUp(200);
+        card.toggleClass('open-row');
+        card.find('.card-body-table').slideToggle(200);
+    }
+
+    $(document).ready(function() {
+        // State variables jo toolbar se aayengi
+        let activeSearch = '';
+        let activeStatus = 'all';
+        let activeFromDate = '';
+        let activeToDate = '';
+
+        function applyClientSideFilters() {
+            var searchText = activeSearch.toLowerCase();
+            var statusFilter = activeStatus.toLowerCase();
+            var fromDate = activeFromDate;
+            var toDate = activeToDate;
+
+            $('.group-card').each(function() {
+                var $card = $(this);
+                var empName = $card.data('name') || "";
+                var hasVisibleRows = false;
+                var visibleCount = 0;
+
+                $card.find('.leave-row').each(function() {
+                    var $row = $(this);
+                    var leaveType = $row.find('td[data-label="Leave Type"]').text().toLowerCase();
+                    var status = $row.find('.status-pill').text().toLowerCase().trim();
+                    var rowDate = $row.data('date');
+
+                    var matchesSearch = searchText === "" || (empName.indexOf(searchText) > -1) || (leaveType.indexOf(searchText) > -1);
+                    var matchesStatus = (statusFilter === 'all' || status === statusFilter);
+
+                    var matchesDate = true;
+                    if (fromDate && rowDate < fromDate) matchesDate = false;
+                    if (toDate && rowDate > toDate) matchesDate = false;
+
+                    if (matchesSearch && matchesStatus && matchesDate) {
+                        $row.show();
+                        hasVisibleRows = true;
+                        visibleCount++;
+                    } else {
+                        $row.hide();
+                    }
+                });
+
+                $card.find('.total-number').text(visibleCount);
+
+                if (hasVisibleRows) {
+                    $card.show();
+                } else {
+                    $card.hide();
+                }
+            });
+        }
+
+        // _DataToolbar2 ke custom event ko listen karna
+        $(document).off('onToolbarChange').on('onToolbarChange', function(event, state) {
+            if (state) {
+                if (state.search !== undefined) activeSearch = state.search;
+                if (state.status !== undefined) activeStatus = state.status;
+
+                // Agar toolbar custom date fields ya HTML bhej raha hai toh unhe yahan uthayein
+                activeFromDate = $('input[name="fromDate"]').val() || '';
+                activeToDate = $('input[name="toDate"]').val() || '';
+
+                applyClientSideFilters();
+            }
+        });
+
+        // Date fields ke manually change hone par bhi filter chale
+        $(document).on('change', 'input[type="date"]', function() {
+            activeFromDate = $('input[name="fromDate"]').val() || '';
+            activeToDate = $('input[name="toDate"]').val() || '';
+            applyClientSideFilters();
+        });
+    });
+</script>

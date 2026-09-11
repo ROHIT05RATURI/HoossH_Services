@@ -20,7 +20,17 @@ namespace HoossH_Services.Controllers
             return View();
         }
 
-        
+
+
+        public IActionResult LeaveManagement()
+        {
+            return View();
+        }
+
+        public IActionResult ViewApprovedHistory()
+        {
+            return View();
+        }
     }
 
 

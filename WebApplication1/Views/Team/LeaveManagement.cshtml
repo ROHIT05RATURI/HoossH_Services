@@ -1,0 +1,261 @@
+﻿
+
+@{
+    
+    ViewBag.Title = "Leave Dashboard";
+    Layout = "~/Views/Shared/_LayoutINV.cshtml";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+<link rel="stylesheet" href="/css/HRMS.css">
+
+
+<div class="d-flex gap-2 mb-4">
+    <a href="/Team/LeaveManagement" class="btn btn-primary btn-sm rounded-pill px-3 active shadow-sm">
+        <i class="fas fa-plus-circle me-1"></i> Apply Leave
+    </a>
+    <a href="/Team/ViewAttendence" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+        <i class="fas fa-list-ul me-1"></i> Leave History
+    </a>
+</div>
+<div class="hrms-wrapper mx-lg-5">
+
+    <div class="leave-balance-row">
+        <!-- Total Leave -->
+        <div class="balance-card">
+            <i class="fas fa-hospital-user" style="color: #3b82f6;"></i>
+            <span class="count">
+               
+                <span class="out-of"></span>
+            </span>
+            <span class="label">Total Leave</span>
+        </div>
+
+        <!-- Casual Leave -->
+        <div class="balance-card">
+            <i class="fas fa-umbrella-beach" style="color: #10b981;"></i>
+            <span class="count">
+               
+                <span class="out-of"></span>
+            </span>
+            <span class="label">Casual</span>
+        </div>
+
+        <!-- Earned Leave -->
+        <div class="balance-card">
+            <i class="fas fa-plane-departure" style="color: #f59e0b;"></i>
+            <span class="count">
+              
+                <span class="out-of"></span>
+            </span>
+            <span class="label">Earned</span>
+        </div>
+
+        <!-- Other Leaves -->
+        <div class="balance-card">
+            <i class="fas fa-briefcase-medical" style="color: #e29e0b;"></i>
+            <span class="count">
+               
+                <span class="out-of"></span>
+            </span>
+            <span class="label">Others</span>
+        </div>
+    </div>
+    
+    <div class="premium-form-card">
+        <div class="section-header">
+            <i class="fas fa-calendar-plus"></i> Leave Request
+        </div>
+        <form method="post" asp-controller="Team" asp-action="AddLeaves" id="registerForm" enctype="multipart/form-data">
+            <div class="form-row-custom">
+                <div class="input-group-custom">
+                    <label>Type of Leave</label>
+                    <select class="modern-input" id="LeaveType" name="LeaveType" required>
+                        <option value="">Choose leave type...</option>
+                        @* @foreach (var leave in Model.LeaveTypes)
+                        {
+                            <option value="@leave.LeaveId">@leave.Name (Remaining Days = @leave.RemainingDays)</option>
+                        } *@
+                    </select>
+                </div>
+                <div class="input-group-custom">
+                    <label>Start Date</label>
+                    <input type="date" name="StartDate" class="modern-input" required />
+                </div>
+                <div class="input-group-custom">
+                    <label>End Date</label>
+                    <input type="date" name="EndDate" class="modern-input" required />
+                </div>
+                <div class="input-group-custom">
+                    <label>Attachment (image/document)</label>
+                    <input type="file" name="Lmg" accept="image/*,.pdf,.doc,.docx" class="modern-input" />
+                </div>
+            </div>
+            <div class="submit-btn-wrap">
+                <button type="submit" class="btn-grad">
+                    Submit Request
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Context setting for Recent Applications -->
+
+    <div class="premium-form-card">
+    <div class="history-section-header">
+        <h5>Recent Applications</h5>
+        <p>Track the status of your previously submitted leave requests</p>
+    </div>
+
+    <div class="history-grid" id="visit-card-list">
+        @* @if (Model.GetLeaves != null && Model.GetLeaves.Any())
+        {
+            foreach (var v in Model.GetLeaves)
+            { *@
+                <div class="history-card visit-data-div">
+                    <div class="card-top-flex">
+                        <div class="leave-type-info">
+                            <div class="leave-type-icon">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <span class="leave-type-title"></span>
+                        </div>
+                        <div class="status-badge">
+                            <i class="fas fa-circle" style="font-size: 6px;"></i> 
+                        </div>
+                    </div>
+
+                    <div class="date-strip">
+                        <div class="date-col">
+                            <span class="d-lbl">From</span>
+                            <span class="d-val"></span>
+                        </div>
+                        <div class="date-col">
+                            <span class="d-lbl">To</span>
+                            <span class="d-val"></span>
+                        </div>
+                        <div class="days-badge">
+                           
+                        </div>
+                    </div>
+                </div>
+            @* } *@
+        @* } *@
+        @* else *@
+        @* { *@
+            <!-- Empty state handling psychologically -->
+            <div style="grid-column: 1 / -1; padding: 30px; text-align: center; color: var(--text-muted); background: white; border-radius: 16px; border: 1px dashed #cbd5e1;">
+                <i class="fas fa-folder-open" style="font-size: 24px; margin-bottom: 10px; opacity: 0.5;"></i>
+                <p style="font-size: 13px; margin: 0;">No recent leave applications found.</p>
+            </div>
+        @* } *@
+    </div>
+    </div>
+</div>
+
+@* @await Html.PartialAsync("_PremiumAlerts")
+@await Html.PartialAsync("_PremiumConfirm") *@
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const currentPath = window.location.pathname.toLowerCase();
+        document.querySelectorAll(".navbarmid .tab").forEach(tab => {
+            if (currentPath.includes(tab.getAttribute("href").toLowerCase())) {
+                tab.classList.add("active");
+            }
+        });
+
+        const leaveForm = document.getElementById("registerForm");
+        const startDateInput = document.querySelector('input[name="StartDate"]');
+        const endDateInput = document.querySelector('input[name="EndDate"]');
+        
+        // Dynamically set minimum dates to today
+        const todayStr = new Date().toLocaleDateString('en-CA'); // Gets YYYY-MM-DD
+        startDateInput.setAttribute('min', todayStr);
+        endDateInput.setAttribute('min', todayStr);
+
+        startDateInput.addEventListener('change', function() {
+            endDateInput.setAttribute('min', this.value);
+        });
+
+        leaveForm.addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            // Date validation client-side
+            let startDateVal = $('input[name="StartDate"]').val();
+            let endDateVal = $('input[name="EndDate"]').val();
+            
+            const todayDate = new Date();
+            todayDate.setHours(0, 0, 0, 0);
+            const selectedStartDate = new Date(startDateVal);
+            selectedStartDate.setHours(0, 0, 0, 0);
+
+            if (selectedStartDate < todayDate) {
+                showPremiumAlert('Invalid Dates', 'Start Date cannot be a past date.', 'error');
+                return;
+            }
+
+            if (selectedStartDate > new Date(endDateVal)) {
+                showPremiumAlert('Invalid Dates', 'Start Date cannot be after End Date.', 'error');
+                return;
+            }
+
+            showPremiumConfirm(
+                'Submit Leave Request?',
+                'Are you sure you want to submit this leave request?',
+                'fa-solid fa-plane-departure',
+                function() {
+                    // Use FormData so file inputs are sent
+                    var formData = new FormData(leaveForm);
+                    var fileInput = leaveForm.querySelector('input[name="Lmg"]');
+                    if (fileInput && fileInput.files.length > 0) {
+                        formData.set('Lmg', fileInput.files[0]);
+                    }
+
+                    $.ajax({
+                        url: '/Team/AddLeaves',
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (response) {
+                            if (response.success !== false) {
+                                showPremiumAlert('Submitted!', response.message || 'Your leave request has been sent to your manager.', 'add', function() {
+                                    window.location.reload();
+                                });
+                            } else {
+                                showPremiumAlert('Failed', response.message || 'Failed to submit leave request.', 'error');
+                            }
+                        },
+                        error: function() {
+                            showPremiumAlert('Error', 'Failed to submit leave request.', 'error');
+                        }
+                    });
+                }
+            );
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const leaveDropdown = document.getElementById("LeaveType");
+        const leaveOptionsCount = leaveDropdown.options.length;
+
+        if (leaveOptionsCount <= 1) {
+            setTimeout(() => {
+                showPremiumAlert('Leaves Not Assigned!', 'It looks like your leave quota isn\'t set yet. Please ask your <b>Higher Authorities</b> to add leave types for you.', 'alert');
+            }, 500); 
+        }
+    });
+</script>
+
+@* @if (Model.LeaveTypes == null || !Model.LeaveTypes.Any() || Model.LeaveTypes.Sum(x => x.AllocatedDays) == 0)
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            setTimeout(() => {
+                showPremiumAlert('Leaves Not Assigned!', 'It looks like your leave quota isn\'t set yet. Please ask your <b>Higher Authorities</b> to add leave types for you.', 'alert');
+            }, 600);
+        });
+    </script>
+} *@

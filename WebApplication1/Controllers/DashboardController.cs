@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HoossH_Services.Controllers
 {
-    public class Dashboard : Controller
+    public class DashboardController : Controller
     {
         public IActionResult Index()
         {
