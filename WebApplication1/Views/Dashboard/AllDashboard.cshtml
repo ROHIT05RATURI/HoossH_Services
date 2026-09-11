@@ -1,270 +1,196 @@
-@{
+﻿@{
     ViewBag.Title = "Dashboard";
     Layout = "~/Views/Shared/_LayoutINV.cshtml";
 }
 
 <link rel="stylesheet" href="~/css/Dashboard/Dashboard.css" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-<div class="dash-wrapper">
-    <div class="dash-header">
-        <h1>Welcome in, Nixtio</h1>
+<div class="hooshh-dashboard">
+
+    <!-- ===================== PROFILE + STATS (single big card) ===================== -->
+    <section class="hd-profile-card">
+
+        <div class="hd-profile-photo-wrap">
+            <img src="~/images/service-man.jpg" alt="Rahul Kumar" class="hd-profile-photo" />
+        </div>
+
+        <div class="hd-profile-info">
+            <h1 class="hd-profile-name">Rahul Kumar</h1>
+            <div class="hd-profile-badges">
+                <span class="hd-badge"><i class="fa-regular fa-calendar-check"></i> Since 1-Jan-2022</span>
+                <span class="hd-badge">AC Service Technician</span>
+            </div>
+        </div>
+
+        <div class="hd-profile-stats">
+
+            <div class="hd-pstat hd-pstat-blue">
+                <div class="hd-pstat-icon"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+                <div class="hd-pstat-value">128</div>
+                <div class="hd-pstat-label">Total Services</div>
+            </div>
+
+            <div class="hd-pstat hd-pstat-amber">
+                <div class="hd-pstat-icon"><i class="fa-regular fa-clock"></i></div>
+                <div class="hd-pstat-value">18</div>
+                <div class="hd-pstat-label">Pending</div>
+            </div>
+
+            <div class="hd-pstat hd-pstat-green">
+                <div class="hd-pstat-icon"><i class="fa-solid fa-circle-check"></i></div>
+                <div class="hd-pstat-value">94</div>
+                <div class="hd-pstat-label">Completed</div>
+            </div>
+
+            <div class="hd-pstat hd-pstat-purple">
+                <div class="hd-pstat-icon"><i class="fa-solid fa-users-gear"></i></div>
+                <div class="hd-pstat-value">2</div>
+                <div class="hd-pstat-label">Today's Jobs</div>
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- ===================== CHART + QUICK ACTIONS ===================== -->
+    <div class="hd-middle-row">
+
+        <section class="hd-card">
+            <div class="hd-card-header">
+                <div>
+                    <h2>Service Activity</h2>
+                    <p>Overview of service requests over the last 7 days</p>
+                </div>
+                <div class="hd-tabs"><span class="active">7D</span><span>30D</span><span>90D</span></div>
+            </div>
+            <div class="hd-chart-legend">
+                <span><span class="dot" style="background:#16a34a"></span>Completed</span>
+                <span><span class="dot" style="background:#d97706"></span>Pending</span>
+                <span><span class="dot" style="background:#7c3aed"></span>New Requests</span>
+            </div>
+            <div class="hd-chart-wrap">
+                <svg viewBox="0 0 720 220" width="100%" height="220" preserveAspectRatio="none">
+                    <defs>
+                        <linearGradient id="hdFillBlue" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#2563eb" stop-opacity="0.18" />
+                            <stop offset="100%" stop-color="#2563eb" stop-opacity="0" />
+                        </linearGradient>
+                    </defs>
+                    <line x1="0" y1="10" x2="720" y2="10" stroke="#edf0f3" stroke-width="1" />
+                    <line x1="0" y1="60" x2="720" y2="60" stroke="#edf0f3" stroke-width="1" />
+                    <line x1="0" y1="110" x2="720" y2="110" stroke="#edf0f3" stroke-width="1" />
+                    <line x1="0" y1="160" x2="720" y2="160" stroke="#edf0f3" stroke-width="1" />
+                    <line x1="0" y1="205" x2="720" y2="205" stroke="#edf0f3" stroke-width="1" />
+
+                    <path d="M0,150 L720,150 L720,220 L0,220 Z" fill="url(#hdFillBlue)" />
+                    <path d="M0,150 C90,120 130,95 210,105 C290,115 320,80 400,75 C480,70 520,95 600,60 C650,40 690,55 720,25"
+                          fill="none" stroke="#2563eb" stroke-width="2.5" />
+                    <path d="M0,180 C100,175 160,150 240,160 C320,170 360,150 440,155 C520,160 560,140 620,150 C660,157 690,150 720,135"
+                          fill="none" stroke="#7c3aed" stroke-width="2.5" />
+                    <path d="M0,195 C110,193 180,185 250,190 C330,196 380,185 450,188 C530,192 580,182 640,187 C670,190 700,186 720,183"
+                          fill="none" stroke="#d97706" stroke-width="2.5" />
+                </svg>
+                <div class="hd-chart-xaxis">
+                    <span>3 Jun</span><span>4 Jun</span><span>5 Jun</span><span>6 Jun</span><span>7 Jun</span><span>8 Jun</span><span>9 Jun</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="hd-card">
+            <div class="hd-card-header"><div><h2>Quick Actions</h2></div></div>
+            <div class="hd-qa-grid">
+                <a href="@Url.Action("VisitList", "UserVisit")" class="hd-qa-tile hd-qa-blue">
+                    <i class="icon fa-solid fa-calendar-plus"></i>
+                    <div class="label">Book a Service <i class="fa-solid fa-arrow-right arrow"></i></div>
+                </a>
+                <a href="#" class="hd-qa-tile hd-qa-green">
+                    <i class="icon fa-regular fa-file-lines"></i>
+                    <div class="label">Create Request <i class="fa-solid fa-arrow-right arrow"></i></div>
+                </a>
+                <a href="@Url.Action("VisitList", "UserVisit")" class="hd-qa-tile hd-qa-purple">
+                    <i class="icon fa-regular fa-calendar"></i>
+                    <div class="label">View Appointments <i class="fa-solid fa-arrow-right arrow"></i></div>
+                </a>
+                <a href="@Url.Action("ClientList", "UserClient")" class="hd-qa-tile hd-qa-amber">
+                    <i class="icon fa-solid fa-user-gear"></i>
+                    <div class="label">Find a Technician <i class="fa-solid fa-arrow-right arrow"></i></div>
+                </a>
+            </div>
+        </section>
     </div>
-    
-    <div class="dash-top-bar">
-        <div class="dash-top-left">
-            <div class="kpi-pill">
-                <span class="kpi-label">Interviews</span>
-                <span class="kpi-val dark">15%</span>
+
+    <!-- ===================== ACTIVITY + UPCOMING ===================== -->
+    <div class="hd-bottom-row">
+
+        <section class="hd-card">
+            <div class="hd-card-header">
+                <div><h2>Recent Activity</h2></div>
+                <a href="#" class="hd-viewall">View all <i class="fa-solid fa-arrow-right"></i></a>
             </div>
-            <div class="kpi-pill">
-                <span class="kpi-label">Hired</span>
-                <span class="kpi-val yellow">15%</span>
+            <div class="hd-activity-list">
+                <div class="hd-activity-item">
+                    <div class="hd-activity-icon act-purple"><i class="fa-solid fa-wrench"></i></div>
+                    <div class="hd-activity-body"><strong>AC Repair - Customer B</strong><span>Status updated to In Progress</span></div>
+                    <span class="hd-pill progress">In Progress</span>
+                    <span class="hd-activity-time">11:45 AM</span>
+                </div>
+                <div class="hd-activity-item">
+                    <div class="hd-activity-icon act-green"><i class="fa-solid fa-plus"></i></div>
+                    <div class="hd-activity-body"><strong>New request - SR-1024</strong><span>AC Installation – Customer A</span></div>
+                    <span class="hd-pill new">New</span>
+                    <span class="hd-activity-time">10:32 AM</span>
+                </div>
+                <div class="hd-activity-item">
+                    <div class="hd-activity-icon act-check"><i class="fa-solid fa-check"></i></div>
+                    <div class="hd-activity-body"><strong>Service completed - SR-1018</strong><span>AC Maintenance – Customer C</span></div>
+                    <span class="hd-pill completed">Completed</span>
+                    <span class="hd-activity-time">09:12 AM</span>
+                </div>
+                <div class="hd-activity-item">
+                    <div class="hd-activity-icon act-blue"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+                    <div class="hd-activity-body"><strong>New request - SR-1023</strong><span>AC Repair – Customer B</span></div>
+                    <span class="hd-pill new">New</span>
+                    <span class="hd-activity-time">08:45 AM</span>
+                </div>
             </div>
-            <div class="kpi-progress">
-                <span class="kpi-label">Project time</span>
-                <div class="prog-bar"><div class="fill" style="width: 60%">60%</div></div>
+        </section>
+
+        <section class="hd-card">
+            <div class="hd-card-header">
+                <div><h2>Upcoming Services</h2></div>
+                <a href="#" class="hd-viewall">View all <i class="fa-solid fa-arrow-right"></i></a>
             </div>
-            <div class="kpi-pill outline">
-                <span class="kpi-label">Output</span>
-                <span class="kpi-val plain">10%</span>
+            <div class="hd-upcoming-list">
+                <div class="hd-upcoming-item">
+                    <span class="time-col">10:00 AM</span>
+                    <div class="hd-upcoming-icon" style="background:var(--blue-light);color:var(--blue)"><i class="fa-solid fa-snowflake"></i></div>
+                    <div class="hd-upcoming-body"><strong>AC Installation</strong><span>Customer A</span><span><i class="fa-solid fa-location-dot"></i> Dehradun</span></div>
+                    <span class="hd-pill scheduled">Scheduled</span>
+                </div>
+                <div class="hd-upcoming-item">
+                    <span class="time-col">11:30 AM</span>
+                    <div class="hd-upcoming-icon" style="background:var(--purple-light);color:var(--purple)"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+                    <div class="hd-upcoming-body"><strong>AC Repair</strong><span>Customer B</span><span><i class="fa-solid fa-location-dot"></i> Dehradun</span></div>
+                    <span class="hd-pill progress">In Progress</span>
+                </div>
+                <div class="hd-upcoming-item">
+                    <span class="time-col">01:00 PM</span>
+                    <div class="hd-upcoming-icon" style="background:var(--amber-light);color:var(--amber)"><i class="fa-solid fa-gears"></i></div>
+                    <div class="hd-upcoming-body"><strong>AC Maintenance</strong><span>Customer C</span><span><i class="fa-solid fa-location-dot"></i> Dehradun</span></div>
+                    <span class="hd-pill scheduled">Scheduled</span>
+                </div>
+                <div class="hd-upcoming-item">
+                    <span class="time-col">03:30 PM</span>
+                    <div class="hd-upcoming-icon" style="background:var(--green-light);color:var(--green)"><i class="fa-solid fa-magnifying-glass"></i></div>
+                    <div class="hd-upcoming-body"><strong>AC Inspection</strong><span>Customer D</span><span><i class="fa-solid fa-location-dot"></i> Dehradun</span></div>
+                    <span class="hd-pill pending">Pending</span>
+                </div>
             </div>
-        </div>
-        <div class="dash-top-right">
-            <div class="big-kpi">
-                <div class="b-val"><i class="fa-solid fa-users text-muted" style="font-size: 1rem;"></i> 78</div>
-                <div class="b-lab">Employe</div>
-            </div>
-            <div class="big-kpi">
-                <div class="b-val"><i class="fa-solid fa-user-plus text-muted" style="font-size: 1rem;"></i> 56</div>
-                <div class="b-lab">Hirings</div>
-            </div>
-            <div class="big-kpi">
-                <div class="b-val"><i class="fa-solid fa-laptop text-muted" style="font-size: 1rem;"></i> 203</div>
-                <div class="b-lab">Projects</div>
-            </div>
-        </div>
+        </section>
     </div>
 
-    <div class="dash-main-grid">
-        <!-- Col 1: Profile & Accordion -->
-        <div class="col-left">
-            <div class="dash-card profile-card">
-                <div class="prof-info">
-                    <h2>Lora Piterson</h2>
-                    <span>UX/UI Designer</span>
-                </div>
-                <div class="prof-badge">$1,200</div>
-            </div>
-            
-            <div class="dash-card accordion-card">
-                <div class="acc-item">
-                    <span>Pension contributions <i class="fa-solid fa-chevron-down text-muted"></i></span>
-                </div>
-                <div class="acc-item active">
-                    <div class="acc-head mb-3">
-                        <span>Devices</span>
-                        <i class="fa-solid fa-chevron-up text-muted"></i>
-                    </div>
-                    <div class="acc-body pt-0">
-                        <div class="device-item">
-                            <!-- Placeholder for MacBook image -->
-                            <img src="https://ui-avatars.com/api/?name=Mac&background=000&color=fff&rounded=true" class="device-img" alt="Mac" />
-                            <div class="device-info">
-                                <strong>MacBook Air</strong>
-                                <span>Version M1</span>
-                            </div>
-                            <i class="fa-solid fa-ellipsis-vertical text-muted cursor-pointer"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="acc-item">
-                    <span>Compensation Summary <i class="fa-solid fa-chevron-down text-muted"></i></span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Col 2: Center (Progress, Tracker, Calendar) -->
-        <div class="col-center">
-            <div class="center-top">
-                <div class="dash-card progress-card position-relative">
-                    <i class="fa-solid fa-arrow-up-right-from-square top-right-icon"></i>
-                    <h3>Progress</h3>
-                    <div class="hours">6.1 h <span>Work Time<br>this week</span></div>
-                    
-                    <div class="bar-chart">
-                        <div class="bar-col"><div class="bar" style="height: 40%"></div><span>S</span></div>
-                        <div class="bar-col"><div class="bar dark" style="height: 60%"></div><span>M</span></div>
-                        <div class="bar-col"><div class="bar dark" style="height: 50%"></div><span>T</span></div>
-                        <div class="bar-col"><div class="bar dark" style="height: 70%"></div><span>W</span></div>
-                        <div class="bar-col"><div class="bar dark" style="height: 50%"></div><span>T</span></div>
-                        <div class="bar-col">
-                            <div class="tooltip-val">5h 23m</div>
-                            <div class="bar yellow" style="height: 85%"></div>
-                            <span>F</span>
-                        </div>
-                        <div class="bar-col"><div class="bar" style="height: 30%"></div><span>S</span></div>
-                    </div>
-                </div>
-
-                <div class="dash-card time-tracker-card position-relative">
-                    <i class="fa-solid fa-arrow-up-right-from-square top-right-icon"></i>
-                    <h3 class="text-start">Time tracker</h3>
-                    
-                    <div class="circle-tracker">
-                        <div class="c-val">02:35</div>
-                        <div class="c-sub">Work Time</div>
-                        <svg viewBox="0 0 100 100">
-                            <circle cx="50" cy="50" r="45" class="bg"></circle>
-                            <circle cx="50" cy="50" r="45" class="progress"></circle>
-                        </svg>
-                    </div>
-                    
-                    <div class="tracker-controls">
-                        <button class="btn-play"><i class="fa-solid fa-play"></i></button>
-                        <button class="btn-pause"><i class="fa-solid fa-pause"></i></button>
-                        <button class="btn-alarm"><i class="fa-regular fa-clock"></i></button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="dash-card calendar-card">
-                <div class="cal-header">
-                    <div class="month-nav">August</div>
-                    <div class="curr-month">September 2024</div>
-                    <div class="month-nav chip">October</div>
-                </div>
-                
-                <div class="cal-days">
-                    <div class="day"><span>Mon</span><span>22</span></div>
-                    <div class="day active"><span>Tue</span><span>23</span></div>
-                    <div class="day"><span>Wed</span><span>24</span></div>
-                    <div class="day"><span>Thu</span><span>25</span></div>
-                    <div class="day"><span>Fri</span><span>26</span></div>
-                    <div class="day"><span>Sat</span><span>27</span></div>
-                </div>
-                
-                <div class="cal-timeline">
-                    <div class="time-row">
-                        <span class="time">8:00 am</span>
-                        <div class="event-line"></div>
-                    </div>
-                    <div class="time-row">
-                        <span class="time">9:00 am</span>
-                        <div class="event-line">
-                            <div class="event dark">
-                                <div class="e-info">
-                                    <strong>Weekly Team Sync</strong>
-                                    <span>Discuss progress on projects</span>
-                                </div>
-                                <div class="e-avatars">
-                                    <img src="https://ui-avatars.com/api/?name=A" alt="user"/>
-                                    <img src="https://ui-avatars.com/api/?name=B" alt="user"/>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="time-row">
-                        <span class="time">10:00 am</span>
-                        <div class="event-line">
-                            <div class="event light" style="margin-left: 20%;">
-                                <div class="e-info">
-                                    <strong>Onboarding Session</strong>
-                                    <span>Introduction for new hires</span>
-                                </div>
-                                <div class="e-avatars">
-                                    <img src="https://ui-avatars.com/api/?name=C" alt="user"/>
-                                    <img src="https://ui-avatars.com/api/?name=D" alt="user"/>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Col 3: Right (Onboarding & Tasks) -->
-        <div class="col-right">
-            <div class="dash-card onboarding-card">
-                <div class="onb-header">
-                    <h3>Onboarding</h3>
-                    <div class="percent">18%</div>
-                </div>
-                <div class="onb-stats">
-                    <div class="stat"><span>30%</span><div class="pill yellow">Task</div></div>
-                    <div class="stat"><span>25%</span><div class="pill dark"></div></div>
-                    <div class="stat"><span>0%</span><div class="pill gray"></div></div>
-                </div>
-            </div>
-
-            <div class="dash-card tasks-card">
-                <div class="t-header">
-                    <h3>Onboarding Task</h3>
-                    <div class="t-count">2/8</div>
-                </div>
-                
-                <div class="task-list">
-                    <div class="task done">
-                        <div class="t-icon"><i class="fa-solid fa-desktop"></i></div>
-                        <div class="t-info">
-                            <strong>Interview</strong>
-                            <span>Sep 13, 08:30</span>
-                        </div>
-                        <i class="fa-solid fa-circle-check check-icon"></i>
-                    </div>
-                    <div class="task done">
-                        <div class="t-icon"><i class="fa-solid fa-bolt"></i></div>
-                        <div class="t-info">
-                            <strong>Team Meeting</strong>
-                            <span>Sep 13, 10:30</span>
-                        </div>
-                        <i class="fa-solid fa-circle-check check-icon"></i>
-                    </div>
-                    <div class="task">
-                        <div class="t-icon"><i class="fa-regular fa-comment-dots"></i></div>
-                        <div class="t-info">
-                            <strong>Project Update</strong>
-                            <span>Sep 13, 13:00</span>
-                        </div>
-                        <div class="circle-uncheck"></div>
-                    </div>
-                    <div class="task">
-                        <div class="t-icon"><i class="fa-solid fa-ruler-combined"></i></div>
-                        <div class="t-info">
-                            <strong>Discuss Q3 Goals</strong>
-                            <span>Sep 13, 14:45</span>
-                        </div>
-                        <div class="circle-uncheck"></div>
-                    </div>
-                    <div class="task">
-                        <div class="t-icon"><i class="fa-solid fa-link"></i></div>
-                        <div class="t-info">
-                            <strong>HR Policy Review</strong>
-                            <span>Sep 13, 16:30</span>
-                        </div>
-                        <div class="circle-uncheck"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 
 @section Scripts {
-    <script>
-        // Any simple interactions like toggling the accordion could go here if needed.
-        $(document).ready(function() {
-            $('.acc-item > span, .acc-head').on('click', function() {
-                // Just a basic toggle simulation for the UI
-                const $item = $(this).closest('.acc-item');
-                const isActive = $item.hasClass('active');
-                
-                $('.acc-item').removeClass('active');
-                if (!isActive) {
-                    $item.addClass('active');
-                }
-            });
-        });
-    </script>
+    <!-- No JavaScript required for the current dashboard -->
 }
-s

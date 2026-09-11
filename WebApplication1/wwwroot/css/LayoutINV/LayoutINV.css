@@ -14,7 +14,7 @@ body {
 }
 
 /* Navbar Styling */
-.main-header {
+.main-sidebar{
     background-color: #ffffff !important;
     border-bottom: 1px solid var(--border-color) !important;
 }
@@ -235,4 +235,68 @@ body:not(.sidebar-collapse) .main-sidebar {
     .bottom-nav {
         display: flex !important;
     }
+}
+/* ================= HOOSSH THEME — SIDEBAR & TOPBAR RECOLOR ================= */
+
+.main-header {
+    background-color: #2563eb !important;
+    border-bottom: none !important;
+}
+
+    .main-header .nav-link,
+    .main-header .navbar-title-center h6,
+    .main-header .profile-icon {
+        color: #ffffff !important;
+    }
+
+.main-sidebar {
+    background-color: #ffffff !important;
+    border-right: none !important;
+    color:white;
+}
+
+.grow-nav-header {
+    background-color: transparent !important;
+    border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+}
+
+    .grow-nav-header .nav-link i {
+        color: #e2e8f0;
+    }
+
+.fb-menu-heading {
+    color: #cbd5e1 !important;
+}
+
+    .fb-menu-heading:hover,
+    .fb-menu-heading.active {
+        background-color: rgba(255,255,255,0.08) !important;
+        color: #ffffff !important;
+    }
+
+.grow-nav-icon {
+    color: #93b4ff !important;
+}
+
+.fb-card {
+    background-color: rgba(255,255,255,0.04) !important;
+    border-color: rgba(255,255,255,0.08) !important;
+}
+
+    .fb-card:hover {
+        background-color: rgba(255,255,255,0.08) !important;
+        border-color: #2563eb !important;
+    }
+
+.fb-card-title,
+.fb-card-icon {
+    color: #e2e8f0 !important;
+}
+
+.profile-icon-img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(255,255,255,0.5);
 }
