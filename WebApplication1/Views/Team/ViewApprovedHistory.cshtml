@@ -1,7 +1,9 @@
-﻿@{
+﻿@using HoossH_Services.Models
+@{
     ViewBag.Title = "Team Leaves";
     Layout = "~/Views/Shared/_LayoutINV.cshtml";
 }
+@model Leaves
 
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -30,23 +32,23 @@
     <a href="/Team/LeaveManagement" class="btn btn-primary btn-sm rounded-pill px-3 active shadow-sm">
         <i class="fas fa-plus-circle me-1"></i> Apply Leave
     </a>
-    <a href="/Team/ViewAttendence" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+    <a href="/Team/ViewApprovedHistory" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
         <i class="fas fa-list-ul me-1"></i> Leave History
     </a>
 </div>
 <div id="pageHeaderWrapper">
-    @await Html.PartialAsync("PageHeader", new
+    @* @await Html.PartialAsync("PageHeader", new
     {
         Title = "Approve Leaves",
         Description = "Total Leave Applications Generated",
         CountText = $"",
         ShowDetailedUI = true,
         BadgeColorClass = "primary"
-    })
+    }) *@
 </div>
 
 <div class="premium-container mx-lg-5 w-auto">
-    @await Html.PartialAsync("_DataToolbar2", new
+    @* @await Html.PartialAsync("_DataToolbar2", new
     {
         SearchPlaceholder = "Search Employee Name, Leave Type...",
         ControllerName = "Team",
@@ -68,26 +70,13 @@
         CustomFilterHtml = @"<div class='date-range-wrapper'>
                             <div class='date-input-group'><span>From</span><input type='date' name='fromDate' class='custom-dynamic-input' title='From Date'></div>
                             <div class='date-input-group'><span>To</span><input type='date' name='toDate' class='custom-dynamic-input' title='To Date'></div></div>"
-    })
+    }) *@
 
-    <div class="leave-list-container" id="leaveList">
-        @if (Model.LeavesHistory != null && Model.LeavesHistory.Count > 0)
-        {
-            var groupedLeaves = Model.LeavesHistory.GroupBy().ToList();
-
-            foreach (var group in groupedLeaves)
-            {
-                var empName = group.Key;
-                var empData = group.First();
-                var totalEmployeeLeaves = group.Count();
-
-               
-
-                <div class="record-card group-card" data-name="@empName.ToLower()">
+              <div class="record-card card-group">
 
                     <div class="card-header-row" onclick="toggleDetails(this)">
                         <div class="sp-Avtar-box">
-                            @if (empData.SalesPersonImg != null && empData.SalesPersonImg.Length > 0)
+                            @* @if (empData.SalesPersonImg != null && empData.SalesPersonImg.Length > 0)
                             {
                                 // convert byte[] image to base64 data URL
                                 var base64 = Convert.ToBase64String(empData.SalesPersonImg);
@@ -97,25 +86,23 @@
                             else
                             {
                                 <img src="/Images/Sadie_Sink.jpg" class="sp-profile-img" alt="Default" />
-                            }
+                            } *@
                         </div>
 
                         <div class="header-left">
                             <div class="emp-name-title">
-                                @empName
+                                
                             </div>
                             <div class="emp-stats">
                                 
-                                }
-                                else
-                                {
+                                
                                     <span class="stat-pill pill-gray-outline"><i class="fa-solid fa-circle-info"></i> No Allocation Data</span>
-                                }
+                                
                             </div>
                         </div>
 
                         <div class="header-right">
-                            <div class="total-number">@totalEmployeeLeaves</div>
+                            <div class="total-number"></div>
                             <div class="total-label">TOTAL LEAVES</div>
                             <i class="fas fa-chevron-down expand-icon"></i>
                         </div>
@@ -135,8 +122,8 @@
                                         <th style="text-align:end;">STATUS</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    @foreach (var leave in group)
+                                @* <tbody>
+                                    @foreach (var leave in Model.ActualLeaves)
                                     {
                                         var days = Convert.ToInt32((leave.EndDate - leave.StartDate).TotalDays + 1);
 
@@ -166,21 +153,18 @@
                                             </td>
                                         </tr>
                                     }
-                                </tbody>
+                                </tbody> *@
                             </table>
                         </div>
                     </div>
-                </div>
-            }
-        }
-        else
-        {
+             
+        
             <div class="no-data-view">
                 <i class="fas fa-calendar-times"></i>
                 <h6>No Leave Applications</h6>
                 <p class="small text-muted">There are no pending or history records available for approval.</p>
             </div>
-        }
+        
     </div>
 </div>
 
