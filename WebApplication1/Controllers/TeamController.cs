@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 
 namespace HoossH_Services.Controllers
 {
@@ -12,12 +12,14 @@ namespace HoossH_Services.Controllers
 
         public IActionResult Attendence()
         {
-            return View();
+            var model = new HoossH_Services.Models.Team.AttendenceViewModel();
+            return View(model);
         }
 
         public IActionResult ViewAttendence()
         {
-            return View();
+            var model = new HoossH_Services.Models.Team.ViewAttendenceViewModel();
+            return View(model);
         }
 
         

@@ -6,7 +6,8 @@ namespace HoossH_Services.Controllers
     {
         public IActionResult Index()
         {
-            return View();
+            var model = new HoossH_Services.Models.Login.IndexViewModel();
+            return View(model);
         }
 
         [HttpPost]
@@ -14,12 +15,17 @@ namespace HoossH_Services.Controllers
         {
             if (request != null && request.UserName == "admin" && request.Password == "admin")
             {
-                // Successful login
-                return Json(new { success = true, redirect = Url.Action("Index", "Home") });
+
+                return Json(new { success = true, redirect = Url.Action("AllDashboard","Dashboard") });
             }
 
-            // Failed login
             return Json(new { success = false, message = "Invalid username or password" });
+        }
+
+        public IActionResult Logout()
+        {
+        
+            return RedirectToAction("Index", "Login");
         }
     }
 }

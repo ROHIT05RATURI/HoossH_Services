@@ -1,0 +1,269 @@
+@{
+    ViewBag.Title = "Dashboard";
+    Layout = "~/Views/Shared/_LayoutINV.cshtml";
+}
+
+<link rel="stylesheet" href="~/css/Dashboard/Dashboard.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<div class="dash-wrapper">
+    <div class="dash-header">
+        <h1>Welcome in, Nixtio</h1>
+    </div>
+    
+    <div class="dash-top-bar">
+        <div class="dash-top-left">
+            <div class="kpi-pill">
+                <span class="kpi-label">Interviews</span>
+                <span class="kpi-val dark">15%</span>
+            </div>
+            <div class="kpi-pill">
+                <span class="kpi-label">Hired</span>
+                <span class="kpi-val yellow">15%</span>
+            </div>
+            <div class="kpi-progress">
+                <span class="kpi-label">Project time</span>
+                <div class="prog-bar"><div class="fill" style="width: 60%">60%</div></div>
+            </div>
+            <div class="kpi-pill outline">
+                <span class="kpi-label">Output</span>
+                <span class="kpi-val plain">10%</span>
+            </div>
+        </div>
+        <div class="dash-top-right">
+            <div class="big-kpi">
+                <div class="b-val"><i class="fa-solid fa-users text-muted" style="font-size: 1rem;"></i> 78</div>
+                <div class="b-lab">Employe</div>
+            </div>
+            <div class="big-kpi">
+                <div class="b-val"><i class="fa-solid fa-user-plus text-muted" style="font-size: 1rem;"></i> 56</div>
+                <div class="b-lab">Hirings</div>
+            </div>
+            <div class="big-kpi">
+                <div class="b-val"><i class="fa-solid fa-laptop text-muted" style="font-size: 1rem;"></i> 203</div>
+                <div class="b-lab">Projects</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dash-main-grid">
+        <!-- Col 1: Profile & Accordion -->
+        <div class="col-left">
+            <div class="dash-card profile-card">
+                <div class="prof-info">
+                    <h2>Lora Piterson</h2>
+                    <span>UX/UI Designer</span>
+                </div>
+                <div class="prof-badge">$1,200</div>
+            </div>
+            
+            <div class="dash-card accordion-card">
+                <div class="acc-item">
+                    <span>Pension contributions <i class="fa-solid fa-chevron-down text-muted"></i></span>
+                </div>
+                <div class="acc-item active">
+                    <div class="acc-head mb-3">
+                        <span>Devices</span>
+                        <i class="fa-solid fa-chevron-up text-muted"></i>
+                    </div>
+                    <div class="acc-body pt-0">
+                        <div class="device-item">
+                            <!-- Placeholder for MacBook image -->
+                            <img src="https://ui-avatars.com/api/?name=Mac&background=000&color=fff&rounded=true" class="device-img" alt="Mac" />
+                            <div class="device-info">
+                                <strong>MacBook Air</strong>
+                                <span>Version M1</span>
+                            </div>
+                            <i class="fa-solid fa-ellipsis-vertical text-muted cursor-pointer"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="acc-item">
+                    <span>Compensation Summary <i class="fa-solid fa-chevron-down text-muted"></i></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Col 2: Center (Progress, Tracker, Calendar) -->
+        <div class="col-center">
+            <div class="center-top">
+                <div class="dash-card progress-card position-relative">
+                    <i class="fa-solid fa-arrow-up-right-from-square top-right-icon"></i>
+                    <h3>Progress</h3>
+                    <div class="hours">6.1 h <span>Work Time<br>this week</span></div>
+                    
+                    <div class="bar-chart">
+                        <div class="bar-col"><div class="bar" style="height: 40%"></div><span>S</span></div>
+                        <div class="bar-col"><div class="bar dark" style="height: 60%"></div><span>M</span></div>
+                        <div class="bar-col"><div class="bar dark" style="height: 50%"></div><span>T</span></div>
+                        <div class="bar-col"><div class="bar dark" style="height: 70%"></div><span>W</span></div>
+                        <div class="bar-col"><div class="bar dark" style="height: 50%"></div><span>T</span></div>
+                        <div class="bar-col">
+                            <div class="tooltip-val">5h 23m</div>
+                            <div class="bar yellow" style="height: 85%"></div>
+                            <span>F</span>
+                        </div>
+                        <div class="bar-col"><div class="bar" style="height: 30%"></div><span>S</span></div>
+                    </div>
+                </div>
+
+                <div class="dash-card time-tracker-card position-relative">
+                    <i class="fa-solid fa-arrow-up-right-from-square top-right-icon"></i>
+                    <h3 class="text-start">Time tracker</h3>
+                    
+                    <div class="circle-tracker">
+                        <div class="c-val">02:35</div>
+                        <div class="c-sub">Work Time</div>
+                        <svg viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="45" class="bg"></circle>
+                            <circle cx="50" cy="50" r="45" class="progress"></circle>
+                        </svg>
+                    </div>
+                    
+                    <div class="tracker-controls">
+                        <button class="btn-play"><i class="fa-solid fa-play"></i></button>
+                        <button class="btn-pause"><i class="fa-solid fa-pause"></i></button>
+                        <button class="btn-alarm"><i class="fa-regular fa-clock"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dash-card calendar-card">
+                <div class="cal-header">
+                    <div class="month-nav">August</div>
+                    <div class="curr-month">September 2024</div>
+                    <div class="month-nav chip">October</div>
+                </div>
+                
+                <div class="cal-days">
+                    <div class="day"><span>Mon</span><span>22</span></div>
+                    <div class="day active"><span>Tue</span><span>23</span></div>
+                    <div class="day"><span>Wed</span><span>24</span></div>
+                    <div class="day"><span>Thu</span><span>25</span></div>
+                    <div class="day"><span>Fri</span><span>26</span></div>
+                    <div class="day"><span>Sat</span><span>27</span></div>
+                </div>
+                
+                <div class="cal-timeline">
+                    <div class="time-row">
+                        <span class="time">8:00 am</span>
+                        <div class="event-line"></div>
+                    </div>
+                    <div class="time-row">
+                        <span class="time">9:00 am</span>
+                        <div class="event-line">
+                            <div class="event dark">
+                                <div class="e-info">
+                                    <strong>Weekly Team Sync</strong>
+                                    <span>Discuss progress on projects</span>
+                                </div>
+                                <div class="e-avatars">
+                                    <img src="https://ui-avatars.com/api/?name=A" alt="user"/>
+                                    <img src="https://ui-avatars.com/api/?name=B" alt="user"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="time-row">
+                        <span class="time">10:00 am</span>
+                        <div class="event-line">
+                            <div class="event light" style="margin-left: 20%;">
+                                <div class="e-info">
+                                    <strong>Onboarding Session</strong>
+                                    <span>Introduction for new hires</span>
+                                </div>
+                                <div class="e-avatars">
+                                    <img src="https://ui-avatars.com/api/?name=C" alt="user"/>
+                                    <img src="https://ui-avatars.com/api/?name=D" alt="user"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Col 3: Right (Onboarding & Tasks) -->
+        <div class="col-right">
+            <div class="dash-card onboarding-card">
+                <div class="onb-header">
+                    <h3>Onboarding</h3>
+                    <div class="percent">18%</div>
+                </div>
+                <div class="onb-stats">
+                    <div class="stat"><span>30%</span><div class="pill yellow">Task</div></div>
+                    <div class="stat"><span>25%</span><div class="pill dark"></div></div>
+                    <div class="stat"><span>0%</span><div class="pill gray"></div></div>
+                </div>
+            </div>
+
+            <div class="dash-card tasks-card">
+                <div class="t-header">
+                    <h3>Onboarding Task</h3>
+                    <div class="t-count">2/8</div>
+                </div>
+                
+                <div class="task-list">
+                    <div class="task done">
+                        <div class="t-icon"><i class="fa-solid fa-desktop"></i></div>
+                        <div class="t-info">
+                            <strong>Interview</strong>
+                            <span>Sep 13, 08:30</span>
+                        </div>
+                        <i class="fa-solid fa-circle-check check-icon"></i>
+                    </div>
+                    <div class="task done">
+                        <div class="t-icon"><i class="fa-solid fa-bolt"></i></div>
+                        <div class="t-info">
+                            <strong>Team Meeting</strong>
+                            <span>Sep 13, 10:30</span>
+                        </div>
+                        <i class="fa-solid fa-circle-check check-icon"></i>
+                    </div>
+                    <div class="task">
+                        <div class="t-icon"><i class="fa-regular fa-comment-dots"></i></div>
+                        <div class="t-info">
+                            <strong>Project Update</strong>
+                            <span>Sep 13, 13:00</span>
+                        </div>
+                        <div class="circle-uncheck"></div>
+                    </div>
+                    <div class="task">
+                        <div class="t-icon"><i class="fa-solid fa-ruler-combined"></i></div>
+                        <div class="t-info">
+                            <strong>Discuss Q3 Goals</strong>
+                            <span>Sep 13, 14:45</span>
+                        </div>
+                        <div class="circle-uncheck"></div>
+                    </div>
+                    <div class="task">
+                        <div class="t-icon"><i class="fa-solid fa-link"></i></div>
+                        <div class="t-info">
+                            <strong>HR Policy Review</strong>
+                            <span>Sep 13, 16:30</span>
+                        </div>
+                        <div class="circle-uncheck"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Any simple interactions like toggling the accordion could go here if needed.
+        $(document).ready(function() {
+            $('.acc-item > span, .acc-head').on('click', function() {
+                // Just a basic toggle simulation for the UI
+                const $item = $(this).closest('.acc-item');
+                const isActive = $item.hasClass('active');
+                
+                $('.acc-item').removeClass('active');
+                if (!isActive) {
+                    $item.addClass('active');
+                }
+            });
+        });
+    </script>
+}
