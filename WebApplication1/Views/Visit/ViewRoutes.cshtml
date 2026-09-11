@@ -1,0 +1,1821 @@
+﻿
+@{
+    ViewBag.Title = "Plan Visit";
+    Layout = "~/Views/Shared/_LayoutINV.cshtml";
+  
+}
+
+
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+<style>
+    :root {
+        --primary: #3f6791;
+        --p-hot: #e11d48;
+        --p-mod: #ffc107;
+        --p-cold: #0077b6;
+        --txt-dark: #0f172a;
+        --txt-light: #64748b;
+        --border-color: #e2e8f0;
+        --bg-light: #f8fafc;
+    }
+
+    body {
+        background-color: var(--bg-light);
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        margin: 0;
+    }
+
+    .v-map-container {
+        width: 100%;
+        max-width: 450px;
+        min-height: 100vh;
+        padding: 20px 12px 100px 12px;
+        margin: 0 auto;
+        position: relative;
+        background-image: radial-gradient(#e2e8f0 0.5px, transparent 0.5px);
+        background-size: 15px 15px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .v-locations-list {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        flex-grow: 1;
+    }
+
+    .v-location-step {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
+
+        .v-location-step:nth-child(odd) {
+            align-items: flex-start !important;
+        }
+
+        .v-location-step:nth-child(even) {
+            align-items: flex-end !important;
+        }
+
+    .v-card-route {
+        width: 78% !important;
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 12px;
+        border: 1px solid #edf2f7;
+        box-shadow: 0 10px 15px 4px rgba(0, 0, 0, 0.04);
+        position: relative;
+        z-index: 2;
+        transition: all 0.3s ease;
+    }
+
+    .v-card-visited {
+        background: #f1f5f9 !important;
+        opacity: 0.8;
+        filter: grayscale(0.5);
+        border: 1px dashed #cbd5e1 !important;
+        box-shadow: none !important;
+    }
+
+        .v-card-visited .v-btnaction {
+            background: #94a3b8 !important;
+            pointer-events: none;
+        }
+
+        .v-card-visited .v-card-floating-pin {
+            animation: none !important;
+            color: #94a3b8 !important;
+        }
+
+    .v-location-step:nth-child(even) .v-card-route {
+        margin-left: auto !important;
+    }
+
+    .v-card-floating-pin {
+        position: absolute;
+        top: -15px;
+        left: 15px;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: white;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        z-index: 3;
+    }
+
+        .v-card-floating-pin::after {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            animation: vPinPulse 2s infinite ease-out;
+        }
+
+    @@keyframes vPinPulse {
+        0% {
+            transform: scale(1);
+            box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.1);
+        }
+
+        70% {
+            transform: scale(1.1);
+            box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
+        }
+
+        100% {
+            transform: scale(1);
+            box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+        }
+    }
+
+    .v-card-cta {
+        background: #ffffff !important;
+        border: 2px dashed #cbd5e1 !important;
+        box-shadow: none !important;
+        text-align: center;
+        padding: 10px 0px !important;
+    }
+
+    .v-cta-text {
+        font-size: 14px;
+        color: #475569;
+        font-weight: 700;
+        margin-bottom: 15px;
+        line-height: 1.4;
+    }
+
+    .v-btn-set-appointment {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 12px;
+        font-size: 13px;
+        font-weight: 800;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(63, 103, 145, 0.3);
+        transition: 0.2s;
+    }
+
+        .v-btn-set-appointment:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(63, 103, 145, 0.4);
+        }
+
+    .v-priority-badge {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        font-size: 8.5px;
+        font-weight: 800;
+        padding: 4px 10px;
+        border-radius: 30px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .v-badge-hot {
+        background: #fff1f2;
+        color: var(--p-hot);
+        border: 1px solid #fecaca;
+    }
+
+    .v-badge-moderate {
+        background: #eff6ff;
+        color: var(--p-mod);
+        border: 1px solid #dbeafe;
+    }
+
+    .v-badge-cold {
+        background: #f0fdf4;
+        color: var(--p-cold);
+        border: 1px solid #d1fae5;
+    }
+
+    .v-loc-content-wrapper {
+        padding-left: 5px;
+        margin-top: 10px;
+    }
+
+    .v-loc-name {
+        font-weight: 800;
+        font-size: 11.5px;
+        color: var(--txt-dark);
+        display: block;
+    }
+
+    .v-loc-meta {
+        font-size: 10px;
+        color: #64748b;
+        font-weight: 600;
+        margin-top: 6px;
+        display: flex;
+        flex-direction: row;
+        gap: 4px;
+    }
+
+    .v-loc-stats {
+        font-size: 9px;
+        color: #94a3b8;
+        margin-top: 5px;
+        display: flex;
+        gap: 12px;
+        border-top: 1px solid #f1f5f9;
+        /* padding-top: 8px;*/
+    }
+
+    .v-btnaction {
+        border: none;
+        padding: 6px 14px;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 800;
+        color: white;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .v-connector {
+        width: 100%;
+        height: 50px;
+        margin: -5px 0;
+        z-index: 1;
+        opacity: 0.7;
+    }
+
+    .v-snake-path {
+        fill: none;
+        stroke: #cbd5e1;
+        stroke-width: 2.5;
+        stroke-linecap: round;
+        stroke-dasharray: 6 5;
+        animation: vMarch 1s infinite linear;
+    }
+
+    @@keyframes vMarch {
+        to {
+            stroke-dashoffset: -11;
+        }
+    }
+
+    .v-btn-checkin-container {
+        display: flex;
+        justify-content: end;
+        margin-top: 10px;
+    }
+
+    /* =========================================
+                   FAB MENU (Prefixed specifically)
+                   ========================================= */
+    .v-floating-action-menu {
+        position: fixed;
+        bottom: 100px;
+        right: 30px;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 10px;
+    }
+
+    .v-fab-btn i {
+        pointer-events: none;
+    }
+
+    .v-fab-btn {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: var(--primary);
+        color: white;
+        border: none;
+        box-shadow: 0 4px 15px rgba(63, 103, 145, 0.4);
+        font-size: 20px;
+        cursor: pointer;
+        transition: 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .v-fab-btn:hover {
+            transform: scale(1.05);
+        }
+
+    .v-fab-menu-items {
+        display: none;
+        flex-direction: column;
+        gap: 10px;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(20px);
+        transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+        /* Changed from .active to .v-open to bypass Bootstrap */
+        .v-fab-menu-items.v-open {
+            opacity: 1;
+            display: flex;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+    .v-fab-sub-btn {
+        background: white;
+        color: var(--txt-dark);
+        border: 1px solid var(--border-color);
+        padding: 10px 16px;
+        border-radius: 30px;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: 0.2s;
+    }
+
+        .v-fab-sub-btn:hover {
+            background: var(--bg-light);
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+    /* =========================================
+                   RIGHT DRAWER (Prefixed specifically)
+                   ========================================= */
+    .v-right-drawer {
+        position: fixed;
+        top: 0;
+        right: -400px;
+        width: 100%;
+        max-width: 400px;
+        height: 100vh;
+        background: white;
+        z-index: 10000;
+        box-shadow: -5px 0 25px rgba(0,0,0,0.1);
+        transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        flex-direction: column;
+    }
+
+        .v-right-drawer.v-open {
+            right: 0;
+        }
+
+    .v-drawer-header {
+        padding: 20px;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: var(--bg-light);
+    }
+
+    .v-drawer-title {
+        font-size: 16px;
+        font-weight: 800;
+        color: var(--txt-dark);
+        margin: 0;
+    }
+
+    .v-drawer-close {
+        background: none;
+        border: none;
+        font-size: 20px;
+        color: var(--txt-light);
+        cursor: pointer;
+    }
+
+    .v-drawer-body {
+        padding: 20px;
+        overflow-y: auto;
+        flex-grow: 1;
+        background: #f8fafc;
+    }
+
+    .v-drawer-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.4);
+        backdrop-filter: blur(4px);
+        z-index: 9999;
+        display: none;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+        .v-drawer-overlay.v-open {
+            display: block;
+            opacity: 1;
+        }
+
+    .v-list-card {
+        background: white;
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 15px;
+        margin-bottom: 12px;
+        cursor: pointer;
+        transition: 0.2s;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .v-list-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(63, 103, 145, 0.1);
+        }
+
+    .v-list-org {
+        font-weight: 800;
+        font-size: 14px;
+        color: var(--txt-dark);
+        margin-bottom: 6px;
+    }
+
+    .v-list-detail {
+        font-size: 12px;
+        color: var(--txt-light);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .v-status-pill {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        font-size: 10px;
+        font-weight: 800;
+        padding: 4px 8px;
+        border-radius: 6px;
+    }
+
+    .v-st-safe {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .v-st-warn {
+        background: #fef9c3;
+        color: #854d0e;
+    }
+
+    .v-st-danger {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    /* =========================================
+                   PREMIUM MODAL (Prefixed specifically)
+                   ========================================= */
+    .v-premium-modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(8px);
+        z-index: 10001;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+
+    .v-modal-box {
+        background: white;
+        width: 100%;
+        max-width: 450px;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        animation: vModalPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        position: relative;
+    }
+
+    @@keyframes vModalPop {
+        from {
+            transform: scale(0.9) translateY(20px);
+            opacity: 0;
+        }
+
+        to {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .v-modal-close-btn {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: #f1f5f9;
+        border: none;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        color: #64748b;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.2s;
+    }
+
+        .v-modal-close-btn:hover {
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+
+    .v-form-group {
+        margin-bottom: 20px;
+    }
+
+    .v-form-label {
+        font-size: 12px;
+        font-weight: 800;
+        color: var(--txt-light);
+        margin-bottom: 8px;
+        display: block;
+        text-transform: uppercase;
+    }
+
+    .v-custom-input {
+        width: 100%;
+        height: 45px;
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+        padding: 10px 15px;
+        font-size: 14px;
+        font-weight: 500;
+        outline: none;
+        background: #fff;
+        transition: 0.2s;
+    }
+
+        .v-custom-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(63, 103, 145, 0.1);
+        }
+
+    .v-priority-selector {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 10px;
+    }
+
+        .v-priority-selector input {
+            display: none;
+        }
+
+    .v-p-box {
+        text-align: center;
+        padding: 12px;
+        border-radius: 12px;
+        border: 2px solid var(--border-color);
+        background: var(--bg-light);
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+        .v-p-box i {
+            font-size: 18px;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .v-p-box span {
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+    input[value="COLD"]:checked + .v-p-box {
+        border-color: var(--p-cold);
+        background: #f0fdf4;
+        color: var(--p-cold);
+    }
+
+    input[value="MODERATE"]:checked + .v-p-box {
+        border-color: var(--p-mod);
+        background: #fffbeb;
+        color: var(--p-mod);
+    }
+
+    input[value="HOT"]:checked + .v-p-box {
+        border-color: var(--p-hot);
+        background: #fff1f2;
+        color: var(--p-hot);
+    }
+
+    .v-btn-submit-form {
+        width: 100%;
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 14px;
+        border-radius: 12px;
+        font-weight: 800;
+        font-size: 14px;
+        cursor: pointer;
+        transition: 0.2s;
+        margin-top: 10px;
+    }
+
+        .v-btn-submit-form:hover {
+            background: #2c4a68;
+        }
+
+    .v-loader-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(255,255,255,0.8);
+        z-index: 20000;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    .v-custom-select-wrapper {
+        position: relative;
+    }
+
+    .v-select-display {
+        height: 45px;
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+        padding: 0 15px;
+        font-size: 14px;
+        font-weight: 600;
+        background: #fff;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        color: var(--txt-dark);
+    }
+
+    .v-select-dropdown {
+        position: absolute;
+        top: calc(100% + 5px);
+        left: 0;
+        width: 100%;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        border: 1px solid var(--border-color);
+        z-index: 100;
+        display: none;
+        max-height: 250px;
+        overflow-y: auto;
+    }
+
+    .v-select-search {
+        padding: 10px;
+        position: sticky;
+        top: 0;
+        background: white;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+        .v-select-search input {
+            width: 100%;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            font-size: 13px;
+            outline: none;
+        }
+
+    .v-select-option {
+        padding: 12px 15px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+        .v-select-option:hover {
+            background: #f8fafc;
+            color: var(--primary);
+        }
+
+    .v-shimmer {
+        animation: vShimmer 2s infinite linear;
+        background: linear-gradient(to right, #eff1f3 4%, #e2e8f0 25%, #eff1f3 36%);
+        background-size: 1000px 100%;
+    }
+
+    @@keyframes vShimmer {
+        0% {
+            background-position: -1000px 0;
+        }
+
+        100% {
+            background-position: 1000px 0;
+        }
+    }
+
+    /* --- Custom Popup Layout (Matching Attendance) --- */
+    .popup-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(15, 23, 42, 0.4);
+        z-index: 10000;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        backdrop-filter: blur(2px);
+    }
+
+        .popup-modal-overlay.active {
+            display: flex;
+        }
+
+    .popup-content-card {
+        background: #ffffff;
+        width: 90%;
+        max-width: 320px;
+        border-radius: 30px;
+        padding: 25px 20px;
+        text-align: center;
+        position: relative;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    .popup-close-btn {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: #f1f5f9;
+        border: none;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+        .popup-close-btn:hover {
+            background: #eb5b3c20;
+            transform: rotate(90deg);
+        }
+
+    .popup-icon-container {
+        margin-top: 10px;
+        margin-bottom: 20px;
+        position: relative;
+        display: inline-block;
+    }
+
+        .popup-icon-container img {
+            width: 70px;
+            height: 70px;
+        }
+
+    .popup-notif-badge {
+        position: absolute;
+        top: -5px;
+        right: -10px;
+        background: #ef4444;
+        color: white;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 0.8rem;
+        font-weight: 800;
+        border: 3px solid white;
+    }
+
+    .premium-popup-title {
+        font-size: 1.35rem;
+        font-weight: 800;
+        color: #1e293b;
+        margin: 0;
+    }
+
+    .premium-popup-time-text {
+        color: #3f6791;
+        font-size: 1rem;
+        margin: 8px 0;
+        font-family: 'Courier New', monospace;
+        background: #ebf2ff;
+        display: inline-block;
+        padding: 2px 10px;
+        border-radius: 6px;
+    }
+
+    .premium-popup-subtext {
+        color: #64748b;
+        font-size: 0.85rem;
+        margin: 0 0 25px 0;
+    }
+
+    .popup-action-area {
+        display: flex;
+        justify-content: center;
+    }
+
+    .button-3d-rendering {
+        position: relative;
+        background: #f1f5f9;
+        border: 1.5px solid #00d09c30;
+        border-radius: 50px;
+        padding: 8px 18px;
+        font-weight: 700;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 15px;
+        transition: all 0.2s;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        min-width: 220px;
+        justify-content: center;
+    }
+
+    .button-3d-confirm:hover {
+        background: #00d09c20;
+    }
+
+    .btn-3d-text {
+        color: #059669;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+    }
+
+    .btn-3d-icon-circle {
+        background: #00d09c;
+        border-radius: 50%;
+        width: 38px;
+        height: 38px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 1px solid white;
+    }
+
+    .button-3d-rendering:active {
+        transform: scale(0.98);
+        box-shadow: 0 2px 3px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    @@media (max-width: 480px) {
+        .popup-content-card {
+            padding: 20px 15px;
+            border-radius: 20px;
+        }
+
+        .premium-popup-title {
+            font-size: 1.2rem;
+        }
+
+        .premium-popup-time-text {
+            font-size: 0.9rem;
+        }
+
+        .popup-icon-container img {
+            width: 60px;
+            height: 60px;
+        }
+    }
+
+    .custom-loader-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(4px);
+        z-index: 10005;
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+        .custom-loader-overlay.active {
+            display: flex;
+        }
+
+    .spinner-circle {
+        width: 50px;
+        height: 50px;
+        border: 4px solid #f1f5f9;
+        border-top: 4px solid #00d09c;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 15px;
+    }
+
+    .loader-text {
+        font-family: 'Segoe UI', sans-serif;
+        font-weight: 700;
+        color: #1e293b;
+        font-size: 1rem;
+        letter-spacing: 0.5px;
+        animation: pulseText 1.5s ease-in-out infinite;
+    }
+
+    @@keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    @@keyframes pulseText {
+        0%, 100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.5;
+        }
+    }
+
+    .custom-success-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(15, 23, 42, 0.4);
+        backdrop-filter: blur(8px);
+        z-index: 10010;
+        display: none;
+        justify-content: center;
+        align-items: center;
+    }
+
+        .custom-success-overlay.active {
+            display: flex;
+        }
+
+    .success-content-card {
+        background: #ffffff;
+        width: 90%;
+        max-width: 380px;
+        border-radius: 28px;
+        padding: 40px 30px;
+        text-align: center;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0,0,0,0.05);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        position: relative;
+        overflow: hidden;
+    }
+
+        .success-content-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 120px;
+            background: linear-gradient(180deg, rgba(241, 245, 249, 0.7) 0%, rgba(255,255,255,0) 100%);
+            z-index: 0;
+        }
+
+    .success-icon-wrapper {
+        width: 85px;
+        height: 85px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto 20px auto;
+        position: relative;
+        z-index: 1;
+        animation: successPulse 2s infinite ease-in-out;
+    }
+
+        .success-icon-wrapper.checkin {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.4), 0 0 0 12px rgba(16, 185, 129, 0.1);
+        }
+
+        .success-icon-wrapper.checkout {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            box-shadow: 0 10px 25px -5px rgba(245, 158, 11, 0.4), 0 0 0 12px rgba(245, 158, 11, 0.1);
+        }
+
+        .success-icon-wrapper i {
+            font-size: 38px;
+        }
+
+    .success-title {
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0 0 12px 0;
+        position: relative;
+        z-index: 1;
+        letter-spacing: -0.5px;
+    }
+
+    .success-time {
+        font-size: 1rem;
+        color: #3f6791;
+        font-weight: 700;
+        margin: 0;
+        background: #ebf2ff;
+        display: inline-block;
+        padding: 8px 20px;
+        border-radius: 50px;
+        position: relative;
+        z-index: 1;
+        border: 1px solid #dbeafe;
+    }
+
+    @@keyframes successPulse {
+        0% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.03);
+        }
+
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    /* --- Premium Date & Time Input Styles --- */
+    .v-date-input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+        .v-date-input-wrapper i {
+            position: absolute;
+            left: 15px;
+            color: var(--primary);
+            font-size: 16px;
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        .v-date-input-wrapper .v-custom-input {
+            padding-left: 45px;
+            cursor: pointer;
+        }
+
+    input[type="date"]::-webkit-calendar-picker-indicator,
+    input[type="time"]::-webkit-calendar-picker-indicator {
+        cursor: pointer;
+        opacity: 0.5;
+        transition: 0.2s;
+        padding: 5px;
+        border-radius: 6px;
+    }
+
+        input[type="date"]::-webkit-calendar-picker-indicator:hover,
+        input[type="time"]::-webkit-calendar-picker-indicator:hover {
+            opacity: 1;
+            background-color: #f1f5f9;
+        }
+
+    /* Drawer Date Filter Specific Style */
+    .v-drawer-date-picker {
+        position: relative;
+        display: flex;
+        align-items: center;
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        border-radius: 30px;
+        padding: 4px 14px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+        .v-drawer-date-picker:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 10px rgba(63, 103, 145, 0.1);
+        }
+
+        .v-drawer-date-picker i {
+            color: var(--primary);
+            font-size: 13px;
+            margin-right: 8px;
+        }
+
+        .v-drawer-date-picker input[type="date"] {
+            border: none;
+            background: transparent;
+            font-family: inherit;
+            font-weight: 800;
+            color: var(--primary);
+            font-size: 12px;
+            outline: none;
+            width: 105px;
+            cursor: pointer;
+        }
+</style>
+
+
+
+
+<div class="v-map-container">
+    <input type="hidden" id="v-CurrLoc" name="CurrentLocation" />
+    <input type="hidden" id="v-SelectedDate" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+
+    <div class="v-locations-list" id="v-routeListContainer">
+    </div>
+</div>
+
+<div class="v-floating-action-menu">
+    <div class="v-fab-menu-items" id="v-fabMenu">
+        <button class="v-fab-sub-btn" onclick="location.href='/Flow/AreaWiseCoutomer'">
+            <i class="fas fa-cogs text-info"></i> Area Wise Customers
+        </button>
+        <button class="v-fab-sub-btn" onclick="vOpenDrawer('future')">
+            <i class="fas fa-calendar-alt text-primary"></i> Future Logs
+        </button>
+        <button class="v-fab-sub-btn" onclick="vOpenDrawer('backlog')">
+            <i class="fas fa-history text-danger"></i> Backlogs
+        </button>
+        <button class="v-fab-sub-btn" onclick="vOpenAppointmentModal('', '')">
+            <i class="fas fa-plus text-success"></i> New Appointment
+        </button>
+        
+       
+            <button class="v-fab-sub-btn" onclick="location.href='/Flow/ClientDetails'">
+                <i class="fas fa-user-plus text-info"></i> New Suspect
+            </button>
+        
+    </div>
+    <button class="v-fab-btn" id="v-mainFabBtn" onclick="vToggleFabMenu()">
+        <i class="fas fa-layer-group"></i>
+    </button>
+</div>
+
+<div class="v-drawer-overlay" id="v-drawerOverlay" onclick="vCloseDrawer()"></div>
+<div class="v-right-drawer" id="v-dataDrawer">
+    <div class="v-drawer-header">
+        <h3 class="v-drawer-title" id="v-drawerTitle">Loading...</h3>
+        <div style="display: flex; align-items: center; gap: 10px;">
+
+            <!-- NEW DRAWER DATE PICKER -->
+            <div class="v-drawer-date-picker" id="v-drawerDateWrapper" style="display: none;">
+                <i class="fas fa-calendar-alt"></i>
+                <input type="date" id="v-futureDateFilter" />
+            </div>
+
+            <button class="v-drawer-close" onclick="vCloseDrawer()"><i class="fas fa-times"></i></button>
+        </div>
+    </div>
+    <div class="v-drawer-body" id="v-drawerBody">
+    </div>
+</div>
+
+<div class="v-premium-modal" id="v-appointmentModal">
+    <div class="v-modal-box">
+        <button class="v-modal-close-btn" onclick="vCloseAppointmentModal()"><i class="fas fa-times"></i></button>
+        <h3 style="font-weight: 800; color: var(--txt-dark); margin-top: 0; margin-bottom: 20px; font-size: 20px;">
+            <i class="fas fa-calendar-check text-primary"></i> Schedule Visit
+        </h3>
+
+        <form id="v-scheduleForm">
+            <input type="hidden" id="v-formCustomerId" name="CustomerID">
+
+            <div class="v-form-group">
+                <label class="v-form-label">Client Organization</label>
+                <div class="v-custom-select-wrapper" id="v-clientSelectWrapper">
+                    <div class="v-select-display" id="v-clientDisplay" onclick="vToggleClientSelect()">
+                        Select a Client...
+                    </div>
+                    <div class="v-select-dropdown" id="v-clientDropdown">
+                        <div class="v-select-search">
+                            <input type="text" id="v-clientSearch" placeholder="Search..." onkeyup="vFilterClients()">
+                        </div>
+                        <div id="v-clientOptionsContainer">
+                            
+                                    
+                                    <div class="v-select-option" onclick="vSelectClient()">
+                                        
+                                    </div>
+                                
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="v-form-group">
+                <label class="v-form-label">Date</label>
+                <div class="v-date-input-wrapper">
+                    <i class="fas fa-calendar-day"></i>
+                    <input type="date" id="v-formDate" name="ReAppointmentDate" class="v-custom-input" value="@DateTime.Now.ToString("yyyy-MM-dd")">
+                </div>
+            </div>
+
+            <div class="v-form-group">
+                <label class="v-form-label">Time</label>
+                <div class="v-date-input-wrapper">
+                    <i class="fas fa-clock"></i>
+                    <input type="time" id="v-formTime" name="scheduledtime" class="v-custom-input" required>
+                </div>
+            </div>
+
+            <div class="v-form-group">
+                <label class="v-form-label">Priority Level</label>
+                <div class="v-priority-selector">
+                    <label>
+                        <input type="radio" name="Priority" value="COLD" checked>
+                        <div class="v-p-box"><i class="fas fa-snowflake"></i><span>Cold</span></div>
+                    </label>
+                    <label>
+                        <input type="radio" name="Priority" value="MODERATE">
+                        <div class="v-p-box"><i class="fas fa-bolt"></i><span>Moderate</span></div>
+                    </label>
+                    <label>
+                        <input type="radio" name="Priority" value="HOT">
+                        <div class="v-p-box"><i class="fas fa-fire"></i><span>Hot</span></div>
+                    </label>
+                </div>
+            </div>
+
+            <button type="button" class="v-btn-submit-form" onclick="vSubmitAppointment()">Save Appointment</button>
+        </form>
+    </div>
+</div>
+
+<div class="v-loader-overlay" id="v-mainLoader">
+    <div class="spinner-border text-primary" style="width: 3rem; height: 3rem; border-width: 4px;"></div>
+    <div style="margin-top: 15px; font-weight: 700; color: var(--txt-dark);">Processing...</div>
+</div>
+
+<!-- Custom Premium Popups -->
+<div id="customPopupModal" class="popup-modal-overlay">
+    <div class="popup-content-card animate__animated">
+        <button type="button" class="popup-close-btn" onclick="closeCustomPopup()">
+            <i class="fas fa-times" style="font-size: 18px; color: #64748b;"></i>
+        </button>
+
+        <div class="popup-icon-container">
+            <div id="dynamicIcon">
+            </div>
+            <span id="popupBadge" class="popup-notif-badge" style="display:none;">1</span>
+        </div>
+
+        <h3 id="popupTitle" class="premium-popup-title">Ready to start?</h3>
+        <p id="popupTime" class="premium-popup-time-text">Time: <b>00:00 AM</b></p>
+        <p id="popupSubText" class="premium-popup-subtext">Confirm to proceed</p>
+
+        <div class="popup-action-area">
+            <button type="button" class="button-3d-rendering button-3d-confirm" onclick="confirmPopupAction()">
+                <div class="btn-3d-text">YES, LET'S GO</div>
+                <div class="btn-3d-icon-circle">
+                    <i class="fas fa-check" style="color: white; font-size: 16px;"></i>
+                </div>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="customSuccessModal" class="custom-success-overlay">
+    <div class="success-content-card animate__animated" id="successCard">
+        <div class="success-icon-wrapper" id="successIconWrapper">
+            <i class="fas fa-check" id="successIcon"></i>
+        </div>
+        <h3 id="successTitle" class="success-title">Checked-In!</h3>
+        <p id="successTime" class="success-time">Recorded at 00:00 AM</p>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/js/geolocation.js"></script>
+
+<script>
+  
+    let vIsMenuOpen = false;
+
+    $(document).ready(function() {
+        vRenderTimeline(vBackendData);
+
+        $(document).click(function(e) {
+            if (!$(e.target).closest('#v-clientSelectWrapper').length) {
+                $('#v-clientDropdown').hide();
+            }
+            if (!$(e.target).closest('.v-floating-action-menu').length && vIsMenuOpen) {
+                vToggleFabMenu();
+            }
+        });
+    });
+
+    function vToggleFabMenu() {
+        vIsMenuOpen = !vIsMenuOpen;
+        if (vIsMenuOpen) {
+            $('#v-fabMenu').addClass('v-open');
+            $('#v-mainFabBtn').html('<i class="fas fa-times"></i>');
+        } else {
+            $('#v-fabMenu').removeClass('v-open');
+            $('#v-mainFabBtn').html('<i class="fas fa-layer-group"></i>');
+        }
+    }
+
+    function vRenderTimeline(routes) {
+        const container = $("#v-routeListContainer");
+        container.empty();
+
+        if (!routes || routes.length === 0) {
+            container.html(`
+                            <div style="display: flex; flex-direction: column; justify-content: center; height: 100%; margin-top: 20px;">
+                                <div class="v-card-route v-card-cta" style="margin: auto; width: 85%;">
+                                    <div class="v-cta-text">No operations scheduled today.</div>
+                                    <button class="v-btn-set-appointment" onclick="vOpenAppointmentModal('', '')">
+                                        <i class="fas fa-plus"></i> Set Appointment
+                                    </button>
+                                </div>
+                            </div>`);
+            return;
+        }
+
+        routes.sort((a, b) => {
+            const getWeight = (status) => {
+                const s = (status || '').trim().toUpperCase();
+                if (s === 'ONGOING') return 1;
+                if (s === 'COMPLETED') return 3;
+                return 2;
+            };
+            return getWeight(a.status) - getWeight(b.status);
+        });
+
+        const hasOngoing = routes.some(r => (r.status || '').trim().toUpperCase() === 'ONGOING');
+
+        routes.forEach((x, i) => {
+            const status = (x.status || '').trim().toUpperCase();
+            const isVisited = status === 'COMPLETED';
+            const isOngoing = status === 'ONGOING';
+
+            const priority = (x.Priority || "COLD").toUpperCase();
+            let badgeText = "COLD", badgeClass = "v-badge-cold", pColor = "var(--p-cold)", pIcon = "fa-snowflake";
+
+            if (priority === "HOT") { badgeText = "HOT"; badgeClass = "v-badge-hot"; pColor = "var(--p-hot)"; pIcon = "fa-fire"; }
+            else if (priority === "MODERATE") { badgeText = "MODERATE"; badgeClass = "v-badge-moderate"; pColor = "var(--p-mod)"; pIcon = "fa-bolt"; }
+
+            const rawName = x.customerName || x.CustomerName || 'N/A';
+            const indVal = x.industry || x.Industry || x.industryType || x.IndustryType || '';
+            const displayCustName = (indVal && indVal.toString().trim() !== '') ? `${rawName} (${indVal})` : rawName;
+
+            const safeName = displayCustName.replace(/'/g, "\\'");
+            const safeArea = x.Area ? x.Area.replace(/'/g, "\\'") : '';
+            const safeLat = x.Latitude || x.latitude || '';
+            const safeLng = x.Longitude || x.longitude || '';
+
+            let btnDisabled = false;
+            let btnIcon = 'fa-location-arrow';
+            let btnText = 'Check-In';
+            let btnBg = 'var(--primary)';
+            let btnOnClick = `onclick="event.stopPropagation(); vPerformCheckIn('${safeName}', ${i})"`;
+
+            if (isVisited) {
+                btnDisabled = true;
+                btnIcon = 'fa-check';
+                btnText = 'Checked-In';
+                btnOnClick = '';
+            } else if (isOngoing) {
+                btnDisabled = true;
+                btnIcon = 'fa-spinner fa-spin';
+                btnText = 'Ongoing';
+                btnBg = 'var(--p-mod)';
+                btnOnClick = '';
+            } else {
+                if (hasOngoing) {
+                    btnDisabled = true;
+                    btnIcon = 'fa-lock';
+                    btnText = 'Check-In';
+                    btnBg = '#94a3b8';
+                    btnOnClick = '';
+                }
+            }
+
+            let cardOnClickAttr = '';
+            let cardCursorStyle = 'cursor: default;';
+
+            if (!isVisited && !isOngoing) {
+                cardOnClickAttr = `onclick="vPromptNextVisit('${x.RouteID}', '${safeName}')"`;
+                cardCursorStyle = 'cursor: pointer;';
+            }
+
+            const card = `
+                            <div class="v-location-step animate__animated animate__fadeInUp" style="animation-delay: ${i * 0.1}s">
+                                <div class="v-card-route ${isVisited ? 'v-card-visited' : ''}" style="${cardCursorStyle}" ${cardOnClickAttr}>
+                                    <div class="v-card-floating-pin" style="color: ${pColor}; cursor: pointer;" onclick="event.stopPropagation(); vOpenDirections('${safeName}', '${safeArea}', '${safeLat}', '${safeLng}')">
+                                        <i class="fa-solid fa-location-dot"></i>
+                                    </div>
+                                    <div class="v-priority-badge ${badgeClass}"><i class="fa-solid ${pIcon}"></i> ${badgeText}</div>
+
+                                    <div class="v-loc-content-wrapper">
+                                        <span class="v-loc-name">${displayCustName}</span>
+                                        <div class="v-loc-meta">
+                                            <span><i class="fas fa-clock text-primary"></i> ${x.AppointmentTime || '--:--'}</span>
+                                            <span><i class="fas fa-user-tie"></i> ${x.ContactPerson || 'N/A'}</span>
+                                        </div>
+                                        <div class="v-loc-stats">
+                                            <span><b>Visits:</b> ${x.TotalVisit || 0}</span>
+                                            <span><b>Sales:</b> ₹${x.SalesAmount || 0}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="v-btn-checkin-container">
+                                        <input type="hidden" id="v-cid_${i}" value="${x.customerid}" />
+                                        <input type="hidden" id="v-prio_${i}" value="${x.Priority}" />
+                                        <input type="hidden" id="v-route_${i}" value="${x.RouteID}" />
+                                        <button
+                                            type="button"
+                                            id="v-btn_${i}"
+                                            class="v-btnaction"
+                                            style="background: ${btnBg}"
+                                            ${btnDisabled ? 'disabled' : btnOnClick}>
+                                            <i class="fa-solid ${btnIcon}"></i>
+                                            ${btnText}
+                                        </button>
+                                    </div>
+                                </div>
+                                <svg class="v-connector" viewBox="0 0 100 100" preserveAspectRatio="none">
+                                    <path class="v-snake-path" d="${i % 2 === 0 ? 'M 25,0 C 25,50 75,50 75,100' : 'M 75,0 C 75,50 25,50 25,100'}" />
+                                </svg>
+                            </div>`;
+            container.append(card);
+        });
+
+        container.append(`
+                        <div class="v-location-step animate__animated animate__fadeInUp" style="animation-delay: ${routes.length * 0.1}s">
+                            <div class="v-card-route v-card-cta">
+                                <div class="v-cta-text">Grow your route trail!</div>
+                                <button class="v-btn-set-appointment" onclick="vOpenAppointmentModal('', '')">
+                                    <i class="fas fa-plus"></i> Add More
+                                </button>
+                            </div>
+                        </div>`);
+    }
+    let activeCheckIn = { custName: '', id: '', cid: '', prio: '', routeid: '' };
+
+    function openCustomPopup(action, custName) {
+        const now = new Date();
+        const currentTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        const popup = document.getElementById("customPopupModal");
+        const card = popup.querySelector(".popup-content-card");
+        const dynamicIcon = document.getElementById("dynamicIcon");
+        const badge = document.getElementById("popupBadge");
+        const title = document.getElementById("popupTitle");
+        const timeText = document.getElementById("popupTime");
+        const subText = document.getElementById("popupSubText");
+        const actionBtnText = popup.querySelector(".btn-3d-text");
+
+        card.classList.remove("animate__bounceIn", "animate__bounceOut");
+        timeText.innerHTML = `Time: <b>${currentTime}</b>`;
+        popup.classList.add("active");
+        card.classList.add("animate__bounceIn");
+
+        title.innerText = 'Confirm Check-In';
+        subText.innerText = `Start your visit at ${custName}`;
+        dynamicIcon.innerHTML = `<i class="fas fa-location-dot" style="font-size: 65px; color: #3f6791; filter: drop-shadow(0 8px 10px rgba(63, 103, 145, 0.3));"></i>`;
+        actionBtnText.innerText = 'Yes, Check-In';
+        badge.style.display = "none";
+    }
+
+    function closeCustomPopup() {
+        const popup = document.getElementById("customPopupModal");
+        const card = popup.querySelector(".popup-content-card");
+
+        card.classList.remove("animate__bounceIn");
+        card.classList.add("animate__bounceOut");
+
+        setTimeout(() => {
+            popup.classList.remove("active");
+        }, 400);
+    }
+
+    async function confirmPopupAction() {
+        closeCustomPopup();
+
+        const now = new Date();
+        const currentTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        const id = activeCheckIn.id;
+        const btn = $(`#v-btn_${id}`);
+        btn.html('<i class="fa-solid fa-spinner fa-spin"></i>').prop('disabled', true);
+
+        try {
+            await vGetLocation();
+            const loc = $('#v-CurrLoc').val();
+
+            if (!loc) {
+                btn.html('<i class="fa-solid fa-location-arrow"></i> Check-In').prop('disabled', false);
+                return;
+            }
+
+            $.post("/Flow/SaveDailyDetails", {
+                CustomerName: activeCheckIn.custName,
+                customerid: activeCheckIn.cid,
+                CurrentLocation: loc,
+                Priority: activeCheckIn.prio,
+                RouteId: activeCheckIn.routeid
+            }, function(res) {
+                if (res.status) {
+                    const successModal = document.getElementById("customSuccessModal");
+                    const successCard = document.getElementById("successCard");
+                    const successIconWrapper = document.getElementById("successIconWrapper");
+                    const successIcon = document.getElementById("successIcon");
+                    const successTitle = document.getElementById("successTitle");
+                    const successTime = document.getElementById("successTime");
+
+                    successCard.classList.remove("animate__zoomIn", "animate__zoomOut");
+
+                    successTitle.innerText = "Checked-In! 🌟";
+                    successIconWrapper.className = "success-icon-wrapper checkin";
+                    successIcon.className = "fas fa-check";
+                    successTime.innerText = `Time: ${currentTime}`;
+
+                    successModal.classList.add("active");
+                    successCard.classList.add("animate__zoomIn");
+
+                    btn.html('<i class="fa-solid fa-check"></i> Checked-In').css('background', '#94a3b8');
+
+                    setTimeout(() => {
+                        successCard.classList.remove("animate__zoomIn");
+                        successCard.classList.add("animate__zoomOut");
+
+                        setTimeout(() => {
+                            window.location.href = "/Flow/CustomerReport?Id=" + encodeURIComponent(activeCheckIn.cid);
+                        }, 400);
+
+                    }, 2000);
+                } else {
+                    Swal.fire({ icon: 'error', text: res.message });
+                    btn.html('<i class="fa-solid fa-location-arrow"></i> Check-In').prop('disabled', false);
+                }
+            }).fail(() => {
+                Swal.fire({ icon: 'error', text: "Server Error" });
+                btn.html('<i class="fa-solid fa-location-arrow"></i> Check-In').prop('disabled', false);
+            });
+        } catch (e) {
+            btn.html('<i class="fa-solid fa-location-arrow"></i> Check-In').prop('disabled', false);
+        }
+    }
+
+    async function vPerformCheckIn(custName, id) {
+        activeCheckIn.custName = custName;
+        activeCheckIn.id = id;
+        activeCheckIn.cid = $(`#v-cid_${id}`).val();
+        activeCheckIn.prio = $(`#v-prio_${id}`).val();
+        activeCheckIn.routeid = $(`#v-route_${id}`).val();
+
+        openCustomPopup('CheckIn', custName);
+    }
+
+    async function vGetLocation() {
+        try {
+            const location = await GeoService.getLocation();
+            if (location && location.latitude) $('#v-CurrLoc').val(location.latitude + "," + location.longitude);
+            else { $('#v-CurrLoc').val(""); alert("Location incomplete."); }
+        } catch (e) {
+            $('#v-CurrLoc').val(""); alert("Location access required.");
+        }
+    }
+
+    function vOpenDirections(name, addr, lat, lng) {
+        let dest = addr || name;
+        if (lat && lng && lat.trim() !== '' && lng.trim() !== '') {
+            dest = lat + "," + lng;
+        }
+        const origin = $('#v-CurrLoc').val();
+        let url = "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent(dest);
+        if (origin) url += "&origin=" + encodeURIComponent(origin);
+        window.open(url, '_blank');
+    }
+
+    function vPromptNextVisit(id, name) {
+        Swal.fire({
+            title: `<span style="font-size: 16px; font-weight:800;">${name}</span>`,
+            html: `
+                        <div style="font-size: 13px; font-weight: 700; color: #64748b; margin-bottom: 12px;">Select Next Visit:</div>
+                        <div style="position: relative; display: flex; align-items: center;">
+                            <i class="fas fa-calendar-alt" style="position: absolute; left: 15px; color: var(--primary);"></i>
+                            <input type="datetime-local" id="v-swalDate" style="width: 100%; padding: 12px 15px 12px 40px; border: 1px solid #cbd5e1; border-radius: 12px; font-size: 14px; font-weight: 600; color: #0f172a; outline: none; box-shadow: 0 4px 6px rgba(0,0,0,0.02); font-family: inherit;">
+                        </div>
+                    `,
+            showCancelButton: true,
+            confirmButtonColor: 'var(--primary)',
+            confirmButtonText: 'Save',
+            preConfirm: () => {
+                const d = $('#v-swalDate').val();
+                if (!d) Swal.showValidationMessage('Date is required!');
+                return d;
+            }
+        }).then((res) => {
+            if (res.isConfirmed) {
+                $('#v-mainLoader').css('display', 'flex');
+                $.post("/Flow/ChangeReappointmentDate", { routeId: id, nextVisitDate: res.value }, function(data) {
+                    $('#v-mainLoader').hide();
+                    if (data.success || data.status) {
+                        Swal.fire('Saved!', '', 'success')
+                            .then(() => {
+                                window.location.reload();
+                            });
+                    } else Swal.fire('Error', data.message || 'Failed', 'error');
+                }).fail(() => {
+                    $('#v-mainLoader').hide();
+                    Swal.fire('Error', 'Server failed', 'error');
+                });
+            }
+        });
+    }
+
+    function vOpenDrawer(type) {
+        vToggleFabMenu();
+        const drawer = $('#v-dataDrawer');
+        const overlay = $('#v-drawerOverlay');
+        const body = $('#v-drawerBody');
+        const title = $('#v-drawerTitle');
+        const dateFilterWrapper = $('#v-drawerDateWrapper'); // New Wrapper Reference
+        const dateFilter = $('#v-futureDateFilter');
+
+        drawer.addClass('v-open');
+        overlay.addClass('v-open');
+        body.html(`<div class="v-list-card v-shimmer" style="height: 80px;"></div><div class="v-list-card v-shimmer" style="height: 80px;"></div>`);
+
+        dateFilter.off('change');
+
+        if (type === 'backlog') {
+            dateFilterWrapper.hide(); // Hide wrapper for backlog
+            title.html('<i class="fas fa-history text-danger"></i> Pending Backlogs');
+            vFetchDrawerData('/Flow/GetBacklogData', 'backlog');
+        } else {
+            dateFilterWrapper.css('display', 'flex'); // Show wrapper with flex for future logs
+
+            const defaultDate = $('#v-SelectedDate').val();
+            dateFilter.val(defaultDate);
+
+            title.html('<i class="fas fa-calendar-alt text-primary"></i> Future Logs');
+            vFetchDrawerData('/Flow/GetFutureLogsData?searchDate=' + defaultDate, 'future');
+
+            dateFilter.on('change', function() {
+                const selectedDate = $(this).val();
+                if (selectedDate) {
+                    body.html(`<div class="v-list-card v-shimmer" style="height: 80px;"></div><div class="v-list-card v-shimmer" style="height: 80px;"></div>`);
+                    vFetchDrawerData('/Flow/GetFutureLogsData?searchDate=' + selectedDate, 'future');
+                }
+            });
+        }
+    }
+
+    function vCloseDrawer() {
+        $('#v-dataDrawer').removeClass('v-open');
+        $('#v-drawerOverlay').removeClass('v-open');
+    }
+
+    function formatDate(dateString) {
+        if (!dateString) return "-";
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-IN', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric'
+        });
+    }
+
+    function vFetchDrawerData(url, type) {
+        $.get(url, function(res) {
+            const body = $('#v-drawerBody');
+            body.empty();
+            let arr = res.data || res;
+            if (typeof arr === 'string') arr = JSON.parse(arr);
+
+            if (!arr || arr.length === 0) {
+                body.html(`<div style="text-align:center; padding: 40px 20px; color: var(--txt-light); font-weight:700;">No records found.</div>`);
+                return;
+            }
+
+            arr.forEach(item => {
+                let rawName = item.CustomerName || item.customerName || item.organizationName || 'Unknown';
+                let indVal = item.Industry || item.industry || item.IndustryType || item.industryType || '';
+                let name = (indVal && indVal.toString().trim() !== '') ? `${rawName} (${indVal})` : rawName;
+                let id = item.CustomerID || item.customerid || '';
+                let safeName = name.replace(/'/g, "\\'");
+
+                let detail = "";
+                let pill = "";
+
+                if (type === 'backlog') {
+                    let days = item.DueDays || item.dueDays || 0;
+                    let lastvisit = formatDate(item.reAppointmentDate) || 0;
+                    detail = `<i class="fas fa-calendar-times"></i>Visiting Date: ${lastvisit}`;
+                    let cls = days > 15 ? 'v-st-danger' : (days > 7 ? 'v-st-warn' : 'v-st-safe');
+                    pill = `<div class="v-status-pill ${cls}">${days} Days</div>`;
+                } else {
+                    let dStr = formatDate(item.reAppointmentDate);
+                    detail = `<i class="fas fa-calendar-day"></i> Scheduled: ${dStr}`;
+                    let p = (item.Priority || '').toLowerCase();
+                    let cls = (p === 'hot') ? 'v-st-danger' : ((p === 'moderate') ? 'v-st-warn' : 'v-st-safe');
+                    pill = `<div class="v-status-pill ${cls}">${p.toUpperCase()}</div>`;
+                }
+
+                body.append(`
+                                    <div class="v-list-card animate__animated animate__fadeInRight" onclick="vTransferFromDrawer('${id}', '${safeName}')">
+                                        ${pill}
+                                        <div class="v-list-org">${name}</div>
+                                        <div class="v-list-detail">${detail}</div>
+                                    </div>
+                                `);
+            });
+        }).fail(() => {
+            $('#v-drawerBody').html(`<div style="color:red; text-align:center; padding:20px;">Failed to load data.</div>`);
+        });
+    }
+
+    function vTransferFromDrawer(id, name) {
+        vCloseDrawer();
+        setTimeout(() => vOpenAppointmentModal(id, name), 300);
+    }
+
+    function vOpenAppointmentModal(cid, cname) {
+        if (vIsMenuOpen) vToggleFabMenu();
+        $('#v-appointmentModal').css('display', 'flex');
+        $('#v-scheduleForm')[0].reset();
+        $('#v-formDate').val($('#v-SelectedDate').val());
+
+        if (cid && cname) vSelectClient(cid, cname);
+        else {
+            $('#v-formCustomerId').val('');
+            $('#v-clientDisplay').text('Select a Client...').css('color', 'var(--txt-light)');
+        }
+    }
+
+    function vCloseAppointmentModal() {
+        $('#v-appointmentModal').hide();
+        $('#v-clientDropdown').hide();
+    }
+
+    function vToggleClientSelect() {
+        $('#v-clientDropdown').toggle();
+        if ($('#v-clientDropdown').is(':visible')) $('#v-clientSearch').focus();
+    }
+
+    function vFilterClients() {
+        const val = $('#v-clientSearch').val().toLowerCase();
+        $('.v-select-option').each(function() {
+            $(this).toggle($(this).text().toLowerCase().includes(val));
+        });
+    }
+
+    function vSelectClient(id, name) {
+        $('#v-formCustomerId').val(id);
+        $('#v-clientDisplay').text(name).css('color', 'var(--txt-dark)');
+        $('#v-clientDropdown').hide();
+    }
+
+    function vSubmitAppointment() {
+        const form = $('#v-scheduleForm');
+        if (!form[0].checkValidity() || !$('#v-formCustomerId').val()) {
+            Swal.fire('Required', 'Please select a client and time.', 'warning');
+            return;
+        }
+
+        $('#v-mainLoader').css('display', 'flex');
+        $.post("/Flow/AddRoute", form.serialize(), function(res) {
+            $('#v-mainLoader').hide();
+            vCloseAppointmentModal();
+            Swal.fire({ icon: 'success', title: 'Scheduled!', showConfirmButton: false, timer: 1500 });
+
+            setTimeout(() => location.reload(), 1500);
+        }).fail(() => {
+            $('#v-mainLoader').hide();
+            Swal.fire('Error', 'Failed to save appointment.', 'error');
+        });
+    }
+</script>
