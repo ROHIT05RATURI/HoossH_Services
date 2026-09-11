@@ -1,0 +1,93 @@
+﻿@using HoossH_Services.Models
+@model List<SuspectNavItem>
+
+<style>
+    .suspect-nav-container {
+        display: flex;
+        width: 100%;
+        overflow-x: auto;
+        gap: 10px;
+        padding: 10px 5px;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+        position: -webkit-sticky;
+        position: sticky;
+        top: 50px;
+        z-index: 99;
+        background-color: #ffffff;
+        border-bottom: 2px solid #cbd5e1;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        margin-top: 0;
+    }
+
+        .suspect-nav-container::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .suspect-nav-container::-webkit-scrollbar-thumb {
+            background-color: #ccc;
+            border-radius: 10px;
+        }
+
+    .suspect-tab {
+        flex: 1;
+        min-width: 130px;
+        justify-content: center;
+        padding: 6px 20px;
+        text-decoration: none;
+        color: #333;
+        background-color: #e2e8f0;
+        border-radius: 5px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+        .suspect-tab:hover {
+            background-color: #cbd5e1;
+            color: #000;
+        }
+
+        .suspect-tab.active {
+            background-color: #89CFF0;
+            color: #ffffff;
+            font-weight: bold;
+            border: 1px solid #90c2d3;
+        }
+
+    @@media (max-width: 768px) {
+        .suspect-nav-container {
+            gap: 6px;
+            padding: 8px 4px;
+            position: -webkit-sticky;
+            position: sticky;
+            top: 50px;
+            z-index: 999;
+            background-color: #ffffff;
+            border-bottom: 2px solid #cbd5e1;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            margin-top: 0;
+        }
+
+        .suspect-tab {
+            min-width: auto;
+            padding: 4px 4px;
+            font-size: 10px;
+            gap: 5px;
+            flex-direction: row;
+        }
+    }
+</style>
+
+<nav class="suspect-nav-container  mx-lg-5 w-auto">
+    @foreach (var item in Model)
+    {
+        var isActive = Context.Request.Path.Value.ToLower() == item.Url.ToLower();
+
+        <a href="@item.Url" class="suspect-tab @(isActive ? "active" : "")">
+            <i class="@item.Icon"></i>
+            @item.Text
+        </a>
+    }
+</nav>

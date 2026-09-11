@@ -1,0 +1,766 @@
+@using HoossH_Services.Models
+@model Client
+
+@{
+    ViewBag.Title = "Add Client";
+    Layout = "~/Views/Shared/_LayoutINV.cshtml";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+<link rel="stylesheet" href="~/css/Pipeline.css">
+<link rel="stylesheet" href="~/css/client/Client.css">
+
+@await Html.PartialAsync("_suspect", new List<SuspectNavItem>
+{
+    new SuspectNavItem { Text = "Add Client", Url = "/Client/AddClient", Icon = "fas fa-user-plus" },
+    new SuspectNavItem { Text = "View Client", Url = "/Client/ViewClient", Icon = "fas fa-users" }
+})
+
+<div id="loaderOverlay" class="loader-overlay">
+    <div class="premium-loader-box">
+        <div class="premium-spinner"></div>
+        <div class="loader-text">Processing...</div>
+    </div>
+</div>
+
+<div id="toastContainer" style="position: fixed; top: 20px; right: 20px; z-index: 100000;"></div>
+
+@if (ViewBag.IsTerritoryAssigned == true)
+{
+    <div class="custom-modal-overlay" style="display: block; background-color: rgba(0, 0, 0, 0.75); backdrop-filter: blur(6px); z-index: 999999;"></div>
+
+    <div class="beautiful-modal animate__animated animate__zoomIn" style="display: block; z-index: 1000000;">
+        <div class="modal-header-v2 bg-danger-light" style="justify-content: center; border-bottom: none;">
+            <div class="header-icon-box icon-danger" style="margin-right: 10px; width: 45px; height: 45px; font-size: 20px;">
+                <i class="fas fa-ban"></i>
+            </div>
+            <h4 class="text-danger-dark" style="font-size: 20px;">Access Denied</h4>
+        </div>
+        <div class="modal-body-v2" style="text-align: center; padding: 10px 30px 30px 30px;">
+            <p style="font-size: 15px; color: #4b5563; line-height: 1.6; font-weight: 500; margin: 0;">
+                You cannot add a new suspect because <b style="color:#111;">no territory is assigned</b> to your account.<br><br>
+                Please contact your Administrator or Area Manager to assign a territory.
+            </p>
+        </div>
+        <div class="modal-footer-v2" style="justify-content: center;">
+            <button type="button" class="btn-fancy-cancel" onclick="window.history.back();" style="max-width: 200px;">
+                <i class="fas fa-arrow-left"></i> Go Back
+            </button>
+        </div>
+    </div>
+}
+
+<div class="premium-container animate__animated animate__fadeIn w-auto mx-lg-5" id="mainForm">
+    <div id="WorkStationDiv">
+        <form id="customerForm">
+
+            <div class="form-section-card">
+                <div class="section-title"><i class="fas fa-building"></i> Company Details</div>
+
+                <div class="suspect-row">
+                    <div class="suspect-group full-width">
+                        <label class="input-group-label">Suspect Name (Organization)</label>
+
+                        <div class="custom-select-container" id="orgSelectContainer" data-target="#SuspectCustomerName">
+                            <div class="input-icon-wrapper custom-select-trigger">
+                                <i class="fas fa-briefcase select-icon-left"></i>
+                                <div class="custom-select-display text-muted">Search or Select Organization...</div>
+                                <i class="fas fa-chevron-down select-icon-right"></i>
+                            </div>
+                            <div class="custom-select-dropdown">
+                                <div class="custom-select-search">
+                                    <i class="fas fa-search"></i>
+                                    <input type="text" class="dropdown-search-input" placeholder="Type to search..." autocomplete="off">
+                                </div>
+                                <ul class="custom-select-options">
+                                    @if (Model.Customers != null)
+                                    {
+                                        foreach (var cust in Model.Customers)
+                                        {
+                                            var displayName = string.IsNullOrWhiteSpace(cust.Industry)
+                                                ? cust.CustomerName
+                                                : $"{cust.CustomerName} ({cust.Industry})";
+                                            <li data-value="@cust.CustomerName" class="existing-org">
+                                                <div class="option-icon"><i class="fas fa-building"></i></div>
+                                                <div class="option-text">@displayName</div>
+                                            </li>
+                                        }
+                                    }
+                                </ul>
+                                <div class="no-results text-center py-3 text-muted" style="display:none; font-size: 13px;">
+                                    <i class="fas fa-box-open mb-2" style="font-size: 20px; color: #cbd5e1;"></i><br>Type to add as New Organization
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="SuspectCustomerName" name="CustomerName" required>
+                    </div>
+                </div>
+
+                <div class="suspect-row">
+                    <div class="suspect-group half">
+                        <label class="input-group-label">Industry Type</label>
+                        <div class="input-icon-wrapper">
+                            <i class="fas fa-industry input-icon"></i>
+                            <select id="Industry" name="Industry" class="custom-input" onchange="handleIndustryChange(this)">
+                                <option value="" disabled selected>Select Industry</option>
+                                <option value="IT">IT & Software</option>
+                                <option value="Manufacturing">Manufacturing</option>
+                                <option value="Healthcare">Healthcare</option>
+                                <option value="Finance">Finance</option>
+                                <option value="Education">Education</option>
+                                <option value="Other">Other (Please Specify)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="suspect-group half">
+                        <label class="input-group-label">PinCode</label>
+                        <div class="input-icon-wrapper">
+                            <i class="fas fa-map-pin input-icon"></i>
+                            <input type="number" id="SuspectPinCode" name="CustomerPinCode" class="custom-input" placeholder="6-digit PIN">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NEW BEAUTIFUL CUSTOM INDUSTRY POPUP (MODAL) -->
+                <div id="industryOverlay" class="custom-modal-overlay" style="display: none;"></div>
+
+                <div id="industryModal" class="beautiful-modal" style="display: none;">
+                    <div class="modal-header-v2">
+                        <div class="header-icon-box">
+                            <i class="fas fa-plus"></i>
+                        </div>
+                        <h4>Add Custom Industry</h4>
+                    </div>
+
+                    <div class="modal-body-v2">
+                        <label>Industry Name</label>
+                        <div class="fancy-input-group">
+                            <span class="fancy-input-icon"><i class="fas fa-tags"></i></span>
+                            <input type="text" id="customIndustryInput" placeholder="Enter industry type...">
+                        </div>
+                    </div>
+
+                    <div class="modal-footer-v2">
+                        <button type="button" class="btn-fancy-cancel" onclick="closeIndustryModal()">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                        <button type="button" class="btn-fancy-save" onclick="saveCustomIndustry()">
+                            <i class="fas fa-check"></i> Save
+                        </button>
+                    </div>
+                </div>
+                <!-- END POPUP -->
+
+                <div class="suspect-row">
+                    <div class="suspect-group full-width">
+                        <label class="input-group-label">Area</label>
+
+                        <div class="custom-select-container" id="areaSelectContainer" data-target="#areaDropdown">
+                            <div class="input-icon-wrapper custom-select-trigger">
+                                <i class="fas fa-map select-icon-left"></i>
+                                <div class="custom-select-display text-muted" id="areaDisplay">Select Area...</div>
+                                <i class="fas fa-chevron-down select-icon-right"></i>
+                            </div>
+                            <div class="custom-select-dropdown">
+                                <ul class="custom-select-options" id="areaOptionsList">
+                                </ul>
+                            </div>
+                        </div>
+                        <input type="hidden" id="areaDropdown" name="Area">
+                    </div>
+                </div>
+
+                <div class="suspect-row">
+                    <div class="suspect-group half">
+                        <label class="input-group-label">Country</label>
+                        <div class="input-icon-wrapper">
+                            <i class="fas fa-globe input-icon"></i>
+                            <input type="text" id="CustomerCountry" name="CustomerCountry" class="custom-input" readonly>
+                        </div>
+                    </div>
+                    <div class="suspect-group half">
+                        <label class="input-group-label">State</label>
+                        <div class="input-icon-wrapper">
+                            <i class="fas fa-map-marked-alt input-icon"></i>
+                            <input type="text" id="CustomerState" name="CustomerState" class="custom-input" readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="suspect-row">
+                    <div class="suspect-group half">
+                        <label class="input-group-label">City</label>
+                        <div class="input-icon-wrapper">
+                            <i class="fas fa-city input-icon"></i>
+                            <input type="text" id="city" name="CustomerCity" class="custom-input" readonly>
+                        </div>
+                    </div>
+                    <div class="suspect-group half">
+                        <label class="input-group-label">District</label>
+                        <div class="input-icon-wrapper">
+                            <i class="fas fa-building input-icon"></i>
+                            <input type="text" id="district" name="Customerdistrict" class="custom-input" readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="suspect-row">
+                    <div class="suspect-group full-width">
+                        <label class="input-group-label">Location Map (Pin your location)</label>
+                        <div id="map" style="height: 300px; width: 100%; border-radius: 12px; border: 1px solid var(--border-color); z-index: 1;"></div>
+                        <input type="hidden" id="Latitude" name="Latitude">
+                        <input type="hidden" id="Longitude" name="Longitude">
+                        <div class="text-muted mt-2" style="font-size: 11px;">
+                            <i class="fas fa-info-circle"></i> Click on the map to pin a location or let it fetch your current location. The address will be populated below.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="suspect-row">
+                    <div class="suspect-group full-width">
+                        <label class="input-group-label">Address</label>
+                        <div class="input-icon-wrapper">
+                            <i class="fas fa-location-arrow input-icon icon-top"></i>
+                            <textarea id="SuspectAddress" name="CustomerAddress" class="custom-input" placeholder="Enter full address..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section-card">
+                <div class="section-title"><i class="fas fa-address-book"></i> Contact Person Details</div>
+
+                <div class="suspect-row">
+                    <div class="suspect-group half">
+                        <label class="input-group-label">Designation</label>
+
+                        <div class="custom-select-container" data-target="#Designation">
+                            <div class="input-icon-wrapper custom-select-trigger">
+                                <i class="fas fa-id-badge select-icon-left"></i>
+                                <div class="custom-select-display text-muted">Select Designation...</div>
+                                <i class="fas fa-chevron-down select-icon-right"></i>
+                            </div>
+                            <div class="custom-select-dropdown">
+                                <ul class="custom-select-options">
+                                    @if (Model.Designations != null)
+                                    {
+                                        foreach (var design in Model.Designations)
+                                        {
+                                            <li data-value="@design.DesignationId">
+                                                <div class="option-icon"><i class="fas fa-user-tag"></i></div>
+                                                <div class="option-text">@design.DesignationName</div>
+                                            </li>
+                                        }
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                        <input type="hidden" id="Designation" name="DesignationId">
+                    </div>
+                    <div class="suspect-group half">
+                        <label class="input-group-label">Salutation</label>
+
+                        <div class="custom-select-container" data-target="#Salutation">
+                            <div class="input-icon-wrapper custom-select-trigger">
+                                <i class="fas fa-user-tie select-icon-left"></i>
+                                <div class="custom-select-display text-muted">Select Salutation...</div>
+                                <i class="fas fa-chevron-down select-icon-right"></i>
+                            </div>
+                            <div class="custom-select-dropdown">
+                                <ul class="custom-select-options">
+                                    <li data-value="Mr."><div class="option-icon"><i class="fas fa-male"></i></div><div class="option-text">Mr.</div></li>
+                                    <li data-value="Ms."><div class="option-icon"><i class="fas fa-female"></i></div><div class="option-text">Ms.</div></li>
+                                    <li data-value="Mrs."><div class="option-icon"><i class="fas fa-female"></i></div><div class="option-text">Mrs.</div></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <input type="hidden" id="Salutation" name="Salutation">
+                    </div>
+                </div>
+
+                <div class="suspect-row">
+                    <div class="suspect-group half">
+                        <label class="input-group-label">Contact Name</label>
+                        <div class="input-icon-wrapper">
+                            <i class="fas fa-user input-icon"></i>
+                            <input type="text" id="ContactPersonName" class="custom-input" placeholder="Full Name">
+                            <input type="hidden" id="ContactPerson" name="ContactPerson" />
+                        </div>
+                    </div>
+                    <div class="suspect-group half">
+                        <label class="input-group-label">Mobile Number</label>
+                        <div class="input-icon-wrapper">
+                            <i class="fas fa-mobile-alt input-icon"></i>
+                            <input type="tel" id="CustomerContactNumber" class="custom-input" maxlength="10" placeholder="10 Digit Number">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="suspect-row">
+                    <div class="suspect-group half">
+                        <label class="input-group-label">Appointment Date</label>
+                        <div class="input-icon-wrapper">
+                            <i class="fas fa-calendar-alt input-icon"></i>
+                            <input type="datetime-local" id="ReAppointmentDate" name="ReAppointmentDate" class="custom-input">
+                        </div>
+                    </div>
+                    <div class="suspect-group half">
+                        <label class="input-group-label">GST Number</label>
+                        <div class="input-icon-wrapper">
+                            <i class="fas fa-file-invoice-dollar input-icon"></i>
+                            <input type="text" id="CustomerGSTNumber" name="CustomerGSTNumber" class="custom-input" placeholder="Optional (e.g. 22AAAAA0000A1Z5)" maxlength="15">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="suspect-button-wrapper" style="text-align: right;">
+                <button type="submit" class="premium-submit-btn">
+                    <i class="fas fa-check-circle"></i> Save Details
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    function showToast(message, type = 'success', duration = 3000) {
+        let container = document.getElementById('toastContainer');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'toastContainer';
+            container.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 100000; display: flex; flex-direction: column; gap: 10px; pointer-events: none;';
+            document.body.appendChild(container);
+        }
+
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        toast.innerText = message;
+
+        toast.style.background = type === 'error' ? '#dc3545' : '#28a745';
+        toast.style.color = '#fff';
+        toast.style.padding = '12px 20px';
+        toast.style.borderRadius = '8px';
+        toast.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s';
+        toast.style.fontSize = '13px';
+        toast.style.fontWeight = '600';
+
+        container.appendChild(toast);
+
+        setTimeout(() => toast.style.opacity = '1', 50);
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            setTimeout(() => container.removeChild(toast), 300);
+        }, duration);
+    }
+
+    function showLoading() { $('#loaderOverlay').css('display', 'flex'); }
+    function hideLoading() { $('#loaderOverlay').hide(); }
+
+
+    $(document).ready(function() {
+
+
+        $('.custom-select-trigger').on('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            let $container = $(this).closest('.custom-select-container');
+
+            $('.custom-select-container').not($container).removeClass('active');
+            $container.toggleClass('active');
+
+            if ($container.hasClass('active')) {
+                setTimeout(() => $container.find('.dropdown-search-input').focus(), 100);
+            }
+        });
+
+        $('.custom-select-search input').on('click', function(e) { e.stopPropagation(); });
+
+        $(document).on('click', function(e) {
+            if (!$(e.target).closest('.custom-select-container').length) {
+                $('.custom-select-container').removeClass('active');
+            }
+        });
+
+        $(document).on('click', '.custom-select-options li', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            var $li = $(this);
+            var $container = $li.closest('.custom-select-container');
+
+            if ($li.hasClass('existing-org')) {
+                $container.removeClass('active');
+                showToast("This organization already exists. You cannot create it again.", "error", 3000);
+                return;
+            }
+
+            var val = $li.attr('data-value');
+            var text = $li.find('.option-text').text().replace(' (NEW)', '').trim();
+
+            $container.find('.custom-select-display').text(text).css('color', '#1e293b');
+            $container.find('.custom-select-options li').removeClass('selected');
+            $li.addClass('selected');
+            $container.removeClass('active');
+
+            var targetSelector = $container.attr('data-target');
+            if (targetSelector) {
+                $(targetSelector).val(val).trigger('change');
+            }
+
+            if ($container.attr('id') === 'areaSelectContainer') {
+                $('#city').val($li.attr('data-city') || "");
+                $('#district').val($li.attr('data-district') || "");
+                $('#CustomerState').val($li.attr('data-state') || "");
+                $('#CustomerCountry').val($li.attr('data-country') || "");
+            }
+        });
+
+        function toCamelCase(str) {
+            return str.toLowerCase().split(' ').filter(word => word.trim() !== '')
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+        }
+
+        $('.dropdown-search-input').on('keyup', function() {
+            let term = $(this).val().trim();
+            let termLower = term.toLowerCase();
+            let $container = $(this).closest('.custom-select-container');
+            let hasResults = false;
+            let exactMatchFound = false;
+
+            $container.find('.custom-select-options li:not(.dynamic-new)').each(function() {
+                let text = $(this).find('.option-text').text().toLowerCase();
+                if (text.includes(termLower)) {
+                    $(this).show();
+                    hasResults = true;
+                    if (text === termLower) exactMatchFound = true;
+                } else {
+                    $(this).hide();
+                }
+            });
+
+            $container.find('.dynamic-new').remove();
+            if (term.length > 0 && !exactMatchFound) {
+                let camelTerm = toCamelCase(term);
+                $container.find('.custom-select-options').append(`
+                                <li data-value="${camelTerm}" class="dynamic-new">
+                                    <div class="option-icon" style="background: var(--primary); color: #fff;"><i class="fas fa-plus"></i></div>
+                                    <div class="option-text">${camelTerm} (NEW)</div>
+                                </li>
+                            `);
+                hasResults = true;
+            }
+
+            let $noResults = $container.find('.no-results');
+            if ($noResults.length) {
+                hasResults ? $noResults.hide() : $noResults.show();
+            }
+        });
+
+        let isFetchingPin = false;
+
+        $('#SuspectPinCode').on('input', function() {
+            let pincode = $(this).val().trim();
+
+            if (pincode.length === 6 && !isFetchingPin) {
+                isFetchingPin = true;
+                $(this).blur();
+
+                showLoading();
+
+                setTimeout(async () => {
+                    try {
+                        const response = await fetch(`/Flow/GetPincodeDetails?pincode=${pincode}`);
+                        if (!response.ok) {
+                            clearAreaFields();
+                            showToast("Pincode not found", "error");
+                        } else {
+                            const data = await response.json();
+                            populateAreaDropdown(data);
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        showToast("Error fetching pincode data", "error");
+                    } finally {
+                        hideLoading();
+                        isFetchingPin = false;
+                    }
+                }, 3000);
+
+            } else if (pincode.length < 6) {
+                clearAreaFields();
+            }
+        });
+
+        function populateAreaDropdown(data) {
+            const $list = $('#areaOptionsList');
+            $list.empty();
+
+            $('#areaDisplay').text("Select Area...").css('color', '#94a3b8');
+            $('#areaDropdown').val('');
+
+            data.forEach(item => {
+                $list.append(`
+                                <li data-value="${item.area}" data-city="${item.city}" data-district="${item.district}" data-state="${item.state}" data-country="${item.country}">
+                                    <div class="option-icon"><i class="fas fa-map-marker-alt"></i></div>
+                                    <div class="option-text">${item.area}</div>
+                                </li>
+                            `);
+            });
+
+            if (data.length > 0) {
+                let firstItem = data[0];
+                $('#areaDropdown').val(firstItem.area);
+                $('#areaDisplay').text(firstItem.area).css('color', '#1e293b');
+                $list.find('li:first').addClass('selected');
+
+                document.getElementById("city").value = firstItem.city;
+                document.getElementById("district").value = firstItem.district;
+                document.getElementById("CustomerState").value = firstItem.state;
+                document.getElementById("CustomerCountry").value = firstItem.country;
+            }
+        }
+
+        function clearAreaFields() {
+            $('#areaOptionsList').empty();
+            $('#areaDisplay').text("Select Area...").css('color', '#94a3b8');
+            $('#areaDropdown').val('');
+            document.getElementById("city").value = "";
+            document.getElementById("district").value = "";
+            document.getElementById("CustomerState").value = "";
+            document.getElementById("CustomerCountry").value = "";
+        }
+
+        function isValidGST(gst) {
+            const gstRegex = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
+            return gstRegex.test(gst);
+        }
+
+        $('#CustomerGSTNumber').on('input', function() {
+            this.value = this.value.toUpperCase();
+        });
+
+        document.getElementById('SuspectAddress').addEventListener('input', function() {
+            const lastChar = this.value.slice(-1);
+            if (lastChar !== ' ') {
+                const cursorPos = this.selectionStart;
+                this.value = toCamelCase(this.value);
+                this.setSelectionRange(cursorPos, cursorPos);
+            }
+        });
+
+        var dtToday = new Date();
+        var month = (dtToday.getMonth() + 1).toString().padStart(2, '0');
+        var day = dtToday.getDate().toString().padStart(2, '0');
+        var year = dtToday.getFullYear();
+        $('#ReAppointmentDate').attr('min', `${year}-${month}-${day}`);
+
+        $('#customerForm').on('submit', function(e) {
+            e.preventDefault();
+
+            let organizationName = document.getElementById("SuspectCustomerName").value;
+            if (!organizationName) {
+                showPremiumAlert('Required', 'Please select or enter an Organization Name.', 'warning');
+                return;
+            }
+
+            let gstNumber = document.getElementById("CustomerGSTNumber").value.trim();
+            if (gstNumber && !isValidGST(gstNumber)) {
+                showPremiumAlert('Invalid GST', 'Please enter a valid 15-character GST number (e.g., 22AAAAA0000A1Z5).', 'error');
+                return;
+            }
+
+            let salutation = document.getElementById("Salutation").value || "";
+            let personName = document.getElementById("ContactPersonName").value || "";
+            document.getElementById("ContactPerson").value = (salutation + " " + personName).trim();
+
+            const formData = new FormData(this);
+            showLoading();
+
+            $.ajax({
+                url: '/Flow/AddNewCustomer',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    hideLoading();
+
+                    if (response?.success) {
+                        showPremiumAlert('Success!', response.message || 'Details saved successfully', 'add');
+
+                        setTimeout(function() {
+                            showPremiumConfirm(
+                                "What Next?",
+                                "Suspect has been added successfully. What would you like to do next?",
+                                "fa-solid fa-circle-question",
+                                function() {
+                                    window.location.href = '/Flow/RoutePlanner';
+                                }
+                            );
+
+                            setTimeout(function() {
+                                let $cancelBtn = $('#confirmPopup .btn-discard, #btnCancel, button:contains("Cancel"), button:contains("Close")');
+                                $cancelBtn.html('<i class="fas fa-plus-circle"></i> Add New');
+
+                                $cancelBtn.off('click').on('click', function(e) {
+                                    e.preventDefault();
+                                    window.location.reload();
+                                });
+
+                                let $confirmBtn = $('#confirmPopup #btnSave, #btnConfirm, button:contains("Got it"), button:contains("Got It"), button:contains("Save")');
+                                $confirmBtn.html('Continue <i class="fas fa-arrow-right"></i>');
+
+                            }, 100);
+
+                        }, 2000);
+
+                    } else {
+                        showPremiumAlert('Error', response.message || 'Something went wrong', 'error');
+                    }
+                },
+                error: function(xhr) {
+                    hideLoading();
+                    console.error(xhr);
+                    showPremiumAlert('Error', 'Server error occurred while saving.', 'error');
+                }
+            });
+        });
+
+        const message = sessionStorage.getItem("successMessage");
+        if (message) {
+            showToast(message, 'success');
+            sessionStorage.removeItem("successMessage");
+        }
+
+        document.querySelectorAll('.suspect-tab').forEach(tab => {
+            if (window.location.pathname.toLowerCase() === tab.getAttribute('href').toLowerCase()) {
+                document.querySelectorAll('.suspect-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+            }
+        });
+
+        var map = L.map('map').setView([20.5937, 78.9629], 5);
+        L.tileLayer('http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
+            maxZoom: 20,
+            subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+            attribution: '© Google'
+        }).addTo(map);
+
+        var marker;
+        var redIcon = new L.Icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            iconSize: [35, 56],
+            iconAnchor: [17, 56],
+            popupAnchor: [1, -44],
+            shadowSize: [56, 56]
+        });
+
+        function updateLocationInputs(lat, lng) {
+            $('#Latitude').val(lat);
+            $('#Longitude').val(lng);
+        }
+
+        function reverseGeocode(lat, lng) {
+            $.ajax({
+                url: `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`,
+                method: 'GET',
+                success: function(data) {
+                    if (data && data.display_name) {
+                        $('#SuspectAddress').val(data.display_name);
+                        if (data.address) {
+                            if (data.address.postcode) {
+                                $('#SuspectPinCode').val(data.address.postcode).trigger('input');
+                            }
+                            if (data.address.state) $('#CustomerState').val(data.address.state);
+                            if (data.address.country) $('#CustomerCountry').val(data.address.country);
+                            if (data.address.city || data.address.state_district) $('#city').val(data.address.city || data.address.state_district);
+                        }
+                    }
+                },
+                error: function() { console.error("Geocoding failed"); }
+            });
+        }
+
+        function onMapClick(e) {
+            var lat = e.latlng.lat;
+            var lng = e.latlng.lng;
+
+            if (marker) {
+                marker.setLatLng(e.latlng);
+            } else {
+                marker = L.marker(e.latlng, { icon: redIcon }).addTo(map);
+            }
+            updateLocationInputs(lat, lng);
+            reverseGeocode(lat, lng);
+        }
+
+        map.on('click', onMapClick);
+
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                var lat = position.coords.latitude;
+                var lng = position.coords.longitude;
+                map.setView([lat, lng], 15);
+                if (marker) {
+                    marker.setLatLng([lat, lng]);
+                } else {
+                    marker = L.marker([lat, lng], { icon: redIcon }).addTo(map);
+                }
+                updateLocationInputs(lat, lng);
+                reverseGeocode(lat, lng);
+            });
+        }
+
+    });
+
+    function handleIndustryChange(selectElement) {
+        if (selectElement.value === 'Other') {
+            document.getElementById('industryOverlay').style.display = 'block';
+            document.getElementById('industryModal').style.display = 'block';
+            document.getElementById('customIndustryInput').value = '';
+            document.getElementById('customIndustryInput').focus();
+        }
+    }
+
+    function saveCustomIndustry() {
+        let customValue = document.getElementById('customIndustryInput').value.trim();
+        let selectElement = document.getElementById('Industry');
+
+        if (customValue !== "") {
+            let exists = Array.from(selectElement.options).some(opt => opt.value.toLowerCase() === customValue.toLowerCase());
+
+            if (!exists) {
+                let newOption = document.createElement("option");
+                newOption.value = customValue;
+                newOption.text = customValue;
+                let otherOptionIndex = selectElement.options.length - 1;
+                selectElement.add(newOption, selectElement.options[otherOptionIndex]);
+            }
+            selectElement.value = customValue;
+        } else {
+            selectElement.selectedIndex = 0;
+        }
+        closeIndustryModal();
+    }
+
+    function closeIndustryModal() {
+        document.getElementById('industryOverlay').style.display = 'none';
+        document.getElementById('industryModal').style.display = 'none';
+
+        let selectElement = document.getElementById('Industry');
+        if (selectElement.value === 'Other') {
+            selectElement.selectedIndex = 0;
+        }
+    }
+</script>

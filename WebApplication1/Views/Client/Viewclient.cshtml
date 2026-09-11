@@ -1,0 +1,687 @@
+@using HoossH_Services.Models
+@using System.Security.Claims
+@inject IHttpContextAccessor HttpContextAccessor
+@using Microsoft.AspNetCore.Http
+
+@{
+    ViewBag.Title = "View Client";
+    Layout = "~/Views/Shared/_LayoutINV.cshtml";
+    var user = HttpContextAccessor.HttpContext?.User;
+    var role = user?.FindFirst(ClaimTypes.Role)?.Value;
+    var selectedId = ViewBag.SelectedUserId as Guid? ?? Guid.Empty;
+    var activeTabSafe = ViewBag.ActiveTab as bool? ?? false;
+}
+
+@model Client
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<link rel="stylesheet" href="/css/Pipeline.css">
+
+<style>
+    .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+        gap: 12px;
+        margin-bottom: 15px;
+        background: #f8fafc;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .metric-item span {
+        font-size: 11px;
+        color: #64748b;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .metric-item strong {
+        display: block;
+        color: #0f172a;
+        font-size: 13px;
+        margin-top: 4px;
+    }
+
+    .suspect-expanded-box {
+        display: none;
+        padding: 15px;
+        border-top: 1px solid #f1f5f9;
+    }
+</style>
+
+
+@await Html.PartialAsync("_suspect", new List<SuspectNavItem>
+{
+    new SuspectNavItem { Text = "Add Client", Url = "/Client/AddClient", Icon = "fas fa-user-plus" },
+    new SuspectNavItem { Text = "View Client", Url = "/Client/ViewClient", Icon = "fas fa-users" }
+})
+
+<div class="premium-container w-auto mx-lg-5">
+    <!-- 3. DATA LIST CONTAINER -->
+    <div id="leadContainer">
+        <div class="hero-content animate__animated animate__fadeIn" id="initialPlaceholder">
+            <div class="hero-icon-main"><i class="fa-solid fa-users"></i></div>
+            <h1 class="soft-heading">Suspect Dashboard</h1>
+            <p>Manage your suspects easily. Click any card below to expand details and perform quick actions.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    let loadedSuspects = [];
+    let isDataLoaded = false;
+    let isLoading = false;
+    let hasMoreRecords = true;
+    let currentPageIndex = 1;
+    let pageSize = 150; 
+
+    let currentLayout = localStorage.getItem('erp_view_pref_Customer') || 'card';
+    let currentPayload = { sort: 'date_desc', view: currentLayout, search: '', salesPersonId: '@(selectedId)' };
+    let currentMeetingTypeFilter = 'all';
+    let selectedAlphabet = 'all';
+
+    let dataactive = @((activeTabSafe).ToString().ToLower());
+    let selectedSalesPersonId = '@(selectedId)';
+
+    let userRole = '@(role ?? "")';
+    let isManager = (userRole === 'SalesManager');
+
+    function makeSafeId(str) { return str ? str.toString().replace(/[^a-zA-Z0-9]/g, '_') : 'unknown'; }
+
+    const formatCurrency = (val) => {
+        if (!val) return '₹0';
+        return '₹' + parseFloat(val).toLocaleString('en-IN', { maximumFractionDigits: 0 });
+    };
+
+    // 🟢 1. MAP SUSPECT DATA
+    function mapSuspectData(item) {
+        let rawDate = item.rawDate || item.VisitDate || null;
+        let dueDays = 0;
+
+        if (rawDate) {
+            let visitDateObj = new Date(rawDate);
+            let today = new Date();
+            visitDateObj.setHours(0, 0, 0, 0);
+            today.setHours(0, 0, 0, 0);
+            let timeDiff = today.getTime() - visitDateObj.getTime();
+            dueDays = Math.floor(timeDiff / (1000 * 3600 * 24)) + 1;
+            if (dueDays < 0) dueDays = 0;
+        }
+
+        let dueTextColor = "#10b981"; // green
+        let borderStatus = "status-safe";
+
+        if (dueDays >= 30) {
+            borderStatus = "status-critical";
+            dueTextColor = "#ef4444"; // red
+        }
+        else if (dueDays >= 15) {
+            borderStatus = "status-warning";
+            dueTextColor = "#f59e0b"; // orange
+        }
+
+        let formattedDate = 'N/A';
+        let dayStr = '--';
+        let monthStr = 'N/A';
+
+        if (rawDate) {
+            let d = new Date(rawDate);
+            if (!isNaN(d.getTime())) {
+                dayStr = String(d.getDate()).padStart(2, '0');
+                monthStr = d.toLocaleString('en-US', { month: 'short' });
+                formattedDate = `${dayStr} ${monthStr}`;
+            }
+        }
+
+        let isActive = (item.isActive === 1 || item.IsActive === 1 || item.isActive === true);
+
+        let spId = item.loginId || item.LoginId || item.salesPersonId || item.SalesPersonId || 'unassigned_sp';
+        let spName = item.salesPersonName || item.SalesPersonName || item.EmpName || item.empName || '';
+
+        if (!spName || spName === '') {
+            let domName = $('.sales-item[data-id="' + spId + '"]').text().replace('-- All --', '').trim();
+            if (domName !== '') spName = domName;
+        }
+        if (!spName || spName === '') spName = 'Unassigned Suspect';
+
+        let territory = item.territoryName || item.TerritoryName || 'Unassigned Territory';
+        let rawOrgName = item.custName || item.CustName || item.CustomerName || item.customerName || item.organizationName || 'Unknown Organization';
+        let industryVal = item.industry || item.Industry || item.industryType || item.IndustryType || '';
+        let displayOrgName = (industryVal && industryVal.toString().trim() !== '') ? `${rawOrgName} (${industryVal})` : rawOrgName;
+
+        return {
+            id: item.id || item.Id || item.CustomerID || item.customerId || '',
+            custName: displayOrgName,
+            contact: item.contact || item.Contact || 'N/A',
+            area: item.area || item.Area || 'No location specified',
+            phone: item.phone || item.Phone || '',
+            rawDate: rawDate || 0,
+            createdOn: formattedDate,
+            visitDay: dayStr,
+            visitMonth: monthStr,
+            dueDays: dueDays,
+            dueTextColor: dueTextColor,
+            borderStatus: borderStatus,
+            spName: spName,
+            territory: territory,
+            spId: spId,
+            profileImage: item.ProfileImage || item.profileImage || '',
+            liveEnquiryCount: item.liveEnquiryCount || 0,
+            liveEnquiryAmount: item.liveEnquiryAmount || 0,
+            liveQualifiedCount: item.liveQualifiedCount || 0,
+            liveQualifiedAmount: item.liveQualifiedAmount || 0,
+            liveOrderCount: item.liveOrderCount || 0,
+            liveOrderAmount: item.liveOrderAmount || 0,
+            liveInvoiceCount: item.liveInvoiceCount || 0,
+            liveInvoiceAmount: item.liveInvoiceAmount || 0,
+            totalVisits: item.totalVisits || 0
+        };
+    }
+
+    $(document).ready(function() {
+        isDataLoaded = true;
+        $('#initialPlaceholder').hide();
+        fetchDataFromBackend(false);
+
+        $(document).off('onHeaderLoadData').on('onHeaderLoadData', function(event, payload) {
+            isDataLoaded = true;
+            $('#initialPlaceholder').hide();
+            currentMeetingTypeFilter = 'all';
+            $('.filter-capsule').removeClass('active');
+            $('.filter-capsule[data-type="all"]').addClass('active');
+            currentPageIndex = 1;
+            hasMoreRecords = true;
+            fetchDataFromBackend(false);
+        });
+
+        $('.alpha-btn-standalone').on('click', function() {
+            if (!isDataLoaded) return;
+            $('.alpha-btn-standalone').removeClass('active');
+            $(this).addClass('active');
+            selectedAlphabet = $(this).data('letter');
+            currentPageIndex = 1;
+            hasMoreRecords = true;
+            fetchDataFromBackend(false);
+        });
+
+        $('.filter-capsule').on('click', function() {
+            if (!isDataLoaded) { isDataLoaded = true; $('#initialPlaceholder').hide(); }
+            $('.filter-capsule').removeClass('active');
+            $(this).addClass('active');
+            currentMeetingTypeFilter = $(this).data('type');
+            currentPageIndex = 1;
+            hasMoreRecords = true;
+            fetchDataFromBackend(false);
+        });
+
+        $(document).off('onToolbarChange').on('onToolbarChange', function(event, state) {
+            if (!isDataLoaded) return;
+
+            let isOnlyViewChange = (
+                currentPayload.sort === state.sort &&
+                currentPayload.status === state.status &&
+                currentPayload.search === state.search &&
+                currentPayload.salesPersonId === state.salesPersonId &&
+                currentLayout !== state.view
+            );
+
+            currentLayout = state.view || 'card';
+            currentPayload = state;
+
+            if (isOnlyViewChange) {
+                let openAccordions = [];
+                $('.sp-accordion-card.active').each(function() {
+                    openAccordions.push($(this).attr('id'));
+                });
+
+                renderActualHTML(loadedSuspects, false);
+
+                openAccordions.forEach(id => {
+                    let card = $('#' + id);
+                    if (card.length) {
+                        card.addClass('active');
+                        card.find('.sp-body').show();
+                        card.find('.sp-toggle-icon i').removeClass('fa-chevron-down').addClass('fa-chevron-up');
+                    }
+                });
+            } else {
+                currentPageIndex = 1;
+                hasMoreRecords = true;
+                fetchDataFromBackend(false);
+            }
+        });
+
+        // 🟢 EXPORT FUNCTIONALITY
+        $(document).off('onExportData').on('onExportData', function(event, payload) {
+            if (!loadedSuspects || loadedSuspects.length === 0) {
+                if (typeof window.showStandardExportPopup === 'function') window.showStandardExportPopup('nodata', 'There are no suspects loaded to export.');
+                else alert("No data available to export!");
+                return;
+            }
+
+            let exportBtn = $('#exportDataBtn');
+            let originalText = exportBtn.html();
+            exportBtn.html('<i class="fas fa-spinner fa-spin"></i> Downloading...');
+            exportBtn.prop('disabled', true);
+
+            setTimeout(function() {
+                try {
+                    let excelData = loadedSuspects.map((item, idx) => ({
+                        "S.No": idx + 1,
+                        "Sales Person": item.spName,
+                        "Territory": item.territory,
+                        "Organization Name": item.custName || "N/A",
+                        "Contact Person": item.contact || "N/A",
+                        "Phone Number": item.phone || "N/A",
+                        "Area / Location": item.area || "N/A",
+                        "Days Due": item.status === 'inactive' ? "-" : (item.dueDays ? item.dueDays + " Days" : "0 Days"),
+                        "Total Visits": item.totalVisits || 0,
+                        "Live Enquiry Count": item.liveEnquiryCount || 0,
+                        "Live Enquiry Amount": item.liveEnquiryAmount || 0,
+                        "Live Qualified Count": item.liveQualifiedCount || 0,
+                        "Live Qualified Amount": item.liveQualifiedAmount || 0,
+                        "Live Order Count": item.liveOrderCount || 0,
+                        "Live Order Amount": item.liveOrderAmount || 0,
+                        "Live Invoice Count": item.liveInvoiceCount || 0,
+                        "Live Invoice Amount": item.liveInvoiceAmount || 0,
+                        "Created On": item.createdOn || "N/A"
+                    }));
+
+                    let worksheet = XLSX.utils.json_to_sheet(excelData);
+                    worksheet['!cols'] = [
+                        { wch: 6 }, { wch: 20 }, { wch: 20 }, { wch: 30 }, { wch: 20 },
+                        { wch: 15 }, { wch: 25 }, { wch: 12 }, { wch: 12 },
+                        { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 15 },
+                        { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 15 }
+                    ];
+                    let workbook = XLSX.utils.book_new();
+                    XLSX.utils.book_append_sheet(workbook, worksheet, "Suspects Data");
+                    let dateStr = new Date().toISOString().slice(0, 10);
+                    XLSX.writeFile(workbook, `Suspects_Export_${dateStr}.xlsx`);
+
+                    exportBtn.html(originalText);
+                    exportBtn.prop('disabled', false);
+
+                    if (typeof window.showStandardExportPopup === 'function') window.showStandardExportPopup('success');
+                } catch (error) {
+                    exportBtn.html(originalText);
+                    exportBtn.prop('disabled', false);
+                    if (typeof window.showStandardExportPopup === 'function') window.showStandardExportPopup('error', 'Failed to generate Excel file.');
+                    else alert("Failed to generate Excel file.");
+                }
+            }, 300);
+        });
+
+        $(document).on('change', '#fromDate, #toDate', function() {
+            let fDate = $('#fromDate').val();
+            let tDate = $('#toDate').val();
+            if ((fDate && !tDate) || (!fDate && tDate)) return;
+            if (isDataLoaded) {
+                currentPageIndex = 1; hasMoreRecords = true; fetchDataFromBackend(false);
+            }
+        });
+
+        $(window).scroll(function() {
+            if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
+                if (!isLoading && hasMoreRecords && isDataLoaded) {
+                    currentPageIndex++; fetchDataFromBackend(true);
+                }
+            }
+        });
+    });
+
+    // 🟢 2. FETCH FROM BACKEND
+    function fetchDataFromBackend(isAppending) {
+        if (!isAppending) {
+            loadedSuspects = [];
+            $('#leadContainer').html(`
+                    <div class="animate__animated animate__fadeIn" style="display:flex; justify-content:center; align-items:center; height:200px;">
+                        <i class="fas fa-spinner fa-spin" style="font-size:30px; color:#3f6791;"></i>
+                    </div>
+                `);
+        } else {
+            if ($('#bottomScrollLoader').length === 0) {
+                $('#leadContainer').append(`<div id="bottomScrollLoader" style="text-align:center; padding:20px; color:#94a3b8; font-weight:600;"><i class="fas fa-spinner fa-spin"></i> Loading more suspects...</div>`);
+            }
+        }
+        isLoading = true;
+
+        let fDate = $('#fromDate').val() || null;
+        let tDate = $('#toDate').val() || null;
+        let activeSalesPersonId = currentPayload.salesPersonId !== undefined && currentPayload.salesPersonId !== '' ? currentPayload.salesPersonId : selectedSalesPersonId;
+
+        $.ajax({
+            url: `/Customer/ProspectSummaryData`, // 👈 Your API endpoint
+            type: 'POST',
+            data: {
+                status: currentPayload.status || 'all',
+                search: currentPayload.search || '',
+                sort: currentPayload.sort || 'date_desc',
+                view: currentPayload.view || 'card',
+                alphabet: selectedAlphabet,
+                meetingType: currentMeetingTypeFilter,
+                fromDate: fDate,
+                toDate: tDate,
+                pageIndex: currentPageIndex,
+                pageSize: pageSize,
+                salesPersonId: activeSalesPersonId
+            },
+            success: function(response) {
+                isLoading = false;
+                $('#bottomScrollLoader').remove();
+
+                if (response.summary) {
+                    $('.card-action .val').text(response.summary.totalRecords || 0);
+                    $('.card-volume .val').text(response.summary.totalVolume || 0);
+                    $('.card-value .val').text(formatCurrency(response.summary.totalAmount || 0));
+                    $('#dynamicTotalCount').text(response.summary.totalRecords || 0);
+                }
+
+                let dataArray = response.data || response;
+                if (Array.isArray(dataArray)) {
+                    if (dataArray.length < pageSize) hasMoreRecords = false;
+
+                    let newMappedData = dataArray.map(item => mapSuspectData(item));
+
+                    if (isAppending) {
+                        newMappedData.forEach(newItem => {
+                            if (!loadedSuspects.some(existing => existing.id === newItem.id && newItem.id !== '')) {
+                                loadedSuspects.push(newItem);
+                            }
+                        });
+                    } else {
+                        loadedSuspects = newMappedData;
+                    }
+
+                    if (dataArray.length === 0 && !isAppending) {
+                        renderEmptyState();
+                        return;
+                    }
+                    renderActualHTML(newMappedData, isAppending);
+                } else {
+                    hasMoreRecords = false;
+                    if (!isAppending) renderEmptyState();
+                }
+            },
+            error: function() {
+                isLoading = false; $('#bottomScrollLoader').remove();
+                if (!isAppending) {
+                    $('#leadContainer').html('<div class="empty-state-container"><div class="empty-state-icon"><i class="fas fa-exclamation-triangle"></i></div><div class="empty-state-title">Error Loading Data</div></div>');
+                }
+            }
+        });
+    }
+
+    function renderEmptyState() {
+        $('#leadContainer').html(`
+                <div class="empty-state-container animate__animated animate__fadeIn">
+                    <div class="empty-state-icon"><i class="fas fa-search"></i></div>
+                    <div class="empty-state-title">No Suspects Found</div>
+                    <div class="empty-state-desc">Try adjusting your search query, dates, or alphabet filter.</div>
+                </div>`);
+    }
+
+    // 🟢 3. HTML GENERATOR (CARD, GRID, TABLE)
+    function generateSuspectsHtml(items, viewType) {
+        let html = '';
+        if (!items || items.length === 0) return html;
+
+        items.forEach((data, i) => {
+            let callBtn = data.phone ? `<a href="tel:${data.phone}" class="btn-action btn-call" onclick="event.stopPropagation();"><i class="fas fa-phone-alt"></i> Call</a>` : '';
+            let leftBadges = `<span class="suspect-badge badge-contact"><i class="far fa-user"></i> ${data.contact}</span>`;
+            let rightSideStats = `<div class="suspect-stat-num" style="color: ${data.dueTextColor};">${data.dueDays}</div><div class="suspect-stat-label">DAYS DUE</div>`;
+
+            if (viewType === 'table') {
+                let tableDaysDue = `${data.dueDays} Days`;
+                html += `
+                        <tr class="suspect-item-tr" onclick="toggleTableUpdateRow('${data.id}')" style="cursor:pointer;">
+                            <td style="font-weight:700; color:#0f172a; font-size:13px;">
+                                <div style="display:flex; align-items:center; gap:10px;">
+                                    <div style="width:28px; height:28px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#64748b; font-size:11px;"><i class="fas fa-building"></i></div>
+                                    ${data.custName}
+                                </div>
+                            </td>
+                            <td style="font-weight:600; color:#475569; font-size:12px;">${data.contact}</td>
+                            <td style="text-align:center; font-weight:700; color:${data.dueTextColor}; font-size:13px;">${tableDaysDue}</td>
+                            <td style="text-align:center;">
+                                <div style="display:flex; justify-content:flex-end; gap:10px;">
+                                    ${callBtn}
+                                    <a href="/Flow/CreateRoute?customerid=${data.id}" class="btn-action btn-route" style="flex:none; width:auto; padding:6px 14px;"><i class="fas fa-directions"></i> Route</a>
+                                    <a href="https://maps.google.com/?q=${encodeURIComponent(data.area)}" target="_blank" class="btn-action btn-map" style="flex:none; width:auto; padding:6px 14px;"><i class="fas fa-map-marker-alt" style="color: #ef4444; font-size: 1.2rem;"></i> Map</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <!-- 🟢 BUG FIX: ADDED EXPANSION ROW FOR TABLE -->
+                        <tr id="expand_${data.id}" class="expandable-table-row" style="display:none;">
+                            <td colspan="4" style="padding:0; border:none; background:#f8fafc;">
+                                <div class="table-expanded-content" style="display:none; padding:15px; border-bottom:1px solid #e2e8f0;">
+                                    <div class="metrics-grid" style="margin-bottom:0; background:#fff;">
+                                        <div class="metric-item"><span>Total Visits</span><strong>${data.totalVisits}</strong></div>
+                                        <div class="metric-item"><span>Enquiries</span><strong>${data.liveEnquiryCount} <span style="color:#10b981">(${formatCurrency(data.liveEnquiryAmount)})</span></strong></div>
+                                        <div class="metric-item"><span>Qualified</span><strong>${data.liveQualifiedCount} <span style="color:#3b82f6">(${formatCurrency(data.liveQualifiedAmount)})</span></strong></div>
+                                        <div class="metric-item"><span>Orders</span><strong>${data.liveOrderCount} <span style="color:#f59e0b">(${formatCurrency(data.liveOrderAmount)})</span></strong></div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>`;
+            } else if (viewType === 'grid') {
+                let gridRightStats = `<span class="ui-status-lbl">Due Days</span><span class="ui-status-val" style="color:${data.dueTextColor}; font-size:18px;">${data.dueDays}</span>`;
+                html += `
+                        <div class="ui-card animate__animated animate__fadeInUp" style="animation-delay: ${(i % 15) * 0.02}s;">
+                            <div class="ui-card-top">
+                                <div class="ui-center">
+                                    <h4 style="font-size:15px; font-weight:700; color:#1e293b; margin:0 0 6px 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${data.custName}">${data.custName}</h4>
+                                    <p style="color:#64748b; font-size:12px; margin:0 0 5px 0;"><i class="fas fa-user" style="margin-right:6px; color:#94a3b8;"></i>${data.contact}</p>
+                                    <!-- 🟢 LIVE METRICS ROW FOR GRID -->
+                                    <div style="display:flex; gap:12px; margin-top:8px; font-size:11px; color:#64748b; font-weight:600;">
+                                        <span><i class="fas fa-shoe-prints" style="color:#3b82f6"></i> Vst: ${data.totalVisits}</span>
+                                        <span><i class="fas fa-file-alt" style="color:#f59e0b"></i> Enq: ${data.liveEnquiryCount}</span>
+                                    </div>
+                                </div>
+                                <div class="ui-status-side">${gridRightStats}</div>
+                            </div>
+                            <div class="ui-divider"></div>
+                            <div class="ui-actions">
+                                ${callBtn}
+                                <a href="/Flow/CreateRoute?customerid=${data.id}" class="btn-action btn-route" title="Route Planner"><i class="fas fa-directions"></i> Route</a>
+                                <a href="https://maps.google.com/?q=${encodeURIComponent(data.area)}" target="_blank" class="btn-action btn-map" title="View Map"><i class="fas fa-map-marker-alt" style="color: #ef4444; font-size: 1.2rem;"></i> Map</a>
+                            </div>
+                        </div>`;
+            } else {
+                // LIST VIEW (Card View)
+                html += `
+                        <div class="suspect-item-modern animate__animated animate__fadeInUp" style="animation-delay: ${(i % 15) * 0.02}s">
+                            <div class="suspect-card-body" onclick="toggleRow(this)">
+                                <div class="sp-Avtar-box"><div class="sp-user-icon" style="color:var(--accent-blue)"><i class="far fa-building suspect-org-icon"></i></div></div>
+                                <div class="suspect-card-left">
+                                    <div class="suspect-name-row"><span class="suspect-name-text">${data.custName}</span></div>
+                                    <div class="suspect-badges-row">${leftBadges}</div>
+                                </div>
+                                <div class="suspect-card-right">
+                                    ${rightSideStats}
+                                    <i class="fas fa-chevron-down suspect-chevron"></i>
+                                </div>
+                            </div>
+                            <div class="suspect-expanded-box">
+                                <!-- 🟢 ADDED METRICS TO CARD EXPANSION -->
+                                <div class="metrics-grid">
+                                    <div class="metric-item"><span>Total Visits</span><strong>${data.totalVisits}</strong></div>
+                                    <div class="metric-item"><span>Enquiries</span><strong>${data.liveEnquiryCount} (${formatCurrency(data.liveEnquiryAmount)})</strong></div>
+                                    <div class="metric-item"><span>Qualified</span><strong>${data.liveQualifiedCount} (${formatCurrency(data.liveQualifiedAmount)})</strong></div>
+                                    <div class="metric-item"><span>Orders</span><strong>${data.liveOrderCount} (${formatCurrency(data.liveOrderAmount)})</strong></div>
+                                </div>
+                                <div class="card-actions">
+                                    ${callBtn}
+                                    <a href="/Flow/CreateRoute?customerid=${data.id}" class="btn-action btn-route" onclick="event.stopPropagation();"><i class="fas fa-directions"></i> RoutePlanner</a>
+                                    <a href="https://maps.google.com/?q=${encodeURIComponent(data.area)}" target="_blank" class="btn-action btn-map" onclick="event.stopPropagation();"><i class="fas fa-map-marker-alt" style="color: #ef4444; font-size: 1.2rem;"></i> ${data.area}</a>
+                                </div>
+                            </div>
+                        </div>`;
+            }
+        });
+        return html;
+    }
+
+    // 🟢 4. MAIN RENDER FUNCTION
+    function renderActualHTML(mappedData, isAppending) {
+        const container = $('#leadContainer');
+        if (!isAppending) container.empty();
+
+        if (isManager) {
+            let groupedData = {};
+
+            mappedData.forEach(data => {
+                let spKey = data.spId || 'unassigned_sp';
+
+                if (!groupedData[spKey]) {
+                    groupedData[spKey] = {
+                        spId: spKey,
+                        spName: data.spName,
+                        profileImage: data.profileImage,
+                        items: []
+                    };
+                }
+                groupedData[spKey].items.push(data);
+            });
+
+            for (const spKey in groupedData) {
+                let group = groupedData[spKey];
+                let spItems = group.items;
+                let safeSpId = 'sp_' + makeSafeId(spKey);
+                let existingAccordion = $(`#${safeSpId}`);
+
+                if (existingAccordion.length > 0 && isAppending) {
+                    let countEl = existingAccordion.find('.sp-count-number').first();
+                    countEl.text(parseInt(countEl.text()) + spItems.length);
+
+                    let itemsHtml = generateSuspectsHtml(spItems, currentPayload.view);
+
+                    if (currentPayload.view === 'table') {
+                        existingAccordion.find('tbody').append(itemsHtml);
+                    } else if (currentPayload.view === 'grid') {
+                        existingAccordion.find('.standard-grid-view').append(itemsHtml);
+                    } else {
+                        existingAccordion.find('.suspect-list').append(itemsHtml);
+                    }
+                } else {
+                    let uniqueTerritories = [...new Set(spItems.map(i => i.territory).filter(Boolean))];
+                    let territoryText = uniqueTerritories.length > 0 ? uniqueTerritories.join(", ") : "Unassigned Territory";
+
+                    let spImg = group.profileImage;
+                    let avatarHtml = spImg && spImg.trim() !== ''
+                        ? `<img src="data:image/jpeg;base64,${spImg}" class="sp-profile-img" alt="Profile" />`
+                        : `<img src="/Images/Sadie_Sink.jpg" class="sp-profile-img" alt="Default" />`;
+
+                    let innerHtml = '';
+                    let itemsHtml = generateSuspectsHtml(spItems, currentPayload.view);
+
+                    if (currentPayload.view === 'table') {
+                        innerHtml = `<div class="table-responsive"><table class="enquiry-table"><thead><tr><th>Organization</th><th>Contact</th><th style="text-align:center;">Days Due</th><th style="text-align:end;">Action</th></tr></thead><tbody>${itemsHtml}</tbody></table></div>`;
+                    } else if (currentPayload.view === 'grid') {
+                        innerHtml = `<div class="standard-grid-view">${itemsHtml}</div>`;
+                    } else {
+                        innerHtml = `<div class="suspect-list">${itemsHtml}</div>`;
+                    }
+
+                    let accordionHtml = `
+                            <div class="sp-accordion-card salesperson-group animate__animated animate__fadeInUp" id="${safeSpId}">
+                                <div class="sp-header" onclick="toggleSalespersonAccordion(this)">
+                                    <div class="sp-Avtar-box">${avatarHtml}</div>
+                                    <div class="sp-left-box">
+                                        <div class="sp-name-area">
+                                            <h4 class="sp-name">${group.spName}</h4>
+                                            <div class="sp-stats">
+                                                <span class="sp-stat-pill" title="${territoryText}">
+                                                    <i class="fa-solid fa-location-dot" style="color:#2563eb;"></i> ${territoryText}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="sp-right-box">
+                                        <div class="sp-count-number group-count-display">${spItems.length}</div>
+                                        <div class="sp-toggle-icon"><i class="fas fa-chevron-down"></i></div>
+                                    </div>
+                                </div>
+                                <div class="sp-body" style="display:none; background:#f8fafc;">${innerHtml}</div>
+                            </div>`;
+
+                    container.append(accordionHtml);
+                }
+            }
+        } else {
+            let itemsHtml = generateSuspectsHtml(mappedData, currentPayload.view);
+            if (isAppending) {
+                if (currentPayload.view === 'table') container.find('tbody').append(itemsHtml);
+                else if (currentPayload.view === 'grid') container.find('.standard-grid-view').append(itemsHtml);
+                else container.find('.suspect-list').append(itemsHtml);
+            } else {
+                let wrapperHtml = '';
+                if (currentPayload.view === 'table') {
+                    wrapperHtml = `<div class="table-responsive"><table class="enquiry-table"><thead><tr><th>Organization</th><th>Contact</th><th style="text-align:center;">Days Due</th><th style="text-align:center;">Action</th></tr></thead><tbody>${itemsHtml}</tbody></table></div>`;
+                } else if (currentPayload.view === 'grid') {
+                    wrapperHtml = `<div class="standard-grid-view">${itemsHtml}</div>`;
+                } else {
+                    wrapperHtml = `<div class="suspect-list">${itemsHtml}</div>`;
+                }
+                container.html(wrapperHtml);
+            }
+        }
+    }
+
+    // 🟢 5. TOGGLES
+    function toggleSalespersonAccordion(element) {
+        const card = $(element).closest('.sp-accordion-card');
+        const body = card.find('.sp-body');
+        const icon = card.find('.sp-toggle-icon i');
+        const isActive = card.hasClass('active');
+
+        $('.sp-accordion-card.active').not(card).each(function() {
+            $(this).removeClass('active');
+            $(this).find('.sp-body').slideUp(200);
+            $(this).find('.sp-toggle-icon i').removeClass('fa-chevron-up').addClass('fa-chevron-down');
+        });
+
+        if (isActive) {
+            card.removeClass('active'); body.slideUp(200);
+            icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
+        } else {
+            card.addClass('active'); body.slideDown(200);
+            icon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
+        }
+    }
+
+    function toggleRow(el) {
+        let currentRow = $(el).closest('.suspect-item-modern');
+        let expandedBox = currentRow.find('.suspect-expanded-box');
+        let isVisible = expandedBox.is(':visible');
+        $('.suspect-expanded-box').slideUp(220);
+        $('.suspect-item-modern').removeClass('active');
+        if (!isVisible) { expandedBox.slideDown(220); currentRow.addClass('active'); }
+    }
+
+    // 🟢 BUG FIX: Fixed Table Expansion Logic
+    function toggleTableUpdateRow(id) {
+        let expandRow = $('#expand_' + id);
+        if (!expandRow.length) return;
+
+        let contentBox = expandRow.find('.table-expanded-content');
+        let isVisible = contentBox.is(':visible');
+
+        // Close all other expanded table rows first
+        $('.table-expanded-content').slideUp(200, function() {
+            $(this).closest('tr').hide();
+        });
+
+        if (!isVisible) {
+            expandRow.show();
+            contentBox.slideDown(200);
+        }
+    }
+</script>
