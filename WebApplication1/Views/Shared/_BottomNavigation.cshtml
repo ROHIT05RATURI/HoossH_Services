@@ -1,0 +1,137 @@
+﻿
+
+<style>
+    :root {
+        --primary: #3f6791;
+        --primary-hover: #3d839b;
+        --primary-light: #5c86b5;
+        --primary-faded: #b1c6e0;
+        --primary-bg: #eef2f7;
+        --bg-body: #f7f9fc;
+        --bg-card: #ffffff;
+        --text-dark: #1e293b;
+        --text-light: #64748b;
+        --text-xs: #94a3b8;
+        --green-bg: #ecfdf5;
+        --green-txt: #10b981;
+        --blue-bg: #eff6ff;
+        --blue-txt: #3b82f6;
+        --orange-bg: #fff7ed;
+        --orange-txt: #f97316;
+        --red-bg: #fef2f2;
+        --red-txt: #ef4444;
+        --purple-bg: #faf5ff;
+        --purple-txt: #a855f7;
+        --border-light: #f1f5f9;
+        --shadow-soft: 0 8px 24px rgba(149, 157, 165, 0.08);
+        font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+        padding-bottom: 75px !important;
+    }
+
+    .bottom-app-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: #ffffff;
+        box-shadow: 0 -4px 25px rgba(0, 0, 0, 0.08);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 10px 7px 10px;
+        z-index: 9999;
+        border-top-left-radius: 24px;
+        border-top-right-radius: 24px;
+    }
+
+    .nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-decoration: none;
+        color: #94a3b8;
+        font-size: 0.65rem;
+        font-weight: 700;
+        gap: 4px;
+        transition: 0.3s ease;
+        flex: 1;
+    }
+
+        .nav-item i {
+            font-size: 1.2rem;
+            padding: 8px 16px;
+            border-radius: 14px;
+            transition: 0.3s ease;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            color: var(--primary);
+        }
+
+            .nav-item.active i {
+                background: var(--primary-bg);
+                color: var(--primary);
+            }
+
+</style>
+
+<nav class="bottom-app-bar">
+    <!-- Replace "Home", "Index" with your actual Home Controller and Action names -->
+    <a href="@Url.Action("Index", "Home")" class="nav-item">
+        <i class="fas fa-home"></i>
+        <span>Home</span>
+    </a>
+
+    <a href="javascript:void(0);" onclick="handleMeetingClick(event)" class="nav-item">
+        <i class="fas fa-handshake"></i>
+        <span>Meeting</span>
+    </a>
+
+    <!-- Replace "Visit", "Index" with your actual Visit Controller and Action names -->
+    <a href="@Url.Action("Index", "Visit")" class="nav-item">
+        <i class="fas fa-map-marker-alt"></i>
+        <span>Visit</span>
+    </a>
+
+    <!-- Replace "HRMS", "Index" with your actual HRMS Controller and Action names -->
+    <a href="@Url.Action("Index", "HRMS")" class="nav-item">
+        <i class="fas fa-id-badge"></i>
+        <span>HRMS</span>
+    </a>
+
+    <!-- Replace "Profile", "Index" with your actual Profile Controller and Action names -->
+    <a href="@Url.Action("Index", "Profile")" class="nav-item">
+        <i class="fas fa-user-circle"></i>
+        <span>Profile</span>
+    </a>
+</nav>
+
+<script>
+    function handleMeetingClick(event) {
+        event.preventDefault();
+        $.ajax({
+            url: '/Flow/CheckOngoingMeeting',
+            type: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                if (response.success && response.hasMeeting) {
+                    window.location.href = '/Flow/CustomerReport?id=' + response.customerId;
+                } else {
+                    Swal.fire({
+                        title: "No Active Meeting",
+                        text: "There is no ongoing meeting at the moment.",
+                        icon: "warning",
+                        confirmButtonColor: "#3f6791",
+                        confirmButtonText: "OK"
+                    });
+                }
+            },
+            error: function() {
+                window.location.href = '/Flow/CustomerReport';
+            }
+        });
+    }
+</script>
