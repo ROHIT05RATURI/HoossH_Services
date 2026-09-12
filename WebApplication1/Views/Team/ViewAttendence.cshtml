@@ -4,6 +4,26 @@
     Layout = "~/Views/Shared/_LayoutINV.cshtml";
 }
 
+@{
+    int selectedMonth;
+    int selectedYear;
+
+    if (!int.TryParse(Context.Request.Query["selectedMonth"], out selectedMonth) || selectedMonth < 1 || selectedMonth > 12)
+    {
+        selectedMonth = DateTime.Today.Month;
+    }
+
+    if (!int.TryParse(Context.Request.Query["year"], out selectedYear) || selectedYear < 1)
+    {
+        selectedYear = DateTime.Today.Year;
+    }
+
+    var daysInMonth = DateTime.DaysInMonth(selectedYear, selectedMonth);
+    var firstOfMonth = new DateTime(selectedYear, selectedMonth, 1);
+    int startDayOfWeek = (int)firstOfMonth.DayOfWeek; // 0 = Sunday
+    int totalRows = (int)Math.Ceiling((startDayOfWeek + daysInMonth) / 7.0);
+}
+
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -60,28 +80,9 @@
                     <i class="fas fa-chevron-left"></i>
                 </button>
 
-              @*   <select name="selectedMonth" id="selectedMonth" class="month-picker-pill" onchange="this.form.submit()">
-                    @for (int m = 1; m <= 12; m++)
-                    {
-                        var joinDateStr = ViewBag.JoinDate as string;
-                        var joinDate = string.IsNullOrEmpty(joinDateStr) ? DateTime.MinValue : DateTime.Parse(joinDateStr);
-
-                        if (selectedYear < joinDate.Year || (selectedYear == joinDate.Year && m < joinDate.Month))
-                        {
-                            continue; // Skip months before joining
-                        }
-
-                        if (m == selectedMonth)
-                        {
-                            <option value="@m" selected>@((new DateTime(selectedYear, m, 1)).ToString("MMMM yyyy"))</option>
-                        }
-                        else
-                        {
-                            <option value="@m">@((new DateTime(selectedYear, m, 1)).ToString("MMMM yyyy"))</option>
-                        }
-                    }
-                </select> *@
-                @* <input type="hidden" name="year" id="selectedYear" value="@selectedYear" /> *@
+                @* Hidden inputs used by the month navigation JavaScript. Kept hidden instead of the full select to provide arrow navigation. *@
+                <input type="hidden" name="selectedMonth" id="selectedMonth" value="@selectedMonth" />
+                <input type="hidden" name="year" id="selectedYear" value="@selectedYear" />
 
                 <button type="button" class="month-nav-btn" onclick="navigateMonth(1)">
                     <i class="fas fa-chevron-right"></i>
@@ -101,7 +102,7 @@
                     <th>Sat</th>
                 </tr>
             </thead>
-             @*    <tbody>    @{
+                <tbody>  @{  
                     int currentDay = 1;
                     for (int r = 0; r < totalRows; r++)
                     {
@@ -116,7 +117,33 @@
                                 {
                                     var loopDate = new DateTime(selectedYear, selectedMonth, currentDay);
                                     var loopDateOnly = DateOnly.FromDateTime(loopDate);
-                                    var record = Model.Attendances?.FirstOrDefault(x => x.AttendanceDate == loopDateOnly);
+                                    var attendances = Model?.Attendances as System.Collections.IEnumerable;
+                                    dynamic record = null;
+                                    if (attendances != null)
+                                    {
+                                        // Iterate to find matching record without relying on dynamic LINQ lambda which can fail at compile-time
+                                        foreach (dynamic a in attendances)
+                                        {
+                                            try
+                                            {
+                                                // AttendanceDate may be DateOnly or DateTime; normalize for comparison
+                                                DateOnly ad;
+                                                if (a.AttendanceDate is DateOnly)
+                                                    ad = a.AttendanceDate;
+                                                else if (a.AttendanceDate is DateTime)
+                                                    ad = DateOnly.FromDateTime(a.AttendanceDate);
+                                                else
+                                                    continue;
+
+                                                if (ad == loopDateOnly)
+                                                {
+                                                    record = a;
+                                                    break;
+                                                }
+                                            }
+                                            catch { }
+                                        }
+                                    }
 
                                     string bgClass = "";
                                     string timeStr = "";
@@ -208,8 +235,8 @@
                     }
                 }
             </tbody>
-        *@'
-            </table> '
+       
+            </table> 
 
         <div class="legend-marquee-wrapper">
             <div class="attendance-legend">
