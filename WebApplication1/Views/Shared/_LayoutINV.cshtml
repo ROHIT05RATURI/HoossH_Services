@@ -24,25 +24,27 @@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
 
-    <link rel="stylesheet" href="~/css/LayoutINV/LayoutINV.css"/>
+    <link rel="stylesheet" href="~/css/LayoutINV/LayoutINV.css" />
 </head>
 
 <body class="hold-transition sidebar-mini sidebar-collapse layout-navbar-fixed">
 
-    @* @if (role == "SalesPerson" || role == "SalesManager")
-    {
-        <partial name="_BottomNavigation" />
-        <div class="bottom-nav justify-content-around align-items-center fixed-bottom" id="mainBottomNav">
-            <div id="dynamic-nav-container" class="d-flex justify-content-around flex-grow-1"></div>
-            <a asp-controller="Flow" asp-action="CustomerReport" class="text-center text-decoration-none text-dark" style="min-width: 60px;">
-                <div class="btn btn-light rounded-circle shadow-sm mx-auto mb-1 d-flex align-items-center justify-content-center"
-                     style="width: 38px; height: 38px; color: var(--primary-color);">
-                    <i class="fa-solid fa-handshake"></i>
-                </div>
-                <div style="font-size: 10px;">Meeting</div>
-            </a>
-        </div>
-    } *@
+    @{
+        var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+        var currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+
+        bool isDashboard = currentController.Equals("Dashboard", StringComparison.OrdinalIgnoreCase);
+        bool isAttendance = currentController.Equals("Team", StringComparison.OrdinalIgnoreCase)
+            && (currentAction.Equals("Attendence", StringComparison.OrdinalIgnoreCase)
+                || currentAction.Equals("ViewAttendence", StringComparison.OrdinalIgnoreCase));
+        bool isLeaves = currentController.Equals("Team", StringComparison.OrdinalIgnoreCase)
+            && (currentAction.Equals("LeaveManagement", StringComparison.OrdinalIgnoreCase)
+                || currentAction.Equals("ViewApprovedHistory", StringComparison.OrdinalIgnoreCase));
+        bool isHrmsSection = isAttendance || isLeaves;
+        bool isVisits = currentController.Equals("Visit", StringComparison.OrdinalIgnoreCase);
+        bool isClients = currentController.Equals("Client", StringComparison.OrdinalIgnoreCase);
+        bool isProducts = currentController.Equals("UserProduct", StringComparison.OrdinalIgnoreCase);
+    }
 
     <div id="global-loader" class="loader-overlay" style="display: none;">
         <div class="spinner"></div>
@@ -71,7 +73,7 @@
                         </a>
                     </li>
                     <li class="nav-item position-relative">
-                        <i class="fa-solid fa-user-circle fs-4 text-secondary cursor-pointer profile-icon" id="profileMenuTrigger"></i>
+                        <img src="~/images/service-man.jpg" alt="Rahul Kumar" class="profile-icon-img cursor-pointer" id="profileMenuTrigger" />
                         <div id="profileDropdown" class="profile-dropdown shadow-sm">
                             <a href="" class="dropdown-item"><i class="fas fa-user me-2"></i> Profile</a>
                             <a href="/Dashboard/AllDashboard" class="dropdown-item"><i class="fas fa-scroll me-2"></i> Kundali</a>
@@ -88,86 +90,63 @@
                 <div class="grow-nav-header">
                     <a class="nav-link text-secondary p-0 d-flex justify-content-between" data-widget="pushmenu" href="#" role="button">
                         <i class="fas fa-bars fs-5"></i>
-                    <img src="~/images/Icon.png" alt="HoossH Service" style="height: 28px;" />
+                        <span class="bee-wrapper">
+                            <span class="bee-fly-anim">
+                                <img src="~/images/Icon.png" alt="HoossH Service" class="bee-img bee-flutter" style="height: 28px;" />
+                            </span>
+                        </span>
                     </a>
                 </div>
 
                 <div class="fb-menu-container">
-                   
-                    
+
                     <div class="fb-menu-heading">
-                        <a href="@Url.Action("AllDashboard", "Dashboard")" class="text-decoration-none w-100 d-flex align-items-center text-dark url-link">
+                        <a href="@Url.Action("AllDashboard", "Dashboard")" class="text-decoration-none w-100 d-flex align-items-center text-dark url-link @(isDashboard ? "active" : "")">
                             <i class="fas fa-home grow-nav-icon"></i>
                             <span class="ms-2">Dashboard</span>
                         </a>
                     </div>
-                        <div class="fb-menu-heading" data-target="sec-hrms">
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-users grow-nav-icon"></i>
-                                <span>HRMS</span>
-                            </div>
-                            <i class="fas fa-chevron-down fb-chevron"></i>
+
+                    <div class="fb-menu-heading @(isHrmsSection ? "active" : "")" data-target="sec-hrms">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-users grow-nav-icon"></i>
+                            <span>HRMS</span>
                         </div>
-                        <div id="sec-hrms" class="fb-collapsible-content">
-                            <div class="fb-grid-row">
-                                <a href="@Url.Action("Attendence", "Team")" class="fb-card url-link">
-                                    <i class="fas fa-clock fb-card-icon"></i>
-                                    <span class="fb-card-title">Attendance</span>
-                                </a>
-                                <a href="@Url.Action("LeaveManagement", "Team")" class="fb-card url-link">
-                                    <i class="fas fa-calendar-minus fb-card-icon"></i>
-                                    <span class="fb-card-title">Leaves</span>
-                                </a>
-                            </div>
+                        <i class="fas fa-chevron-down fb-chevron"></i>
+                    </div>
+                    <div id="sec-hrms" class="fb-collapsible-content" style="display:@(isHrmsSection ? "block" : "none");">
+                        <div class="fb-grid-row">
+                            <a href="@Url.Action("Attendence", "Team")" class="fb-card url-link @(isAttendance ? "active" : "")">
+                                <i class="fas fa-clock fb-card-icon"></i>
+                                <span class="fb-card-title">Attendance</span>
+                            </a>
+                            <a href="@Url.Action("LeaveManagement", "Team")" class="fb-card url-link @(isLeaves ? "active" : "")">
+                                <i class="fas fa-calendar-minus fb-card-icon"></i>
+                                <span class="fb-card-title">Leaves</span>
+                            </a>
                         </div>
+                    </div>
 
                     <div class="fb-menu-heading">
-                        <a href="@Url.Action("AddClient", "Client")" class="text-decoration-none w-100 d-flex align-items-center text-dark url-link">
+                        <a href="@Url.Action("ViewRoutes", "Visit")" class="text-decoration-none w-100 d-flex align-items-center text-dark url-link @(isVisits ? "active" : "")">
+                            <i class="fa-solid fa-clipboard-list grow-nav-icon"></i>
+                            <span class="ms-2">Visits</span>
+                        </a>
+                    </div>
+
+                    <div class="fb-menu-heading">
+                        <a href="@Url.Action("AddClient", "Client")" class="text-decoration-none w-100 d-flex align-items-center text-dark url-link @(isClients ? "active" : "")">
                             <i class="fas fa-user-tie grow-nav-icon"></i>
                             <span class="ms-2">Clients</span>
                         </a>
                     </div>
 
-                        <div class="fb-menu-heading">
-                        <a href="@Url.Action("ViewRoutes", "Visit")" class="text-decoration-none w-100 d-flex align-items-center text-dark url-link">
-                                <i class="fa-solid fa-clipboard-list grow-nav-icon"></i>
-                                <span class="ms-2">Visits</span>
-                            </a>
-                        </div>
-
-                        <div class="fb-menu-heading">
-                            <a href="@Url.Action("ProductList", "UserProduct")" class="text-decoration-none w-100 d-flex align-items-center text-dark url-link">
-                                <i class="fa-solid fa-box-open grow-nav-icon"></i>
-                                <span class="ms-2">Products Catalogue</span>
-                            </a>
-                        </div>
-                    
-                    @* else if ("manager"== "Manager")
-                    {
-                        
-                        <div class="fb-menu-heading">
-                            <a href="@Url.Action("Users", "Manager")" class="text-decoration-none w-100 d-flex align-items-center text-dark url-link">
-                                <i class="fas fa-users grow-nav-icon"></i>
-                                <span class="ms-2">Team Users</span>
-                            </a>
-                        </div>
-                        <div class="fb-menu-heading">
-                            <a href="@Url.Action("Reports", "Manager")" class="text-decoration-none w-100 d-flex align-items-center text-dark url-link">
-                                <i class="fas fa-chart-line grow-nav-icon"></i>
-                                <span class="ms-2">Reports</span>
-                            </a>
-                        </div>
-                    }
-                    else
-                    {
-                        <!-- Default Fallback Navigation for other roles -->
-                        <div class="fb-menu-heading">
-                            <a href="/User/Dashboard" class="text-decoration-none w-100 d-flex align-items-center text-dark url-link">
-                                <i class="fas fa-home grow-nav-icon"></i>
-                                <span class="ms-2">Dashboard</span>
-                            </a>
-                        </div>
-                    } *@
+                    <div class="fb-menu-heading">
+                        <a href="@Url.Action("ProductList", "UserProduct")" class="text-decoration-none w-100 d-flex align-items-center text-dark url-link @(isProducts ? "active" : "")">
+                            <i class="fa-solid fa-box-open grow-nav-icon"></i>
+                            <span class="ms-2">Products Catalogue</span>
+                        </a>
+                    </div>
 
                     <div class="fb-menu-heading mt-3 border-top pt-2">
                         <a href="/Login/Logout" class="text-decoration-none w-100 d-flex align-items-center text-danger url-link">
@@ -199,38 +178,58 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
 
     <script>
-                // Profile dropdown toggle
-                const trigger = document.getElementById('profileMenuTrigger');
-                const dropdown = document.getElementById('profileDropdown');
+            // Profile dropdown toggle
+            const trigger = document.getElementById('profileMenuTrigger');
+            const dropdown = document.getElementById('profileDropdown');
 
-                if (trigger && dropdown) {
-                    trigger.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-                    });
-                    window.addEventListener('click', function() {
-                        dropdown.style.display = 'none';
-                    });
-                }
+            if (trigger && dropdown) {
+                trigger.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+                });
+                window.addEventListener('click', function() {
+                    dropdown.style.display = 'none';
+                });
+            }
 
-                // Collapsible sidebar menu handling
-                document.querySelectorAll(".fb-menu-heading[data-target]").forEach(header => {
-                    header.addEventListener("click", function () {
-                const targetId = this.dataset.target;
-                const targetContent = document.getElementById(targetId);
-                if (targetContent) {
-                    const isVisible = targetContent.style.display === "block";
-                    targetContent.style.display = isVisible ? "none" : "block";
-                    this.classList.toggle("active", !isVisible);
-                }
+            // Collapsible sidebar menu handling
+            document.querySelectorAll(".fb-menu-heading[data-target]").forEach(header => {
+                header.addEventListener("click", function() {
+                    const targetId = this.dataset.target;
+                    const targetContent = document.getElementById(targetId);
+                    if (targetContent) {
+                        const isVisible = targetContent.style.display === "block";
+                        targetContent.style.display = isVisible ? "none" : "block";
+                        this.classList.toggle("active", !isVisible);
+                    }
+                });
             });
-            });
 
-                // Close sidebar on navigation for mobile view
-                function closeSidebar() {
-                    document.body.classList.add('sidebar-collapse');
-                }
+            // Close sidebar on navigation for mobile view
+            function closeSidebar() {
+                document.body.classList.add('sidebar-collapse');
+            }
     </script>
+
+    @if (isDashboard)
+    {
+        <script>
+                document.querySelectorAll('[data-widget="pushmenu"]').forEach(function(btn) {
+                    btn.addEventListener('click', function() {
+                        setTimeout(function() {
+                            if (!document.body.classList.contains('sidebar-collapse')) {
+                                var beeAnim = document.querySelector('.bee-fly-anim');
+                                if (beeAnim) {
+                                    beeAnim.classList.remove('bee-fly-in');
+                                    void beeAnim.offsetWidth; // forces reflow so animation replays every time
+                                    beeAnim.classList.add('bee-fly-in');
+                                }
+                            }
+                        }, 50);
+                    });
+                });
+        </script>
+    }
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>
