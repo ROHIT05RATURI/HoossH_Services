@@ -22,7 +22,7 @@
     --red-light: #fef2f2;
     --purple: #7c3aed;
     --purple-light: #faf5ff;
-    --hd-card-shadow:rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+    --hd-card-shadow:rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
     --hd-radius: 13px;
 }
 
@@ -58,9 +58,10 @@
     height: 150px;
     min-width: 130px;
     border-radius: 16px;
-    overflow: hidden;
-    background: #eef1f5;
+    background: linear-gradient(145deg, #ffffff, var(--blue-light));
     flex-shrink: 0;
+    padding: 6px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
 }
 
 .hd-profile-photo {
@@ -68,6 +69,8 @@
     height: 100%;
     object-fit: cover;
     display: block;
+    border-radius: 11px;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.04);
 }
 
 .hd-profile-info {
@@ -226,7 +229,7 @@
 
 .hd-middle-row {
     display: grid;
-    grid-template-columns: 1.7fr 1fr;
+    grid-template-columns: 1fr;
     gap: 18px;
     margin-bottom: 18px;
     align-items: start;
@@ -258,67 +261,6 @@
     font-size: 11px;
     color: var(--text-light);
     padding: 0 4px;
-}
-
-.hd-qa-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-    padding: 16px 20px 20px;
-}
-
-.hd-qa-tile {
-    border: 1px solid var(--border-light);
-    border-radius: 11px;
-    padding: 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 22px;
-    text-decoration: none;
-}
-
-    .hd-qa-tile i.icon {
-        width: 34px;
-        height: 34px;
-        border-radius: 9px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 14px;
-    }
-
-    .hd-qa-tile .label {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        font-size: 13px;
-        font-weight: 600;
-        color: var(--text-secondary);
-    }
-
-        .hd-qa-tile .label i.arrow {
-            font-size: 11px;
-            color: var(--text-light);
-        }
-
-.hd-qa-blue .icon {
-    background: var(--blue-light);
-    color: var(--blue);
-}
-
-.hd-qa-green .icon {
-    background: var(--green-light);
-    color: var(--green);
-}
-
-.hd-qa-purple .icon {
-    background: var(--purple-light);
-    color: var(--purple);
-}
-
-.hd-qa-amber .icon {
-    background: var(--amber-light);
-    color: var(--amber);
 }
 
 /* ===================== BOTTOM ROW ===================== */
@@ -507,9 +449,5 @@
     .hd-profile-stats {
         width: 100%;
         justify-content: space-between;
-    }
-
-    .hd-qa-grid {
-        grid-template-columns: 1fr;
     }
 }

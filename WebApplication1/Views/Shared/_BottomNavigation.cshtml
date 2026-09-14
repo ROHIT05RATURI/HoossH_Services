@@ -2,80 +2,254 @@
 
 <style>
     :root {
-        --primary: #3f6791;
-        --primary-hover: #3d839b;
-        --primary-light: #5c86b5;
-        --primary-faded: #b1c6e0;
-        --primary-bg: #eef2f7;
-        --bg-body: #f7f9fc;
-        --bg-card: #ffffff;
-        --text-dark: #1e293b;
-        --text-light: #64748b;
-        --text-xs: #94a3b8;
-        --green-bg: #ecfdf5;
-        --green-txt: #10b981;
-        --blue-bg: #eff6ff;
-        --blue-txt: #3b82f6;
-        --orange-bg: #fff7ed;
-        --orange-txt: #f97316;
-        --red-bg: #fef2f2;
-        --red-txt: #ef4444;
-        --purple-bg: #faf5ff;
-        --purple-txt: #a855f7;
-        --border-light: #f1f5f9;
-        --shadow-soft: 0 8px 24px rgba(149, 157, 165, 0.08);
-        font-family: 'Poppins', sans-serif;
+        --footer-primary: #3f6791;
+        --footer-primary-light: #eef4ff;
+        --footer-text: #94a3b8;
+        --footer-border: #dce6f2;
     }
 
+    /* Space for the fixed bottom navigation */
     body {
-        padding-bottom: 75px !important;
+        padding-bottom: 82px !important;
     }
+
+    /* =====================================================
+           BOTTOM APP BAR
+           ===================================================== */
 
     .bottom-app-bar {
         position: fixed;
+        left: 15px;
+        right: 15px;
         bottom: 0;
-        left: 0;
-        width: 100%;
-        background: #ffffff;
-        box-shadow: 0 -4px 25px rgba(0, 0, 0, 0.08);
+        width: auto;
+        height: 80px;
         display: flex;
+        align-items: center;
         justify-content: space-between;
-        align-items: center;
-        padding: 10px 10px 7px 10px;
+        padding: 8px 12px 6px;
+        background: #ffffff;
+        border-radius: 26px 26px 0 0;
+        box-shadow: 0 -4px 18px rgba(49, 79, 110, 0.08), 0 -1px 4px rgba(49, 79, 110, 0.04);
         z-index: 9999;
-        border-top-left-radius: 24px;
-        border-top-right-radius: 24px;
     }
 
-    .nav-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-decoration: none;
-        color: #94a3b8;
-        font-size: 0.65rem;
-        font-weight: 700;
-        gap: 4px;
-        transition: 0.3s ease;
-        flex: 1;
-    }
 
-        .nav-item i {
-            font-size: 1.2rem;
-            padding: 8px 16px;
-            border-radius: 14px;
-            transition: 0.3s ease;
+        /* =====================================================
+           NAV ITEM
+           ===================================================== */
+
+        .bottom-app-bar .nav-item {
+            position: relative;
+            height: 100%;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            text-decoration: none;
+            color: var(--footer-text);
+            font-size: 10px;
+            font-weight: 600;
+            line-height: 1.2;
+            transition: color 0.2s ease, transform 0.2s ease;
         }
 
-        .nav-item:hover, .nav-item.active {
-            color: var(--primary);
-        }
 
-            .nav-item.active i {
-                background: var(--primary-bg);
-                color: var(--primary);
+            /* =====================================================
+           ICON
+           ===================================================== */
+
+            .bottom-app-bar .nav-item i {
+                width: 38px;
+                height: 32px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0;
+                border-radius: 10px;
+                color: var(--footer-primary);
+                font-size: 18px;
+                transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
             }
 
+
+            /* =====================================================
+           LABEL
+           ===================================================== */
+
+            .bottom-app-bar .nav-item span {
+                display: block;
+                max-width: 150px;
+                color: inherit;
+                font-size: 10px;
+                font-weight: 600;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                text-align: center;
+            }
+
+
+            /* =====================================================
+           ACTIVE / HOVER
+           ===================================================== */
+
+            .bottom-app-bar .nav-item:hover {
+                color: var(--footer-primary);
+                transform: translateY(-1px);
+            }
+
+                .bottom-app-bar .nav-item:hover i {
+                    background: var(--footer-primary-light);
+                }
+
+            .bottom-app-bar .nav-item.active {
+                color: var(--footer-primary);
+            }
+
+                .bottom-app-bar .nav-item.active i {
+                    background: var(--footer-primary-light);
+                    color: var(--footer-primary);
+                }
+
+
+            /* =====================================================
+           VERTICAL SEPARATORS
+           ===================================================== */
+
+            .bottom-app-bar .nav-item:not(:last-child)::after {
+                content: "";
+                position: absolute;
+                right: 0;
+                top: 50%;
+                width: 1px;
+                height: 32px;
+                transform: translateY(-50%);
+                background: var(--footer-border);
+            }
+
+
+        /* =====================================================
+           REMOVE DEFAULT LINK EFFECTS
+           ===================================================== */
+
+        .bottom-app-bar a,
+        .bottom-app-bar a:hover,
+        .bottom-app-bar a:focus,
+        .bottom-app-bar a:active {
+            text-decoration: none;
+        }
+
+
+    /* =====================================================
+           TABLET
+           ===================================================== */
+
+    @@media (max-width: 900px) {
+
+        .bottom-app-bar {
+            left: 10px;
+            right: 10px;
+            height: 74px;
+            padding: 7px 8px 5px;
+            border-radius: 23px 23px 0 0;
+        }
+
+            .bottom-app-bar .nav-item i {
+                width: 36px;
+                height: 30px;
+                font-size: 17px;
+            }
+
+            .bottom-app-bar .nav-item span {
+                font-size: 9px;
+            }
+
+        body {
+            padding-bottom: 76px !important;
+        }
+    }
+
+
+    /* =====================================================
+           MOBILE
+           ===================================================== */
+
+    @@media (max-width: 600px) {
+
+        .bottom-app-bar {
+            left: 0;
+            right: 0;
+            height: 70px;
+            padding: 6px 5px calc(5px + env(safe-area-inset-bottom));
+            border-radius: 21px 21px 0 0;
+        }
+
+            .bottom-app-bar .nav-item {
+                gap: 2px;
+            }
+
+                .bottom-app-bar .nav-item i {
+                    width: 34px;
+                    height: 28px;
+                    font-size: 16px;
+                    border-radius: 9px;
+                }
+
+                .bottom-app-bar .nav-item span {
+                    max-width: 90px;
+                    font-size: 8px;
+                }
+
+                .bottom-app-bar .nav-item:not(:last-child)::after {
+                    height: 27px;
+                }
+
+        body {
+            padding-bottom: 72px !important;
+        }
+    }
+
+
+    /* =====================================================
+           VERY SMALL MOBILE
+           ===================================================== */
+
+    @@media (max-width: 380px) {
+
+        .bottom-app-bar {
+            height: 66px;
+        }
+
+            .bottom-app-bar .nav-item i {
+                width: 31px;
+                height: 26px;
+                font-size: 15px;
+            }
+
+            .bottom-app-bar .nav-item span {
+                font-size: 7px;
+            }
+
+        body {
+            padding-bottom: 68px !important;
+        }
+    }
+
+
+    /* =====================================================
+           REDUCED MOTION
+           ===================================================== */
+
+    @@media (prefers-reduced-motion: reduce) {
+
+        .bottom-app-bar .nav-item,
+        .bottom-app-bar .nav-item i {
+            transition: none;
+        }
+    }
 </style>
 
 <nav class="bottom-app-bar">

@@ -13,7 +13,7 @@
 
     if (!string.IsNullOrEmpty(selectedLoginId) && Model.IsSalesManager && Model.SalesPersons != null)
     {
-        var matchedSp = Model.SalesPersons.FirstOrDefault(x => x.LoginId != null && x.LoginId.ToString() == selectedLoginId);
+        var matchedSp = Model.SalesPersons.FirstOrDefault(x =>  selectedLoginId!= null && x.login.ToString() == selectedLoginId);
         if (matchedSp != null)
         {
             selectedSalesPersonName = matchedSp.FullName;
@@ -550,8 +550,8 @@
                             </li>
                             @foreach (var sp in Model.SalesPersons)
                             {
-                                <li class="dropdown-item-custom sales-item" data-id="@sp.LoginId">
-                                    <i class="fa-solid fa-user" style="font-size: 10px;"></i> @sp.FullName
+                                <li class="dropdown-item-custom sales-item" data-id=login>
+                                    <i class="fa-solid fa-user" style="font-size: 10px;"></i> full name
                                 </li>
                             }
                         </ul>

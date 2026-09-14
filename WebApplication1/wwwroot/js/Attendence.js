@@ -1,369 +1,193 @@
-let events = [];
+// =========================================================
+// ATTENDANCE CALENDAR
+// Renders the monthly grid and loads real attendance data
+// from /Team/GetMonthlyAttendance for each month shown.
+// =========================================================
 
-// letiables to store event input fields and reminder list
-let eventDateInput =
-	document.getElementById("eventDate");
-let eventTitleInput =
-	document.getElementById("eventTitle");
-let eventDescriptionInput =
-	document.getElementById("eventDescription");
-let reminderList =
-	document.getElementById("reminderList");
+let today = new Date();
+let currentMonth = today.getMonth();
+let currentYear = today.getFullYear();
 
-// Counter to generate unique event IDs
-let eventIdCounter = 1;
+let selectYear = document.getElementById("year");
+let selectMonth = document.getElementById("month");
 
-// Function to add events
-function addEvent() {
-	let date = eventDateInput.value;
-	let title = eventTitleInput.value;
-	let description = eventDescriptionInput.value;
-
-	if (date && title) {
-		// Create a unique event ID
-		let eventId = eventIdCounter++;
-
-		events.push(
-			{
-				id: eventId, date: date,
-				title: title,
-				description: description
-			}
-		);
-		showCalendar(currentMonth, currentYear);
-		eventDateInput.value = "";
-		eventTitleInput.value = "";
-		eventDescriptionInput.value = "";
-		/*		displayReminders();*/
-	}
-}
-
-// Function to delete an event by ID
-function deleteEvent(eventId) {
-	// Find the index of the event with the given ID
-	let eventIndex =
-		events.findIndex((event) =>
-			event.id === eventId);
-
-	if (eventIndex !== -1) {
-		// Remove the event from the events array
-		events.splice(eventIndex, 1);
-		showCalendar(currentMonth, currentYear);
-		/*	displayReminders();*/
-	}
-}
-
+// Join date is supplied by the view via window.attendanceJoinDate
+// (set in a small inline <script> before this file is loaded).
+let joinDate = window.attendanceJoinDate ? new Date(window.attendanceJoinDate) : null;
+if (joinDate) joinDate.setHours(0, 0, 0, 0);
 
 function generate_year_range(start, end) {
-	let years = "";
-	for (let year = start; year <= end; year++) {
-		years += "<option value='" +
-			year + "'>" + year + "</option>";
-	}
-	return years;
+    let years = "";
+    for (let year = start; year <= end; year++) {
+        years += "<option value='" + year + "'>" + year + "</option>";
+    }
+    return years;
 }
 
-// Initialize date-related letiables
-today = new Date();
-currentMonth = today.getMonth();
-currentYear = today.getFullYear();
-selectYear = document.getElementById("year");
-selectMonth = document.getElementById("month");
-
-createYear = generate_year_range(2000, 3099);
-
+let createYear = generate_year_range(2000, 3099);
 document.getElementById("year").innerHTML = createYear;
 
-let calendar = document.getElementById("calendar");
-
 let months = [
-	"January",
-	"February",
-	"March",
-	"April",
-	"May",
-	"June",
-	"July",
-	"August",
-	"September",
-	"October",
-	"November",
-	"December"
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
 ];
-let days = [
-	"Sun", "Mon", "Tue", "Wed",
-	"Thu", "Fri", "Sat"];
+let days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-$dataHead = "<tr>";
-for (dhead in days) {
-	$dataHead += "<th data-days='" +
-		days[dhead] + "'>" +
-		days[dhead] + "</th>";
+let $dataHead = "<tr>";
+for (let dhead in days) {
+    $dataHead += "<th data-days='" + days[dhead] + "'>" + days[dhead] + "</th>";
 }
 $dataHead += "</tr>";
-
 document.getElementById("thead-month").innerHTML = $dataHead;
 
-monthAndYear =
-	document.getElementById("monthAndYear");
-showCalendar(currentMonth, currentYear);
+let monthAndYear = document.getElementById("monthAndYear");
 
-// Function to navigate to the next month
+// Navigate to the next month
 function next() {
-	currentYear = currentMonth === 11 ?
-		currentYear + 1 : currentYear;
-	currentMonth = (currentMonth + 1) % 12;
-	/*	showCalendar(currentMonth, currentYear);*/
-	getAttendanceData(currentMonth, currentYear);
+    currentYear = currentMonth === 11 ? currentYear + 1 : currentYear;
+    currentMonth = (currentMonth + 1) % 12;
+    getAttendanceData(currentMonth, currentYear);
 }
 
-// Function to navigate to the previous month
+// Navigate to the previous month
 function previous() {
-	currentYear = currentMonth === 0 ?
-		currentYear - 1 : currentYear;
-	currentMonth = currentMonth === 0 ?
-		11 : currentMonth - 1;
-	/*	showCalendar(currentMonth, currentYear);*/
-	getAttendanceData(currentMonth, currentYear);
-
+    currentYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+    currentMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+    getAttendanceData(currentMonth, currentYear);
 }
 
-
-function getAttendanceData(currentMonth, currentYear) {
-	$.ajax({
-		type: "GET",
-		url: "/Team/GetMonthlyAttendance", // Replace with your actual controller URL
-		data: { month: currentMonth + 1, year: currentYear }, // Send month and year as parameters
-		success: function (attendanceData) {
-
-			showCalendar(currentMonth, currentYear);
-			fillCalendar(attendanceData);
-		},
-		error: function (xhr, status, error) {
-			console.error("Error fetching attendance data:", error);
-			alert("Failed to fetch attendance data for the previous month.");
-		}
-	});
-}
-function fillCalendar(attendanceData) {
-	attendanceData.forEach(record => {
-		const dateObj = new Date(record.attendenceDate);
-		const date = dateObj.getDate();
-		const cell = document.querySelector(`[data-date="${date}"]`);
-
-		if (cell) {
-			const status = record.managerStatus || record.status;
-			if (status === "Present" || status === "Approved") {
-				cell.classList.add("present-approved-bg");
-				const time = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
-				const timeSpan = document.createElement("span");
-				timeSpan.className = "attendance-time";
-				timeSpan.innerText = time;
-				cell.appendChild(timeSpan);
-			}
-			else if (status === "Pending") {
-				cell.classList.add("present-not-approved-bg");
-				const time = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
-				const timeSpan = document.createElement("span");
-				timeSpan.className = "attendance-time";
-				timeSpan.innerText = time;
-				cell.appendChild(timeSpan);
-			}
-			else if (status === "Absent") {
-				cell.classList.add("absent-bg");
-				const redDot = document.createElement("div");
-				redDot.className = "red-dot-indicator";
-				cell.appendChild(redDot);
-			}
-			else if (status === "Leave") {
-				cell.classList.add("leave-bg");
-			}
-			else if (status === "Working on Leave") {
-				cell.classList.add("working-leave-bg");
-				const time = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
-				const timeSpan = document.createElement("span");
-				timeSpan.className = "attendance-time";
-				timeSpan.innerText = time;
-				cell.appendChild(timeSpan);
-			}
-		}
-	});
-}
-
-// Function to jump to a specific month and year
+// Jump straight to a chosen month/year (wired to the #month/#year selects)
 function jump() {
-	currentYear = parseInt(selectYear.value);
-	currentMonth = parseInt(selectMonth.value);
-	getAttendanceData(currentMonth, currentYear);
+    currentYear = parseInt(selectYear.value);
+    currentMonth = parseInt(selectMonth.value);
+    getAttendanceData(currentMonth, currentYear);
 }
 
-
-//function convertTo12HourFormat(time) {
-//	// Split the time string into hours and minutes
-//	let [hours, minutes] = time.split(":").map(Number);
-
-//	// Determine AM/PM and convert hours to 12-hour format
-//	const period = hours >= 12 ? "PM" : "AM";
-//	hours = hours % 12;
-//	hours = hours === 0 ? 12 : hours; // Handle midnight (00:00) as 12:00 AM
-
-//	// Format the time as 12-hour format
-//	const formattedTime = `${hours}:${minutes.toString().padStart(2, '0')} ${period}`;
-//	return formattedTime;
-//}
-
-// Function to display the calendar
-function showCalendar(month, year) {
-	let firstDay = new Date(year, month, 1).getDay();
-	tbl = document.getElementById("calendar-body");
-	tbl.innerHTML = "";
-	monthAndYear.innerHTML = months[month] + " " + year;
-	selectYear.value = year;
-	selectMonth.value = month;
-
-	let date = 1;
-	for (let i = 0; i < 6; i++) {
-		let row = document.createElement("tr");
-		for (let j = 0; j < 7; j++) {
-			if (i === 0 && j < firstDay) {
-				cell = document.createElement("td");
-				cellText = document.createTextNode("");
-				cell.appendChild(cellText);
-				row.appendChild(cell);
-			} else if (date > daysInMonth(month, year)) {
-				break;
-			} else {
-				cell = document.createElement("td");
-				cell.setAttribute("data-date", date);
-				cell.setAttribute("data-month", month + 1);
-				cell.setAttribute("data-year", year);
-				cell.setAttribute("data-month_name", months[month]);
-				cell.className = "date-picker";
-				cell.innerHTML = "<div>" + date + "</div";
-
-				if (
-					date === today.getDate() &&
-					year === today.getFullYear() &&
-					month === today.getMonth()
-				) {
-					cell.className = "date-picker selected";
-				}
-
-				// Check if there are events on this date
-				if (hasEventOnDate(date, month, year)) {
-					cell.classList.add("event-marker");
-					cell.appendChild(
-						createEventTooltip(date, month, year)
-					);
-				}
-
-				row.appendChild(cell);
-				date++;
-			}
-		}
-		tbl.appendChild(row);
-	}
-
-	/*	displayReminders();*/
+// Fetches the month's attendance records, then draws the grid and fills it in.
+function getAttendanceData(month, year) {
+    $.ajax({
+        type: "GET",
+        url: "/Team/GetMonthlyAttendance",
+        data: { month: month + 1, year: year },
+        success: function (attendanceData) {
+            showCalendar(month, year);
+            fillCalendar(attendanceData);
+        },
+        error: function (xhr, status, error) {
+            console.error("Error fetching attendance data:", error);
+            showCalendar(month, year);
+            alert("Failed to fetch attendance data for this month.");
+        }
+    });
 }
 
-// Function to create an event tooltip
-function createEventTooltip(date, month, year) {
-	let tooltip = document.createElement("div");
-	tooltip.className = "event-tooltip";
-	let eventsOnDate = getEventsOnDate(date, month, year);
-	for (let i = 0; i < eventsOnDate.length; i++) {
-		let event = eventsOnDate[i];
-		let eventDate = new Date(event.date);
-		let eventText = `<strong>${event.title}</strong> - 
-			${event.description} on 
-			${eventDate.toLocaleDateString()}`;
-		let eventElement = document.createElement("p");
-		eventElement.innerHTML = eventText;
-		tooltip.appendChild(eventElement);
-	}
-	return tooltip;
+// Colors in each day cell based on the fetched attendance records.
+// Adds a small status dot + optional time label instead of filling the whole cell.
+function fillCalendar(attendanceData) {
+    if (!attendanceData) return;
+
+    attendanceData.forEach(record => {
+        const dateObj = new Date(record.attendenceDate);
+        const date = dateObj.getDate();
+        const cell = document.querySelector(`#calendar-body [data-date="${date}"]`);
+
+        // Skip days before the employee joined — those stay locked as "not-joined"
+        if (!cell || cell.classList.contains("not-joined-bg")) return;
+
+        const status = record.managerStatus || record.status;
+        const time = dateObj.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true });
+
+        function addDot(dotClass) {
+            const dot = document.createElement("span");
+            dot.className = "status-dot " + dotClass;
+            cell.appendChild(dot);
+        }
+
+        function addTime() {
+            const timeSpan = document.createElement("span");
+            timeSpan.className = "attendance-time";
+            timeSpan.innerText = time;
+            cell.appendChild(timeSpan);
+        }
+
+        // A real recorded status always takes priority over the default weekend styling
+        cell.classList.remove("weekend-bg");
+
+        if (status === "Present" || status === "Approved") {
+            addDot("present-approved-dot");
+            addTime();
+        } else if (status === "Pending") {
+            addDot("present-not-approved-dot");
+            addTime();
+        } else if (status === "Absent") {
+            addDot("absent-dot");
+        } else if (status === "Leave") {
+            addDot("leave-dot");
+        } else if (status === "Working on Leave") {
+            addDot("working-leave-dot");
+            addTime();
+        } else {
+            // Unrecognized/blank status on a non-weekend day — leave as a plain default cell.
+        }
+    });
 }
 
-// Function to get events on a specific date
-function getEventsOnDate(date, month, year) {
-	return events.filter(function (event) {
-		let eventDate = new Date(event.date);
-		return (
-			eventDate.getDate() === date &&
-			eventDate.getMonth() === month &&
-			eventDate.getFullYear() === year
-		);
-	});
-}
-
-// Function to check if there are events on a specific date
-function hasEventOnDate(date, month, year) {
-	return getEventsOnDate(date, month, year).length > 0;
-}
-
-// Function to get the number of days in a month
 function daysInMonth(iMonth, iYear) {
-	return 32 - new Date(iYear, iMonth, 32).getDate();
+    return 32 - new Date(iYear, iMonth, 32).getDate();
 }
 
-// Call the showCalendar function initially to display the calendar
-showCalendar(currentMonth, currentYear);
+// Builds the empty calendar grid for the given month/year.
+function showCalendar(month, year) {
+    let firstDay = new Date(year, month, 1).getDay();
+    let tbl = document.getElementById("calendar-body");
+    tbl.innerHTML = "";
+    monthAndYear.innerHTML = months[month] + " " + year;
+    selectYear.value = year;
+    selectMonth.value = month;
 
+    const totalDays = daysInMonth(month, year);
+    let date = 1;
 
-// Function to display reminders
-//function displayReminders() {
-//	reminderList.innerHTML = "";
-//	for (let i = 0; i < events.length; i++) {
-//		let event = events[i];
-//		let eventDate = new Date(event.date);
-//		if (eventDate.getMonth() ===
-//			currentMonth &&
-//			eventDate.getFullYear() ===
-//			currentYear) {
-//			let listItem = document.createElement("li");
-//			listItem.innerHTML =
-//				`<strong>${event.title}</strong> -
-//			${event.description} on
-//			${eventDate.toLocaleDateString()}`;
+    for (let i = 0; i < 6 && date <= totalDays; i++) {
+        let row = document.createElement("tr");
 
-//			// Add a delete button for each reminder item
-//			let deleteButton =
-//				document.createElement("button");
-//			deleteButton.className = "delete-event";
-//			deleteButton.textContent = "Delete";
-//			deleteButton.onclick = function () {
-//				deleteEvent(event.id);
-//			};
+        for (let j = 0; j < 7; j++) {
+            let cell = document.createElement("td");
 
-//			listItem.appendChild(deleteButton);
-//			reminderList.appendChild(listItem);
-//		}
-//	}
-//}
+            if ((i === 0 && j < firstDay) || date > totalDays) {
+                cell.className = "empty-cell";
+            } else {
+                cell.setAttribute("data-date", date);
+                cell.setAttribute("data-month", month + 1);
+                cell.setAttribute("data-year", year);
+                cell.setAttribute("data-month_name", months[month]);
+                cell.className = "date-picker";
+                cell.innerHTML = '<span class="c-day-num">' + date + "</span>";
 
-// Function to generate a range of
-// years for the year select input
+                const cellDate = new Date(year, month, date);
+                cellDate.setHours(0, 0, 0, 0);
 
+                if (joinDate && cellDate < joinDate) {
+                    cell.classList.add("not-joined-bg");
+                } else if (j === 0) {
+                    // Sunday column — real attendance status (if any) overrides this in fillCalendar()
+                    cell.classList.add("weekend-bg");
+                }
 
-//function fetchCurrentMonthData(Month) {
-//	$.ajax({
-//		type: "GET",
-//		url: "/Team/GetMonthlyAttendence",
-//		data: {month: Month},
-//		success: function (result) {
-//			if (result) {
-//				fillCalender(result);
+                if (date === today.getDate() && year === today.getFullYear() && month === today.getMonth()) {
+                    cell.classList.add("today-highlight");
+                }
 
-//			}
+                date++;
+            }
 
-//		},
-//		error: function (xhr, status, error) {
-//			console.error("Error");
-//			alert("An error occurred while detching the month data");
-//		}
-//	});
+            row.appendChild(cell);
+        }
 
+        tbl.appendChild(row);
+    }
+}
 
-
-//}
+// Initial load — fetches this month's real attendance data instead of
+// rendering an empty calendar with no status colors.
+getAttendanceData(currentMonth, currentYear);
