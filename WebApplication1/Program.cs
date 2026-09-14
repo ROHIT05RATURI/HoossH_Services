@@ -3,6 +3,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<HoossH_Service_DAL.Repositories.IAuthRepository, HoossH_Service_DAL.Repositories.AuthRepository>();
 
 // Session support
 builder.Services.AddDistributedMemoryCache();

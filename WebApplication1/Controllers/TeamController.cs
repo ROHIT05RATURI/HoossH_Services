@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using HoossH_Services.Models;
 
 namespace HoossH_Services.Controllers
 {
@@ -24,12 +25,12 @@ namespace HoossH_Services.Controllers
 
         public IActionResult LeaveManagement()
         {
-            return View();
+            return View(new Leaves());
         }
 
         public IActionResult ViewApprovedHistory()
         {
-            return View();
+            return View(new Leaves());
         }
     }
 

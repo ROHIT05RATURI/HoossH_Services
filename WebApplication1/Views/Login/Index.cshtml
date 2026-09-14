@@ -1,3 +1,5 @@
+@using HoossH_Services.Models.Login
+@model LoginRequest
 
 @{
     ViewBag.Title = "Login";
@@ -122,12 +124,12 @@
                 $("#btnText").text("Authenticating...");
 
                 const loginData = {
-                    userName: $("#userName").val(),
-                    password: $("#password").val()
+                    Username: $("#userName").val(),
+                    Password: $("#password").val()
                 };
 
                 $.ajax({
-                    url: '@Url.Action("Login", "Login")',
+                    url: '/Login/Login',
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify(loginData),
