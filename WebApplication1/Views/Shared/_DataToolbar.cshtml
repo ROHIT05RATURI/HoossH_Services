@@ -1,0 +1,229 @@
+﻿
+<style>
+    :root {
+        --pt-primary: #3f6791;
+        --pt-soft-grey: #9ca3af;
+        --pt-border: #f1f5f9;
+        --pt-dark: #1e293b;
+    }
+
+    .toolbar-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+        background: #fff;
+        padding: 10px 18px;
+        border-radius: 16px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+        border: 1px solid var(--pt-border);
+        margin-bottom: 20px;
+    }
+
+    .search-group {
+        display: flex;
+        align-items: center;
+        flex: 1;
+        min-width: 250px;
+        background: #f8fafc;
+        padding: 10px 16px;
+        border-radius: 10px;
+        border: 1px solid var(--pt-border);
+        transition: 0.3s ease all;
+    }
+
+        .search-group:focus-within {
+            background: #ffffff;
+            border-color: var(--pt-primary);
+            box-shadow: 0 0 0 3px rgba(63, 103, 145, 0.1);
+        }
+
+        .search-group i {
+            color: var(--pt-soft-grey);
+            font-size: 13px;
+            transition: 0.3s ease;
+        }
+
+        .search-group:focus-within i {
+            color: var(--pt-primary);
+        }
+
+        .search-group input {
+            flex: 1;
+            border: none;
+            outline: none;
+            background: transparent;
+            margin-left: 10px;
+            color: var(--pt-dark);
+            font-weight: 500;
+            font-size: 13px;
+        }
+
+            .search-group input::placeholder {
+                color: var(--pt-soft-grey);
+                font-weight: 400;
+            }
+
+    .toolbar-actions {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .view-toggle-group {
+        display: flex;
+        background: #f1f5f9;
+        border-radius: 10px;
+        padding: 4px;
+        gap: 4px;
+    }
+
+    .toggle-btn {
+        background: transparent;
+        border: none;
+        padding: 8px 14px;
+        border-radius: 6px;
+        color: var(--pt-soft-grey);
+        font-weight: 600;
+        font-size: 12px;
+        cursor: pointer;
+        transition: 0.3s all ease;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+        .toggle-btn.active {
+            background: #fff;
+            color: var(--pt-primary);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        .toggle-btn:hover:not(.active) {
+            color: var(--pt-dark);
+        }
+
+    .custom-sort-dropdown {
+        position: absolute;
+        top: calc(100% + 8px);
+        right: 0;
+        width: 190px;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        z-index: 9999; /* BHAAYANKAR Z-INDEX TAQI TABLE KE UPAR DIKHE */
+        padding: 6px;
+        border: 1px solid var(--pt-border);
+        list-style: none;
+        margin: 0;
+        display: none;
+    }
+
+    .sort-item {
+        padding: 10px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--pt-dark);
+        transition: 0.2s;
+        display: flex;
+        align-items: center;
+    }
+
+        .sort-item i {
+            margin-right: 8px;
+            color: var(--pt-soft-grey);
+            width: 14px;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .sort-item:hover {
+            background: #f4f7ff;
+            color: var(--pt-primary);
+        }
+
+            .sort-item:hover i {
+                color: var(--pt-primary);
+            }
+
+    /* === RESPONSIVE MEDIA QUERIES FOR TOOLBAR === */
+    @@media (max-width: 576px) {
+        .toolbar-container {
+            flex-direction: column;
+            align-items: stretch;
+            padding: 12px;
+            gap: 12px;
+        }
+
+        .toolbar-actions {
+            justify-content: space-between;
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="toolbar-container animate__animated animate__fadeInDown" id="mainDataToolbar" style="display: none;">
+    <div class="search-group">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="toolbarSearch" placeholder="Search enquiry by Name, Series..." autocomplete="off">
+    </div>
+
+    <div class="toolbar-actions">
+        <div class="view-toggle-group">
+            <button class="toggle-btn active" data-view="card" title="Card View"><i class="fa-solid fa-list"></i></button>
+            <button class="toggle-btn" data-view="grid" title="Grid View"><i class="fa-solid fa-border-all"></i></button>
+            <button class="toggle-btn" data-view="table" title="Table View"><i class="fa-solid fa-table"></i></button>
+        </div>
+
+        <div style="position: relative;">
+            <button class="toggle-btn" id="sortToggleBtn" title="Sort Data" style="background:#f8fafc; border:1px solid var(--pt-border); color: var(--pt-dark);">
+                <i class="fa-solid fa-arrow-down-short-wide"></i> Sort
+            </button>
+            <ul class="custom-sort-dropdown" id="sortDropdown">
+                <li class="sort-item" data-sort="name_asc"><i class="fa-solid fa-arrow-down-a-z"></i> Name (A - Z)</li>
+                <li class="sort-item" data-sort="name_desc"><i class="fa-solid fa-arrow-up-z-a"></i> Name (Z - A)</li>
+                <li class="sort-item" data-sort="date_desc"><i class="fa-regular fa-clock"></i> Newest First</li>
+                <li class="sort-item" data-sort="date_asc"><i class="fa-solid fa-clock-rotate-left"></i> Oldest First</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+@await Html.PartialAsync("_ExportPopup")
+
+<script>
+    $(document).ready(function() {
+        let currentView = 'card';
+        let currentSort = 'date_desc';
+
+        $(document).on('showDataToolbar', function() { $('#mainDataToolbar').fadeIn(); });
+
+        $('.view-toggle-group .toggle-btn').on('click', function() {
+            $('.view-toggle-group .toggle-btn').removeClass('active');
+            $(this).addClass('active');
+            currentView = $(this).data('view');
+            fireToolbarEvent();
+        });
+
+        $('#sortToggleBtn').on('click', function(e) { e.stopPropagation(); $('#sortDropdown').fadeToggle(150); });
+
+        $('.sort-item').on('click', function() {
+            currentSort = $(this).data('sort');
+            $('#sortDropdown').hide();
+            fireToolbarEvent();
+        });
+
+        $(document).on('click', function() { $('#sortDropdown').hide(); });
+
+        $('#toolbarSearch').on('input', function() { fireToolbarEvent(); });
+
+        function fireToolbarEvent() {
+            let searchText = $('#toolbarSearch').val().toLowerCase();
+            $(document).trigger('onToolbarChange', { view: currentView, sort: currentSort, search: searchText });
+        }
+    });
+</script>

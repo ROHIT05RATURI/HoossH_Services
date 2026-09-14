@@ -1,0 +1,893 @@
+﻿@model HoossH_Services.Models.DataToolbarModel
+
+@{
+    var customDataStr = Model.CustomData != null && Model.CustomData.Any()
+        ? System.Text.Json.JsonSerializer.Serialize(Model.CustomData)
+        : "{}";
+
+    // ==========================================
+    // 🟢 100% SAFE LOGIC FOR SHARED PARTIAL VIEW
+    // ==========================================
+    var selectedLoginId = ViewData["SelectedID"]?.ToString() ?? Context.Request.Query["LoginID"].ToString();
+    var selectedSalesPersonName = "-- All --";
+
+    if (!string.IsNullOrEmpty(selectedLoginId) && Model.IsSalesManager && Model.SalesPersons != null)
+    {
+        var matchedSp = Model.SalesPersons.FirstOrDefault(x => x.LoginId != null && x.LoginId.ToString() == selectedLoginId);
+        if (matchedSp != null)
+        {
+            selectedSalesPersonName = matchedSp.FullName;
+        }
+    }
+}
+
+<style>
+    :root {
+        --pt-primary: #3f6791;
+        --pt-soft-grey: #9ca3af;
+        --pt-border: #f1f5f9;
+        --pt-dark: #1e293b;
+    }
+
+    .premium-export-popup {
+        border-radius: 20px !important;
+        padding: 24px 20px !important;
+        background: #ffffff !important;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12) !important;
+        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    }
+
+    .premium-export-title {
+        font-size: 20px !important;
+        font-weight: 700 !important;
+        color: #1e293b !important;
+        margin-top: 10px !important;
+    }
+
+    .premium-export-content {
+        font-size: 14px !important;
+        color: #64748b !important;
+        font-weight: 500 !important;
+    }
+
+    /* =========================================================
+               NEW PREMIUM TOOLBAR LAYOUT
+               ========================================================= */
+    .toolbar-container {
+        display: flex;
+        flex-direction: column;
+        background: #fff;
+        padding: 12px 18px;
+        border-radius: 12px;
+        box-shadow: 0 2px 0px rgb(190 212 235);
+        border: 1px solid var(--pt-border);
+        margin-bottom: 20px;
+        position: relative;
+        z-index: 99;
+        width: 100%;
+        box-sizing: border-box;
+        position: sticky !important;
+        top: 60px; /* Aapke upar wale black header ki height ke hisaab se isko adjust karein (e.g. 50px, 70px) */
+        transition: top 0.2s ease;
+    }
+
+    .top-row-flex {
+        display: flex;
+        width: 100%;
+        gap: 15px;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    /* SEARCH BAR */
+    .search-group {
+        display: flex;
+        align-items: center;
+        flex: 1; /* Pura bacha hua space lega */
+        background: #f8fafc;
+        padding: 10px 16px;
+        border-radius: 10px;
+        border: 1px solid var(--pt-border);
+        transition: 0.3s ease all;
+        min-width: 250px;
+        cursor: text; /* Cursor update taaki clickable feel aaye */
+    }
+
+        .search-group:focus-within {
+            background: #ffffff;
+            border-color: var(--pt-primary);
+            box-shadow: 0 0 0 3px rgba(63, 103, 145, 0.1);
+        }
+
+        .search-group i {
+            color: var(--pt-soft-grey);
+            font-size: 14px;
+        }
+
+        .search-group:focus-within i {
+            color: var(--pt-primary);
+        }
+
+        .search-group input {
+            flex: 1;
+            border: none;
+            outline: none;
+            background: transparent;
+            margin-left: 10px;
+            color: var(--pt-dark);
+            font-weight: 500;
+            font-size: 13px;
+            width: 100%;
+        }
+
+    /* ACTIONS (Right Side) */
+    .toolbar-actions {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: nowrap;
+    }
+
+    .view-toggle-group {
+        display: flex;
+        background: #f1f5f9;
+        border-radius: 10px;
+        padding: 4px;
+        gap: 4px;
+    }
+
+    .toggle-btn {
+        background: transparent;
+        border: none;
+        padding: 8px 14px;
+        border-radius: 6px;
+        color: var(--pt-soft-grey);
+        font-weight: 600;
+        font-size: 13px;
+        cursor: pointer;
+        transition: 0.3s all;
+    }
+
+        .toggle-btn.active {
+            background: #fff;
+            color: var(--pt-primary);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+    .action-btn {
+        background: #f8fafc;
+        border: 1px solid var(--pt-border);
+        padding: 9px 16px;
+        border-radius: 10px;
+        color: var(--pt-dark);
+        font-weight: 600;
+        font-size: 13px;
+        cursor: pointer;
+        transition: 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        white-space: nowrap;
+    }
+
+        .action-btn:hover, .action-btn.active {
+            border-color: var(--pt-primary);
+            color: var(--pt-primary) !important;
+            background: #ffffff;
+        }
+
+    /* =========================================================
+               INSIDE FILTER PANEL (Grid Layout)
+               ========================================================= */
+    .advanced-filters-panel, .alphabet-filters-panel {
+        display: none; /* Default Hidden */
+        width: 100%;
+        padding-top: 15px;
+
+    }
+
+    .filter-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 15px;
+        align-items: end;
+    }
+
+    .filter-box {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        position: relative;
+    }
+
+        .filter-box label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--pt-soft-grey);
+            text-transform: uppercase;
+            margin: 0;
+        }
+
+        .filter-box .action-btn {
+            width: 100%;
+            justify-content: space-between;
+        }
+
+    .custom-dropdown-menu {
+        position: absolute;
+        top: calc(100% + 5px);
+        left: 0;
+        right: 0;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        z-index: 9999;
+        padding: 6px;
+        border: 1px solid var(--pt-border);
+        list-style: none;
+        margin: 0;
+        display: none;
+        max-height: 250px;
+        overflow-y: auto;
+    }
+
+    .dropdown-item-custom {
+        padding: 10px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--pt-dark);
+        transition: 0.2s;
+        display: flex;
+        align-items: center;
+    }
+
+        .dropdown-item-custom i {
+            margin-right: 8px;
+            color: var(--pt-soft-grey);
+            width: 14px;
+            text-align: center;
+        }
+
+        .dropdown-item-custom:hover {
+            background: #f4f7ff;
+            color: var(--pt-primary);
+        }
+
+            .dropdown-item-custom:hover i {
+                color: var(--pt-primary);
+            }
+
+    /* Custom Date HTML wrapper Styling */
+    .custom-html-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+    }
+
+        .custom-html-wrapper .date-input-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .custom-html-wrapper span {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--pt-soft-grey);
+            text-transform: uppercase;
+        }
+
+        .custom-html-wrapper input {
+            width: 100%;
+            background: #f8fafc;
+            border: 1px solid var(--pt-border);
+            padding: 9px 12px;
+            border-radius: 10px;
+            font-size: 13px;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+            .custom-html-wrapper input:focus {
+                border-color: var(--pt-primary);
+                background: #ffffff;
+            }
+
+    .filter-top-row {
+        display: flex;
+        flex-wrap: nowrap; /* Desktop par strictly ek line (no wrap) */
+        gap: 15px;
+        align-items: flex-end;
+        width: 100%;
+    }
+
+    .filter-box {
+        flex: 1 1 0; /* Salesperson aur Sort By barabar jagah lenge */
+        min-width: 0; /* Taaki box screen se bahar na nikle */
+    }
+
+    .custom-date-box {
+        flex: 1.5 1 0; /* Date wale box ko thodi zyada jagah milegi */
+    }
+
+    /* =========================================================
+               PREMIUM DOWNLOAD BUTTON & ANIMATION
+               ========================================================= */
+    .btn-download-modern {
+        background: #f0fdf4; /* Light green background */
+        border: 1px solid #bbf7d0;
+        color: #16a34a; /* Excel green text */
+        padding: 9px 16px;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 13px;
+        cursor: pointer;
+        transition: 0.3s ease all;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        white-space: nowrap;
+        box-shadow: 0 2px 4px rgba(22, 163, 74, 0.05);
+    }
+
+        .btn-download-modern:hover {
+            background: #16a34a;
+            color: #ffffff;
+            border-color: #16a34a;
+            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);
+        }
+
+    /* Icon ke liye smooth downloading animation */
+    @@keyframes downloadBounce {
+        0%, 100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(4px);
+        }
+    }
+
+    .btn-download-modern:hover i {
+        animation: downloadBounce 0.8s infinite ease-in-out;
+    }
+
+    .mobile-view-menu-container {
+        display: none;
+    }
+
+    /* =========================================================
+               MOBILE & TABLET RESPONSIVE VIEW (COMBINED & OPTIMIZED)
+               ========================================================= */
+    @@media (max-width: 768px) {
+        .filter-box label {
+            text-align: center;
+        }
+
+        .view-toggle-group {
+            display: none;
+        }
+        /* 1. Desktop wale view toggles hide, Mobile 3-dot show */
+        .desktop-toggles {
+            display: none !important;
+        }
+
+        .mobile-view-menu-container {
+            display: block;
+        }
+        /* 2. Main Toolbar container padding */
+        .toolbar-container {
+            margin-bottom: 0px;
+            padding: 12px !important;
+            top: 50px;
+        }
+
+        body:has(.suspect-nav-container) .toolbar-container {
+            top: 90px !important; /* Header (50) + Suspect Nav ki height (45) */
+        }
+        /* 3. 🟢 MAGIC: Ek hi Row mein Search + Download + 3-Dots + Filter 🟢 */
+        .top-row-flex {
+            flex-direction: row !important; /* Isse 1 hi line me sab aayega */
+            flex-wrap: nowrap !important;
+            align-items: center !important;
+            gap: 8px !important;
+        }
+
+        .search-group {
+            flex: 1 1 auto !important; /* Bachi hui poori jagah search ko milegi */
+            width: auto !important;
+            min-width: 0 !important;
+            padding: 5px 10px !important;
+        }
+
+        .toolbar-actions {
+            width: auto !important;
+            flex: 0 0 auto !important;
+            gap: 6px !important;
+            justify-content: flex-end !important;
+        }
+        /* 4. Filter Panel ke andar wale boxes */
+        .filter-top-row {
+            flex-wrap: wrap; /* Mobile par wrap allow karenge */
+            gap: 10px;
+        }
+
+        .filter-box {
+            flex: 1 1 45%; /* Salesperson, Status, Sort By (2 column aamne-saamne) */
+            gap: 0px;
+        }
+
+        .custom-date-box {
+            flex: 1 1 100%; /* Date filter mobile par poori jagah (full width) lega */
+            margin-top: 5px;
+        }
+
+        .filter-top-row .action-btn {
+            padding: 8px 10px !important;
+            font-size: 11px !important;
+        }
+
+            .filter-top-row .action-btn span {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+        .filter-grid {
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+        /* 5. Buttons ko Compact Banana (Mobile View) */
+        .btn-text-hide {
+            display: none !important; /* Text hide karke sirf Icon dikhayenge */
+        }
+
+        .action-btn, .btn-download-modern {
+            padding: 5px 7px !important;
+            height: 30px !important; /* Exact square/compact look ke liye */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+</style>
+
+<div class="toolbar-container animate__animated animate__fadeInDown" id="mainDataToolbar" data-controller="@Model.ControllerName" data-action="@Model.ActionName" data-custom="@customDataStr">
+
+    <!-- ==============================================
+         ROW 1: ALWAYS VISIBLE (Search, View, Filter)
+         ============================================== -->
+    <div class="top-row-flex">
+        <!-- SEARCH -->
+        <div class="search-group" id="searchGroupContainer">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="toolbarSearch" placeholder="@Model.SearchPlaceholder" autocomplete="off">
+            <button type="button" id="resetToolbarBtn" title="Clear" style="border:none; background:transparent; display:none; cursor:pointer;">
+                <i class="fa-solid fa-circle-xmark" style="color:#cbd5e1; font-size: 15px;"></i>
+            </button>
+        </div>
+
+        <!-- ACTIONS -->
+        <div class="toolbar-actions">
+
+            @if (Model.ShowViewToggles)
+            {
+                <div class="view-toggle-group">
+                    <button type="button" class="toggle-btn active" data-view="card"><i class="fa-solid fa-list"></i></button>
+                    <button type="button" class="toggle-btn" data-view="grid"><i class="fa-solid fa-border-all"></i></button>
+                    <button type="button" class="toggle-btn" data-view="table"><i class="fa-solid fa-table"></i></button>
+                </div>
+            }
+
+            @if (Model.ShowViewToggles)
+            {
+                <!-- MOBILE 3-DOT MENU (Desktop par hide hoga) -->
+                <div class="mobile-view-menu-container" style="position: relative;">
+                    <button type="button" class="action-btn" id="mobileViewMenuBtn" title="Change View">
+                        <i class="fa-solid fa-ellipsis-vertical" style="font-size: 16px; padding: 0 4px;"></i>
+                    </button>
+                    <!-- 3-Dot ka dropdown jisme views aayenge -->
+                    <ul class="custom-dropdown-menu right-align" id="mobileViewDropdown" style="width: 140px;">
+                        <li class="dropdown-item-custom toggle-btn active" data-view="card">
+                            <i class="fa-solid fa-list"></i> Card View
+                        </li>
+                        <li class="dropdown-item-custom toggle-btn" data-view="grid">
+                            <i class="fa-solid fa-border-all"></i> Grid View
+                        </li>
+                        <li class="dropdown-item-custom toggle-btn" data-view="table">
+                            <i class="fa-solid fa-table"></i> Table View
+                        </li>
+                    </ul>
+                </div>
+                <!-- DOWNLOAD BUTTON -->
+                <button type="button" class="btn-download-modern" id="exportDataBtn" title="Download these records">
+                    <i class="fa-solid fa-cloud-arrow-down" style="font-size: 14px;"></i>
+                    <span class="btn-text-hide">Download Data</span>
+                </button>
+            }
+
+            <button type="button" class="action-btn" id="toggleFiltersBtn" title="Advanced Filters">
+                <i class="fa-solid fa-sliders"></i>
+                <span class="btn-text-hide">Filters</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ==============================================
+     ALPHABET FILTER PANEL (Auto-opens on search click)
+     ============================================== -->
+    <div class="alphabet-filters-panel" id="alphabetToggleSection">
+        <div id="alphabetFilterDestination"></div>
+    </div>
+
+    <!-- ==============================================
+     ROW 2: HIDDEN FILTERS PANEL
+     ============================================== -->
+    <div class="advanced-filters-panel" id="advancedFiltersSection">
+
+        <div style="display: flex; flex-direction: column; gap: 15px;">
+
+            <!-- TOP ROW: Salesperson, Status, Sort, aur Date Range ek hi line me -->
+            <div class="filter-top-row">
+
+                <!-- 1. SALESPERSON -->
+                @if (Model.IsSalesManager && Model.SalesPersons != null && Model.SalesPersons.Any())
+                {
+                    <div class="filter-box">
+                        <label>Salesperson</label>
+                        <button type="button" class="action-btn" id="salesToggleBtn">
+                            <span><i class="fa-solid fa-user-tie" style="color: var(--pt-soft-grey); margin-right: 6px;"></i> <span id="salesBtnText">@selectedSalesPersonName</span></span>
+                            <i class="fa-solid fa-chevron-down" style="font-size: 10px; color: var(--pt-soft-grey);"></i>
+                        </button>
+                        <ul class="custom-dropdown-menu" id="salesDropdown">
+                            <li class="dropdown-item-custom sales-item" data-id="">
+                                <i class="fa-solid fa-circle-dot" style="font-size: 8px;"></i>-- All --
+                            </li>
+                            @foreach (var sp in Model.SalesPersons)
+                            {
+                                <li class="dropdown-item-custom sales-item" data-id="@sp.LoginId">
+                                    <i class="fa-solid fa-user" style="font-size: 10px;"></i> @sp.FullName
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                }
+
+                <!-- 2. STATUS FILTER -->
+                @if (Model.FilterOptions != null && Model.FilterOptions.Any())
+                {
+                    <div class="filter-box">
+                        <label>Status</label>
+                        <button type="button" class="action-btn" id="statusToggleBtn">
+                            <span><i class="fa-solid fa-filter" style="color: var(--pt-soft-grey); margin-right: 6px;"></i> <span id="statusBtnText">Total Enquiries</span></span>
+                            <i class="fa-solid fa-chevron-down" style="font-size: 10px; color: var(--pt-soft-grey);"></i>
+                        </button>
+                        <ul class="custom-dropdown-menu" id="statusDropdown">
+                            @foreach (var item in Model.FilterOptions)
+                            {
+                                <li class="dropdown-item-custom filter-item" data-status="@item.Key">
+                                    <i class="fa-solid fa-circle-dot" style="font-size: 8px;"></i> @item.Value
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                }
+
+                <!-- 3. SORT RECORDS -->
+                @if (Model.SortOptions != null && Model.SortOptions.Any())
+                {
+                    <div class="filter-box">
+                        <label>Sort By</label>
+                        <button type="button" class="action-btn" id="sortToggleBtn">
+                            <span><i class="fa-solid fa-arrow-down-short-wide" style="color: var(--pt-soft-grey); margin-right: 6px;"></i> <span id="sortBtnText">Sort</span></span>
+                            <i class="fa-solid fa-chevron-down" style="font-size: 10px; color: var(--pt-soft-grey);"></i>
+                        </button>
+                        <ul class="custom-dropdown-menu" id="sortDropdown">
+                            @foreach (var sort in Model.SortOptions)
+                            {
+                                <li class="dropdown-item-custom sort-item" data-sort="@sort.Value">
+                                    <i class="@sort.IconClass"></i> @sort.Text
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                }
+
+                <!-- 4. CUSTOM DATE RANGE -->
+                @if (!string.IsNullOrEmpty(Model.CustomFilterHtml))
+                {
+                    <div class="filter-box custom-date-box">
+                        <div class="custom-html-wrapper" style="width: 100%;">
+                            @Html.Raw(Model.CustomFilterHtml)
+                        </div>
+                    </div>
+                }
+
+            </div> <!-- Yahan filter-top-row khatam hui -->
+
+        </div>
+    </div>
+</div>
+
+@await Html.PartialAsync("_ExportPopup")
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        let ctrlName = $('#mainDataToolbar').data('controller') || 'default';
+        let actionName = $('#mainDataToolbar').data('action') || 'Index';
+        let currentView = 'card';
+
+        let currentStatus = $('.filter-item').first().data('status') || 'all';
+        let currentSort = $('.sort-item').first().data('sort') || '';
+        let currentSalesPersonId = '';
+
+        let hiddenLoginVal = $('#hiddenLoginId').val();
+        if (hiddenLoginVal && hiddenLoginVal !== "0" && hiddenLoginVal !== "") {
+            currentSalesPersonId = hiddenLoginVal;
+            let spText = $('.sales-item[data-id="' + hiddenLoginVal + '"]').text().trim();
+            if (spText) {
+                $('#salesBtnText').text(spText);
+            }
+        }
+
+        // ==========================================
+        // AUTO MOVE ALPHABET FILTER
+        // ==========================================
+        setTimeout(function() {
+            if ($('#alphabetFilterWrapper').length > 0) {
+                $('#alphabetFilterWrapper').appendTo('#alphabetFilterDestination').css('display', 'block');
+            }
+        }, 150);
+        // ==========================================
+
+        $('.custom-html-wrapper input[type="date"]').each(function() {
+            $(this).attr('type', 'text').attr('placeholder', 'mm/dd/yyyy');
+            $(this).on('focus', function() { $(this).attr('type', 'date'); });
+            $(this).on('blur', function() { if (!$(this).val()) $(this).attr('type', 'text'); });
+        });
+
+        // Initial UI Setups
+        $(`.view-toggle-group .toggle-btn`).removeClass('active');
+        $(`.view-toggle-group .toggle-btn[data-view="${currentView}"]`).addClass('active');
+        if ($('.filter-item').length) { $('#statusBtnText').text($('.filter-item').first().text().trim()); }
+        if ($('.sort-item').length) { $('#sortBtnText').text($('.sort-item').first().text().trim()); }
+
+        // 🟢 NAYA: SEARCH BAR CLICK PAR ALPHABET PANEL AUTO-OPEN KAREGA 🟢
+        $('#searchGroupContainer, #toolbarSearch').on('focus click', function(e) {
+            e.stopPropagation();
+            // Agar advanced filters open hain toh band kardo taaki screen bhare na
+            if ($('#advancedFiltersSection').is(':visible')) {
+                $('#advancedFiltersSection').slideUp(200);
+                $('#toggleFiltersBtn').removeClass('active');
+            }
+            $('#alphabetToggleSection').slideDown(200);
+        });
+
+        // Alphabet panel ke andar click karne par dropdown band na ho jaye isliye:
+        $('#alphabetToggleSection').on('click', function(e) {
+            e.stopPropagation();
+        });
+
+        // TOGGLE ADVANCED FILTER PANEL
+        $('#toggleFiltersBtn').on('click', function(e) {
+            e.stopPropagation();
+            // Agar alphabet open hai toh usko band kar do
+            if ($('#alphabetToggleSection').is(':visible')) {
+                $('#alphabetToggleSection').slideUp(200);
+            }
+            $('#advancedFiltersSection').slideToggle(200);
+            $(this).toggleClass('active');
+        });
+
+        // Dropdown Click Handlers
+        $('#sortToggleBtn').on('click', function(e) {
+            e.stopPropagation(); $('#statusDropdown, #salesDropdown').hide(); $('#sortDropdown').fadeToggle(150);
+        });
+
+        $('#statusToggleBtn').on('click', function(e) {
+            e.stopPropagation(); $('#sortDropdown, #salesDropdown').hide(); $('#statusDropdown').fadeToggle(150);
+        });
+
+        $('#salesToggleBtn').on('click', function(e) {
+            e.stopPropagation(); $('#statusDropdown, #sortDropdown').hide(); $('#salesDropdown').fadeToggle(150);
+        });
+
+        // HIDE PANELS WHEL CLICKING OUTSIDE
+        $(document).on('click', function(e) {
+            $('.custom-dropdown-menu').fadeOut(100);
+
+            // Agar bahar kahin (jahan search aur alphabet nai hai) click ho toh alphabet band kardo
+            if (!$(e.target).closest('#searchGroupContainer, #alphabetToggleSection').length) {
+                $('#alphabetToggleSection').slideUp(200);
+            }
+        });
+
+        // 3-Dot button par click karne par dropdown khulna
+        $('#mobileViewMenuBtn').on('click', function(e) {
+            e.stopPropagation();
+            $('.custom-dropdown-menu').not('#mobileViewDropdown').hide();
+            $('#mobileViewDropdown').fadeToggle(150);
+        });
+
+        // View Toggle Click
+        $('.toggle-btn').on('click', function() {
+            $('.toggle-btn').removeClass('active');
+            currentView = $(this).data('view');
+            $('.toggle-btn[data-view="' + currentView + '"]').addClass('active');
+            $('#mobileViewDropdown').fadeOut(150);
+            fireToolbarEvent();
+        });
+
+        $('.sort-item').on('click', function() {
+            currentSort = $(this).data('sort');
+            $('#sortBtnText').text($(this).text().trim());
+            fireToolbarEvent();
+        });
+
+        $('.filter-item').on('click', function() {
+            currentStatus = $(this).data('status');
+            $('#statusBtnText').text($(this).text().trim());
+            fireToolbarEvent();
+        });
+
+        $('.sales-item').on('click', function() {
+            currentSalesPersonId = $(this).data('id');
+            $('#salesBtnText').text($(this).text().trim());
+            fireToolbarEvent();
+        });
+
+        let searchTimeout;
+        $('#toolbarSearch').on('input', function() {
+            $('#resetToolbarBtn').toggle($(this).val().length > 0);
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(fireToolbarEvent, 400);
+        });
+
+        $(document).on('change input', '.custom-html-wrapper input, .custom-html-wrapper select, .custom-dynamic-input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(fireToolbarEvent, 300);
+        });
+
+        $('#resetToolbarBtn').on('click', function() {
+            $('#toolbarSearch').val('');
+            $(this).fadeOut(200);
+            $('.custom-dynamic-input').val('');
+            $('.custom-html-wrapper input, .custom-html-wrapper select').val('');
+
+            // Optional: Agar reset kare toh alphabet list wapas band ho jaye:
+            $('#alphabetToggleSection').slideUp(200);
+
+            fireToolbarEvent();
+        });
+
+        $(document).off('click', '#exportDataBtn').on('click', '#exportDataBtn', function(e) {
+            let btnElement = document.getElementById('exportDataBtn');
+            let btnEvents = (btnElement && $._data) ? $._data(btnElement, 'events') : null;
+            if (btnEvents && btnEvents.click && btnEvents.click.length > 0) { return; }
+
+            let now = Date.now();
+            if (window._lastExportTime && (now - window._lastExportTime < 2500)) { return; }
+            window._lastExportTime = now;
+
+            let payload = {
+                view: currentView,
+                sort: currentSort,
+                search: $('#toolbarSearch').val(),
+                status: currentStatus,
+                salesPersonId: currentSalesPersonId,
+                controller: ctrlName,
+                action: actionName
+            };
+
+            let docEvents = $._data ? $._data(document, 'events') : null;
+            if (docEvents) {
+                if (docEvents.onExportData && docEvents.onExportData.length > 0) { $(document).trigger('onExportData', [payload]); return; }
+                if (docEvents.onToolbarExport && docEvents.onToolbarExport.length > 0) { $(document).trigger('onToolbarExport', ['excel', payload]); return; }
+                if (docEvents.exportData && docEvents.exportData.length > 0) { $(document).trigger('exportData', [payload]); return; }
+            }
+            fallbackExportTable();
+        });
+
+        function fallbackExportTable() {
+            let table = $('table:visible').first();
+            if (!table.length) table = $('table').first();
+            if (!table.length) { window.showStandardExportPopup('nodata', 'No data table found to export on this page.'); return; }
+
+            let csv = [];
+            table.find('tr').each(function() {
+                let row = [];
+                $(this).find('th, td').each(function() {
+                    let text = $(this).text().trim().replace(/"/g, '""');
+                    row.push('"' + text + '"');
+                });
+                if (row.length > 0) csv.push(row.join(','));
+            });
+
+            if (csv.length <= 1) { window.showStandardExportPopup('nodata', 'No data rows available in the table to export.'); return; }
+
+            let csvString = csv.join('\n');
+            let blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+            let link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = (ctrlName || 'Export') + '_Data_' + new Date().toISOString().slice(0, 10) + '.csv';
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.showStandardExportPopup('success');
+        }
+
+        setTimeout(fireToolbarEvent, 200);
+
+        function fireToolbarEvent() {
+            let customInputs = {};
+            $('.custom-html-wrapper input, .custom-html-wrapper select, .custom-dynamic-input').each(function() {
+                let key = $(this).attr('name') || $(this).attr('id');
+                if (key) { customInputs[key] = $(this).val(); }
+            });
+
+            let fromDateVal = $('#fromDate').val() || $('input[name="fromDate"]').val() || $('#filterFromDate').val() || '';
+            let toDateVal = $('#toDate').val() || $('input[name="toDate"]').val() || $('#filterToDate').val() || '';
+
+            let payload = Object.assign({
+                view: currentView,
+                sort: currentSort,
+                search: $('#toolbarSearch').val(),
+                status: currentStatus,
+                salesPersonId: currentSalesPersonId,
+                fromDate: fromDateVal,
+                toDate: toDateVal,
+                controller: ctrlName,
+                action: actionName
+            }, customInputs);
+
+            $(document).trigger('onToolbarChange', [payload]);
+        }
+
+        function adjustToolbarStickyPosition() {
+            let $toolbar = $('#mainDataToolbar');
+            let $suspectNav = $('.suspect-nav-container');
+
+            if ($toolbar.length > 0) {
+                let isMobile = window.innerWidth <= 768; // Mobile screen check
+
+                // Check agar Suspect Nav is page par exist karta hai
+                if ($suspectNav.length > 0 && $suspectNav.is(':visible')) {
+
+                    if (isMobile) {
+                        // Agar mobile hai, toh toolbar ko suspect nav ke theek niche lagao
+                        // Suspect nav ka top (50px) + uski total height
+                        let suspectTop = parseInt($suspectNav.css('top')) || 50;
+                        let suspectHeight = $suspectNav.outerHeight();
+
+                        $toolbar.css('top', (suspectTop + suspectHeight) + 'px');
+                    } else {
+                        // Desktop par suspect nav sticky nahi hota, toh toolbar default rahega
+                        $toolbar.css('top', '60px');
+                    }
+                } else {
+                    // Agar Suspect Nav page par NAHI hai
+                    if (isMobile) {
+                        // Direct main header (50px) ke theek niche chipkega
+                        $toolbar.css('top', '50px');
+                    } else {
+                        $toolbar.css('top', '60px');
+                    }
+                }
+            }
+        }
+
+        // 1. Page load par run karein
+        adjustToolbarStickyPosition();
+
+        // 2. Window resize (phone rotate karne par) wapas calculate karein
+        $(window).on('resize', function() {
+            adjustToolbarStickyPosition();
+        });
+    });
+</script>

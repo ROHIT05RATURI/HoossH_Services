@@ -8,15 +8,11 @@
 <link rel="stylesheet" href="/css/HRMS.css">
 <link rel="stylesheet" href="/Attendance/Attendance.css">
 
-<!-- Clean Sub Navigation bar matching HRMS flow -->
-<div class="d-flex gap-2 mb-4">
-    <a href="/Team/Attendence" class="btn btn-primary btn-sm rounded-pill px-3 active shadow-sm">
-        <i class="fas fa-plus-circle me-1"></i> Mark Attendance
-    </a>
-    <a href="/Team/ViewAttendence" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
-        <i class="fas fa-list-ul me-1"></i> Attendance History
-    </a>
-</div>
+@await Html.PartialAsync("_suspect", new List<SuspectNavItem>
+{
+    new SuspectNavItem { Text = "Attendence", Url = "/Team/Attendence", Icon = "fas fa-user-plus" },
+    new SuspectNavItem { Text = "View Attendence", Url = "/Team/View Attendence", Icon = "fas fa-users" }
+})
 
 <div class="row g-4">
     <!-- Check-In / Check-Out Card -->

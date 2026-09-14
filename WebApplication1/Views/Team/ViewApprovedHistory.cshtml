@@ -2,15 +2,78 @@
 @{
     ViewBag.Title = "Team Leaves";
     Layout = "~/Views/Shared/_LayoutINV.cshtml";
+    string role = "SalesPerson";
 
+    // DUMMY DATA: Mocking the leaves history list
+    var dummyLeavesHistory = new List<MockLeave>
+    {
+        new MockLeave {
+            FullName = "Amit Patel",
+            AllocationJSON = "[{\"Description\":\"CL\",\"Used\":3.0,\"Allocated\":12.0},{\"Description\":\"EL\",\"Used\":2.0,\"Allocated\":15.0}]",
+            SalesPersonImg = null,
+            name = "Casual Leave",
+            StartDate = new DateTime(2026, 8, 10),
+            EndDate = new DateTime(2026, 8, 12),
+            CreatedDate = new DateTime(2026, 8, 5),
+            ActualLeaves = 3,
+            status = "Approved"
+        },
+        new MockLeave {
+            FullName = "Amit Patel",
+            AllocationJSON = "[{\"Description\":\"CL\",\"Used\":3.0,\"Allocated\":12.0},{\"Description\":\"EL\",\"Used\":2.0,\"Allocated\":15.0}]",
+            SalesPersonImg = null,
+            name = "Earned Leave",
+            StartDate = new DateTime(2026, 12, 1),
+            EndDate = new DateTime(2026, 12, 5),
+            CreatedDate = new DateTime(2026, 11, 20),
+            ActualLeaves = 5,
+            status = "Pending"
+        },
+        new MockLeave {
+            FullName = "Priya Sharma",
+            AllocationJSON = "[{\"Description\":\"CL\",\"Used\":1.0,\"Allocated\":10.0},{\"Description\":\"PL\",\"Used\":0.0,\"Allocated\":5.0}]",
+            SalesPersonImg = null,
+            name = "Sick Leave",
+            StartDate = new DateTime(2026, 9, 15),
+            EndDate = new DateTime(2026, 9, 16),
+            CreatedDate = new DateTime(2026, 9, 14),
+            ActualLeaves = 2,
+            status = "Rejected"
+        }
+    };
+
+    int totalRecords = dummyLeavesHistory.Count;
 }
-@model Leaves
+
+@functions {
+    public class LeaveAllocationItem
+    {
+        public string Description { get; set; }
+        public decimal Used { get; set; }
+        public decimal Allocated { get; set; }
+    }
+
+    // DUMMY DATA: Mock class for leaves
+    public class MockLeave
+    {
+        public string FullName { get; set; }
+        public string AllocationJSON { get; set; }
+        public byte[] SalesPersonImg { get; set; }
+        public string name { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public decimal ActualLeaves { get; set; }
+        public string status { get; set; }
+    }
+}
 
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="/css/HRMS.css">
 
 <style>
-    /* Profile Image CSS - Same as your previous code */
+    /* Profile Image CSS */
     .sp-profile-img {
         width: 45px;
         height: 45px;
@@ -36,79 +99,132 @@
         <i class="fas fa-list-ul me-1"></i> Leave History
     </a>
 </div>
+
 <div id="pageHeaderWrapper">
-    @* @await Html.PartialAsync("PageHeader", new
+    @* Uncomment this when connecting to your backend
+    @await Html.PartialAsync("PageHeader", new
     {
         Title = "Approve Leaves",
         Description = "Total Leave Applications Generated",
-        CountText = $"",
+        CountText = $"{totalRecords}",
         ShowDetailedUI = true,
         BadgeColorClass = "primary"
-    }) *@
+    }) 
+    *@
 </div>
 
 <div class="premium-container mx-lg-5 w-auto">
-    @* @await Html.PartialAsync("_DataToolbar2", new
+    @* Uncomment this when connecting to your backend
+    @await Html.PartialAsync("_DataToolbar2", new
     {
         SearchPlaceholder = "Search Employee Name, Leave Type...",
         ControllerName = "Team",
         ActionName = "ViewApproveLeave",
         IsSalesManager = false,
-        
+        SalesPersons = "",
         FilterOptions = new Dictionary<string, string> {
             { "all", "Total Leaves" },
             { "pending", "Pending" },
             { "approved", "Approved" },
             { "rejected", "Rejected" }
         },
-        // SortOptions = new List<CIS_MIS_DAL.Model.ToolbarSortOption> {
-        //     new CIS_MIS_DAL.Model.ToolbarSortOption { Value = "date_desc", Text = "Newest First", IconClass = "fa-regular fa-clock" },
-        //     new CIS_MIS_DAL.Model.ToolbarSortOption { Value = "date_asc", Text = "Oldest First", IconClass = "fa-solid fa-clock-rotate-left" },
-        //     new CIS_MIS_DAL.Model.ToolbarSortOption { Value = "name_asc", Text = "Name (A-Z)", IconClass = "fa-solid fa-arrow-down-a-z" },
-        //     new CIS_MIS_DAL.Model.ToolbarSortOption { Value = "name_desc", Text = "Name (Z-A)", IconClass = "fa-solid fa-arrow-up-z-a" }
-        // },
+        SortOptions = new List<HoossH_Services.Models.ToolbarSortOption> {
+            new HoossH_Services.Models.ToolbarSortOption { Value = "date_desc", Text = "Newest First", IconClass = "fa-regular fa-clock" },
+            new HoossH_Services.Models.ToolbarSortOption { Value = "date_asc", Text = "Oldest First", IconClass = "fa-solid fa-clock-rotate-left" },
+            new HoossH_Services.Models.ToolbarSortOption { Value = "name_asc", Text = "Name (A-Z)", IconClass = "fa-solid fa-arrow-down-a-z" },
+            new HoossH_Services.Models.ToolbarSortOption { Value = "name_desc", Text = "Name (Z-A)", IconClass = "fa-solid fa-arrow-up-z-a" }
+        },
         CustomFilterHtml = @"<div class='date-range-wrapper'>
                             <div class='date-input-group'><span>From</span><input type='date' name='fromDate' class='custom-dynamic-input' title='From Date'></div>
                             <div class='date-input-group'><span>To</span><input type='date' name='toDate' class='custom-dynamic-input' title='To Date'></div></div>"
-    }) *@
+    }) 
+    *@
 
-              <div class="record-card card-group">
+    <div class="leave-list-container" id="leaveList">
+        @if (dummyLeavesHistory != null && dummyLeavesHistory.Count > 0)
+        {
+            var groupedLeaves = dummyLeavesHistory.GroupBy(x => x.FullName).ToList();
+
+            foreach (var group in groupedLeaves)
+            {
+                var empName = group.Key;
+                var empData = group.First();
+                var totalEmployeeLeaves = group.Count();
+
+                List<LeaveAllocationItem> allocations = new List<LeaveAllocationItem>();
+                if (!string.IsNullOrEmpty(empData.AllocationJSON) && empData.AllocationJSON != "[]")
+                {
+                    try
+                    {
+                        allocations =  new List<LeaveAllocationItem>();
+                    }
+                    catch { }
+                }
+
+                <div class="record-card group-card" data-name="@empName.ToLower()">
 
                     <div class="card-header-row" onclick="toggleDetails(this)">
                         <div class="sp-Avtar-box">
-                            @* @if (empData.SalesPersonImg != null && empData.SalesPersonImg.Length > 0)
+                            @if (empData.SalesPersonImg != null && empData.SalesPersonImg.Length > 0)
                             {
-                                // convert byte[] image to base64 data URL
                                 var base64 = Convert.ToBase64String(empData.SalesPersonImg);
                                 var finalImgSrc = $"data:image/jpeg;base64,{base64}";
                                 <img src="@finalImgSrc" class="sp-profile-img" alt="Profile" />
                             }
                             else
                             {
-                                <img src="/Images/Sadie_Sink.jpg" class="sp-profile-img" alt="Default" />
-                            } *@
+                                <img src="https://ui-avatars.com/api/?name=@Uri.EscapeDataString(empName)&background=random" class="sp-profile-img" alt="Default" />
+                            }
                         </div>
 
                         <div class="header-left">
                             <div class="emp-name-title">
-                                
+                                @empName
                             </div>
                             <div class="emp-stats">
-                                
-                                
+                                @if (allocations.Count > 0)
+                                {
+                                    foreach (var alloc in allocations)
+                                    {
+                                        string badgeClass = "pill-gray-outline";
+                                        string iconClass = "fa-solid fa-briefcase";
+
+                                        if (alloc.Description == "CL")
+                                        {
+                                            badgeClass = "pill-green-outline";
+                                            iconClass = "fa-solid fa-calendar-day";
+                                        }
+                                        else if (alloc.Description == "EL")
+                                        {
+                                            badgeClass = "pill-blue-outline";
+                                            iconClass = "fa-solid fa-calendar-check";
+                                        }
+                                        else if (alloc.Description == "PL")
+                                        {
+                                            badgeClass = "pill-gray-outline";
+                                            iconClass = "fa-solid fa-plane";
+                                        }
+
+                                        <span class="stat-pill @badgeClass">
+                                            <i class="@iconClass"></i> @alloc.Description: @Convert.ToInt32(alloc.Used) / @Convert.ToInt32(alloc.Allocated)
+                                        </span>
+                                    }
+                                }
+                                else
+                                {
                                     <span class="stat-pill pill-gray-outline"><i class="fa-solid fa-circle-info"></i> No Allocation Data</span>
-                                
+                                }
                             </div>
                         </div>
 
                         <div class="header-right">
-                            <div class="total-number"></div>
+                            <div class="total-number">@totalEmployeeLeaves</div>
                             <div class="total-label">TOTAL LEAVES</div>
                             <i class="fas fa-chevron-down expand-icon"></i>
                         </div>
                     </div>
 
-                    <div class="card-body-table">
+                    <div class="card-body-table" style="display:none;">
                         <div class="table-responsive">
                             <table class="detail-table">
                                 <thead>
@@ -118,12 +234,12 @@
                                         <th style="text-align:center;">END DATE</th>
                                         <th style="text-align:center;">APPLIED ON</th>
                                         <th style="text-align:center;">DAYS</th>
-                                        <th style="text-align:center;">ACTUAL DAYS</th> <!-- NAYA COLUMN YAHAN H -->
+                                        <th style="text-align:center;">ACTUAL DAYS</th>
                                         <th style="text-align:end;">STATUS</th>
                                     </tr>
                                 </thead>
-                                @* <tbody>
-                                    @foreach (var leave in Model.ActualLeaves)
+                                <tbody>
+                                    @foreach (var leave in group)
                                     {
                                         var days = Convert.ToInt32((leave.EndDate - leave.StartDate).TotalDays + 1);
 
@@ -143,28 +259,29 @@
                                             <td data-label="Total Days" style="text-align:center;">
                                                 <span class="outline-pill outline-gray">@days Day(s)</span>
                                             </td>
-
                                             <td data-label="Actual Days" style="text-align:center;">
                                                 <span class="outline-pill outline-gray">@Convert.ToInt32(leave.ActualLeaves) Day(s)</span>
                                             </td>
-
                                             <td data-label="Status" style="text-align:end;">
-                                                <span class="status-pill status-@leave.status">@leave.status</span>
+                                                <span class="status-pill status-@leave.status.ToLower()">@leave.status</span>
                                             </td>
                                         </tr>
                                     }
-                                </tbody> *@
+                                </tbody>
                             </table>
                         </div>
                     </div>
-             
-        
+                </div>
+            }
+        }
+        else
+        {
             <div class="no-data-view">
                 <i class="fas fa-calendar-times"></i>
                 <h6>No Leave Applications</h6>
                 <p class="small text-muted">There are no pending or history records available for approval.</p>
             </div>
-        
+        }
     </div>
 </div>
 
@@ -178,7 +295,7 @@
     }
 
     $(document).ready(function() {
-        // State variables jo toolbar se aayengi
+        // State variables for toolbar filtering
         let activeSearch = '';
         let activeStatus = 'all';
         let activeFromDate = '';
@@ -228,13 +345,12 @@
             });
         }
 
-        // _DataToolbar2 ke custom event ko listen karna
+        // Custom event listener for DataToolbar2
         $(document).off('onToolbarChange').on('onToolbarChange', function(event, state) {
             if (state) {
                 if (state.search !== undefined) activeSearch = state.search;
                 if (state.status !== undefined) activeStatus = state.status;
 
-                // Agar toolbar custom date fields ya HTML bhej raha hai toh unhe yahan uthayein
                 activeFromDate = $('input[name="fromDate"]').val() || '';
                 activeToDate = $('input[name="toDate"]').val() || '';
 
@@ -242,7 +358,7 @@
             }
         });
 
-        // Date fields ke manually change hone par bhi filter chale
+        // Trigger filters when dates change
         $(document).on('change', 'input[type="date"]', function() {
             activeFromDate = $('input[name="fromDate"]').val() || '';
             activeToDate = $('input[name="toDate"]').val() || '';

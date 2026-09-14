@@ -1,10 +1,11 @@
-﻿
+﻿@using HoossH_Services.Models
 @{
     ViewBag.Title = "Plan Visit";
     Layout = "~/Views/Shared/_LayoutINV.cshtml";
-  
-}
 
+    // DUMMY DATA: Mocking the role for testing purposes
+    string role = "SalesPerson";
+}
 
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -277,8 +278,8 @@
     }
 
     /* =========================================
-                   FAB MENU (Prefixed specifically)
-                   ========================================= */
+                       FAB MENU (Prefixed specifically)
+                       ========================================= */
     .v-floating-action-menu {
         position: fixed;
         bottom: 100px;
@@ -355,8 +356,8 @@
         }
 
     /* =========================================
-                   RIGHT DRAWER (Prefixed specifically)
-                   ========================================= */
+                       RIGHT DRAWER (Prefixed specifically)
+                       ========================================= */
     .v-right-drawer {
         position: fixed;
         top: 0;
@@ -482,8 +483,8 @@
     }
 
     /* =========================================
-                   PREMIUM MODAL (Prefixed specifically)
-                   ========================================= */
+                       PREMIUM MODAL (Prefixed specifically)
+                       ========================================= */
     .v-premium-modal {
         display: none;
         position: fixed;
@@ -1144,7 +1145,6 @@
 
 
 
-
 <div class="v-map-container">
     <input type="hidden" id="v-CurrLoc" name="CurrentLocation" />
     <input type="hidden" id="v-SelectedDate" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
@@ -1167,12 +1167,12 @@
         <button class="v-fab-sub-btn" onclick="vOpenAppointmentModal('', '')">
             <i class="fas fa-plus text-success"></i> New Appointment
         </button>
-        
-       
+        @if (role == "SalesPerson")
+        {
             <button class="v-fab-sub-btn" onclick="location.href='/Flow/ClientDetails'">
                 <i class="fas fa-user-plus text-info"></i> New Suspect
             </button>
-        
+        }
     </div>
     <button class="v-fab-btn" id="v-mainFabBtn" onclick="vToggleFabMenu()">
         <i class="fas fa-layer-group"></i>
@@ -1219,13 +1219,20 @@
                             <input type="text" id="v-clientSearch" placeholder="Search..." onkeyup="vFilterClients()">
                         </div>
                         <div id="v-clientOptionsContainer">
-                            
-                                    
-                                    <div class="v-select-option" onclick="vSelectClient()">
-                                        
-                                    </div>
-                                
-                            
+                            <!-- DUMMY DATA FOR CLIENT OPTIONS -->
+                            <div class="v-select-option" data-id="CUST001" onclick="vSelectClient('CUST001', 'Tech Innovations Inc. (IT)')">
+                                Tech Innovations Inc. (IT) - Downtown Area
+                            </div>
+                            <div class="v-select-option" data-id="CUST002" onclick="vSelectClient('CUST002', 'Global Logistics (Supply Chain)')">
+                                Global Logistics (Supply Chain) - North Industrial
+                            </div>
+                            <div class="v-select-option" data-id="CUST003" onclick="vSelectClient('CUST003', 'Sunrise Retailers (Retail)')">
+                                Sunrise Retailers (Retail) - City Center
+                            </div>
+                            <div class="v-select-option" data-id="CUST004" onclick="vSelectClient('CUST004', 'Acme Manufacturing')">
+                                Acme Manufacturing - East Wing
+                            </div>
+                            <!-- END DUMMY DATA -->
                         </div>
                     </div>
                 </div>
@@ -1315,10 +1322,58 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="/js/geolocation.js"></script>
+<!-- <script src="/js/geolocation.js"></script> -->
 
 <script>
-  
+    // DUMMY DATA FOR TIMELINE
+    const vBackendData = [
+        {
+            customerName: "Tech Innovations Inc.",
+            industry: "IT",
+            Area: "Downtown Area",
+            Latitude: "28.7041",
+            Longitude: "77.1025",
+            Priority: "HOT",
+            status: "COMPLETED",
+            AppointmentTime: "09:30 AM",
+            ContactPerson: "Rajesh Kumar",
+            TotalVisit: 5,
+            SalesAmount: 150000,
+            customerid: "CUST001",
+            RouteID: "RT101"
+        },
+        {
+            customerName: "Global Logistics",
+            industry: "Supply Chain",
+            Area: "North Industrial",
+            Latitude: "28.5355",
+            Longitude: "77.3910",
+            Priority: "MODERATE",
+            status: "ONGOING",
+            AppointmentTime: "11:00 AM",
+            ContactPerson: "Anita Sharma",
+            TotalVisit: 2,
+            SalesAmount: 45000,
+            customerid: "CUST002",
+            RouteID: "RT102"
+        },
+        {
+            customerName: "Sunrise Retailers",
+            industry: "Retail",
+            Area: "City Center",
+            Latitude: "28.4595",
+            Longitude: "77.0266",
+            Priority: "COLD",
+            status: "PENDING",
+            AppointmentTime: "02:15 PM",
+            ContactPerson: "Vikram Singh",
+            TotalVisit: 0,
+            SalesAmount: 0,
+            customerid: "CUST003",
+            RouteID: "RT103"
+        }
+    ];
+
     let vIsMenuOpen = false;
 
     $(document).ready(function() {
@@ -1351,14 +1406,14 @@
 
         if (!routes || routes.length === 0) {
             container.html(`
-                            <div style="display: flex; flex-direction: column; justify-content: center; height: 100%; margin-top: 20px;">
-                                <div class="v-card-route v-card-cta" style="margin: auto; width: 85%;">
-                                    <div class="v-cta-text">No operations scheduled today.</div>
-                                    <button class="v-btn-set-appointment" onclick="vOpenAppointmentModal('', '')">
-                                        <i class="fas fa-plus"></i> Set Appointment
-                                    </button>
-                                </div>
-                            </div>`);
+                                <div style="display: flex; flex-direction: column; justify-content: center; height: 100%; margin-top: 20px;">
+                                    <div class="v-card-route v-card-cta" style="margin: auto; width: 85%;">
+                                        <div class="v-cta-text">No operations scheduled today.</div>
+                                        <button class="v-btn-set-appointment" onclick="vOpenAppointmentModal('', '')">
+                                            <i class="fas fa-plus"></i> Set Appointment
+                                        </button>
+                                    </div>
+                                </div>`);
             return;
         }
 
@@ -1430,56 +1485,56 @@
             }
 
             const card = `
-                            <div class="v-location-step animate__animated animate__fadeInUp" style="animation-delay: ${i * 0.1}s">
-                                <div class="v-card-route ${isVisited ? 'v-card-visited' : ''}" style="${cardCursorStyle}" ${cardOnClickAttr}>
-                                    <div class="v-card-floating-pin" style="color: ${pColor}; cursor: pointer;" onclick="event.stopPropagation(); vOpenDirections('${safeName}', '${safeArea}', '${safeLat}', '${safeLng}')">
-                                        <i class="fa-solid fa-location-dot"></i>
-                                    </div>
-                                    <div class="v-priority-badge ${badgeClass}"><i class="fa-solid ${pIcon}"></i> ${badgeText}</div>
-
-                                    <div class="v-loc-content-wrapper">
-                                        <span class="v-loc-name">${displayCustName}</span>
-                                        <div class="v-loc-meta">
-                                            <span><i class="fas fa-clock text-primary"></i> ${x.AppointmentTime || '--:--'}</span>
-                                            <span><i class="fas fa-user-tie"></i> ${x.ContactPerson || 'N/A'}</span>
+                                <div class="v-location-step animate__animated animate__fadeInUp" style="animation-delay: ${i * 0.1}s">
+                                    <div class="v-card-route ${isVisited ? 'v-card-visited' : ''}" style="${cardCursorStyle}" ${cardOnClickAttr}>
+                                        <div class="v-card-floating-pin" style="color: ${pColor}; cursor: pointer;" onclick="event.stopPropagation(); vOpenDirections('${safeName}', '${safeArea}', '${safeLat}', '${safeLng}')">
+                                            <i class="fa-solid fa-location-dot"></i>
                                         </div>
-                                        <div class="v-loc-stats">
-                                            <span><b>Visits:</b> ${x.TotalVisit || 0}</span>
-                                            <span><b>Sales:</b> ₹${x.SalesAmount || 0}</span>
+                                        <div class="v-priority-badge ${badgeClass}"><i class="fa-solid ${pIcon}"></i> ${badgeText}</div>
+
+                                        <div class="v-loc-content-wrapper">
+                                            <span class="v-loc-name">${displayCustName}</span>
+                                            <div class="v-loc-meta">
+                                                <span><i class="fas fa-clock text-primary"></i> ${x.AppointmentTime || '--:--'}</span>
+                                                <span><i class="fas fa-user-tie"></i> ${x.ContactPerson || 'N/A'}</span>
+                                            </div>
+                                            <div class="v-loc-stats">
+                                                <span><b>Visits:</b> ${x.TotalVisit || 0}</span>
+                                                <span><b>Sales:</b> ₹${x.SalesAmount || 0}</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="v-btn-checkin-container">
+                                            <input type="hidden" id="v-cid_${i}" value="${x.customerid}" />
+                                            <input type="hidden" id="v-prio_${i}" value="${x.Priority}" />
+                                            <input type="hidden" id="v-route_${i}" value="${x.RouteID}" />
+                                            <button
+                                                type="button"
+                                                id="v-btn_${i}"
+                                                class="v-btnaction"
+                                                style="background: ${btnBg}"
+                                                ${btnDisabled ? 'disabled' : btnOnClick}>
+                                                <i class="fa-solid ${btnIcon}"></i>
+                                                ${btnText}
+                                            </button>
                                         </div>
                                     </div>
-
-                                    <div class="v-btn-checkin-container">
-                                        <input type="hidden" id="v-cid_${i}" value="${x.customerid}" />
-                                        <input type="hidden" id="v-prio_${i}" value="${x.Priority}" />
-                                        <input type="hidden" id="v-route_${i}" value="${x.RouteID}" />
-                                        <button
-                                            type="button"
-                                            id="v-btn_${i}"
-                                            class="v-btnaction"
-                                            style="background: ${btnBg}"
-                                            ${btnDisabled ? 'disabled' : btnOnClick}>
-                                            <i class="fa-solid ${btnIcon}"></i>
-                                            ${btnText}
-                                        </button>
-                                    </div>
-                                </div>
-                                <svg class="v-connector" viewBox="0 0 100 100" preserveAspectRatio="none">
-                                    <path class="v-snake-path" d="${i % 2 === 0 ? 'M 25,0 C 25,50 75,50 75,100' : 'M 75,0 C 75,50 25,50 25,100'}" />
-                                </svg>
-                            </div>`;
+                                    <svg class="v-connector" viewBox="0 0 100 100" preserveAspectRatio="none">
+                                        <path class="v-snake-path" d="${i % 2 === 0 ? 'M 25,0 C 25,50 75,50 75,100' : 'M 75,0 C 75,50 25,50 25,100'}" />
+                                    </svg>
+                                </div>`;
             container.append(card);
         });
 
         container.append(`
-                        <div class="v-location-step animate__animated animate__fadeInUp" style="animation-delay: ${routes.length * 0.1}s">
-                            <div class="v-card-route v-card-cta">
-                                <div class="v-cta-text">Grow your route trail!</div>
-                                <button class="v-btn-set-appointment" onclick="vOpenAppointmentModal('', '')">
-                                    <i class="fas fa-plus"></i> Add More
-                                </button>
-                            </div>
-                        </div>`);
+                            <div class="v-location-step animate__animated animate__fadeInUp" style="animation-delay: ${routes.length * 0.1}s">
+                                <div class="v-card-route v-card-cta">
+                                    <div class="v-cta-text">Grow your route trail!</div>
+                                    <button class="v-btn-set-appointment" onclick="vOpenAppointmentModal('', '')">
+                                        <i class="fas fa-plus"></i> Add More
+                                    </button>
+                                </div>
+                            </div>`);
     }
     let activeCheckIn = { custName: '', id: '', cid: '', prio: '', routeid: '' };
 
@@ -1531,58 +1586,40 @@
         btn.html('<i class="fa-solid fa-spinner fa-spin"></i>').prop('disabled', true);
 
         try {
-            await vGetLocation();
-            const loc = $('#v-CurrLoc').val();
+            // MOCKED GeoService call
+            // await vGetLocation();
+            const loc = "28.7041,77.1025";
 
-            if (!loc) {
-                btn.html('<i class="fa-solid fa-location-arrow"></i> Check-In').prop('disabled', false);
-                return;
-            }
+            // MOCKING AJAX CALL WITH SETTIMEOUT
+            setTimeout(() => {
+                const successModal = document.getElementById("customSuccessModal");
+                const successCard = document.getElementById("successCard");
+                const successIconWrapper = document.getElementById("successIconWrapper");
+                const successIcon = document.getElementById("successIcon");
+                const successTitle = document.getElementById("successTitle");
+                const successTime = document.getElementById("successTime");
 
-            $.post("/Flow/SaveDailyDetails", {
-                CustomerName: activeCheckIn.custName,
-                customerid: activeCheckIn.cid,
-                CurrentLocation: loc,
-                Priority: activeCheckIn.prio,
-                RouteId: activeCheckIn.routeid
-            }, function(res) {
-                if (res.status) {
-                    const successModal = document.getElementById("customSuccessModal");
-                    const successCard = document.getElementById("successCard");
-                    const successIconWrapper = document.getElementById("successIconWrapper");
-                    const successIcon = document.getElementById("successIcon");
-                    const successTitle = document.getElementById("successTitle");
-                    const successTime = document.getElementById("successTime");
+                successCard.classList.remove("animate__zoomIn", "animate__zoomOut");
 
-                    successCard.classList.remove("animate__zoomIn", "animate__zoomOut");
+                successTitle.innerText = "Checked-In! 🌟";
+                successIconWrapper.className = "success-icon-wrapper checkin";
+                successIcon.className = "fas fa-check";
+                successTime.innerText = `Time: ${currentTime}`;
 
-                    successTitle.innerText = "Checked-In! 🌟";
-                    successIconWrapper.className = "success-icon-wrapper checkin";
-                    successIcon.className = "fas fa-check";
-                    successTime.innerText = `Time: ${currentTime}`;
+                successModal.classList.add("active");
+                successCard.classList.add("animate__zoomIn");
 
-                    successModal.classList.add("active");
-                    successCard.classList.add("animate__zoomIn");
+                btn.html('<i class="fa-solid fa-check"></i> Checked-In').css('background', '#94a3b8');
 
-                    btn.html('<i class="fa-solid fa-check"></i> Checked-In').css('background', '#94a3b8');
-
+                setTimeout(() => {
+                    successCard.classList.remove("animate__zoomIn");
+                    successCard.classList.add("animate__zoomOut");
                     setTimeout(() => {
-                        successCard.classList.remove("animate__zoomIn");
-                        successCard.classList.add("animate__zoomOut");
+                        successModal.classList.remove("active");
+                    }, 400);
+                }, 2000);
+            }, 1000); // 1 sec delay to mock processing
 
-                        setTimeout(() => {
-                            window.location.href = "/Flow/CustomerReport?Id=" + encodeURIComponent(activeCheckIn.cid);
-                        }, 400);
-
-                    }, 2000);
-                } else {
-                    Swal.fire({ icon: 'error', text: res.message });
-                    btn.html('<i class="fa-solid fa-location-arrow"></i> Check-In').prop('disabled', false);
-                }
-            }).fail(() => {
-                Swal.fire({ icon: 'error', text: "Server Error" });
-                btn.html('<i class="fa-solid fa-location-arrow"></i> Check-In').prop('disabled', false);
-            });
         } catch (e) {
             btn.html('<i class="fa-solid fa-location-arrow"></i> Check-In').prop('disabled', false);
         }
@@ -1596,16 +1633,6 @@
         activeCheckIn.routeid = $(`#v-route_${id}`).val();
 
         openCustomPopup('CheckIn', custName);
-    }
-
-    async function vGetLocation() {
-        try {
-            const location = await GeoService.getLocation();
-            if (location && location.latitude) $('#v-CurrLoc').val(location.latitude + "," + location.longitude);
-            else { $('#v-CurrLoc').val(""); alert("Location incomplete."); }
-        } catch (e) {
-            $('#v-CurrLoc').val(""); alert("Location access required.");
-        }
     }
 
     function vOpenDirections(name, addr, lat, lng) {
@@ -1623,12 +1650,12 @@
         Swal.fire({
             title: `<span style="font-size: 16px; font-weight:800;">${name}</span>`,
             html: `
-                        <div style="font-size: 13px; font-weight: 700; color: #64748b; margin-bottom: 12px;">Select Next Visit:</div>
-                        <div style="position: relative; display: flex; align-items: center;">
-                            <i class="fas fa-calendar-alt" style="position: absolute; left: 15px; color: var(--primary);"></i>
-                            <input type="datetime-local" id="v-swalDate" style="width: 100%; padding: 12px 15px 12px 40px; border: 1px solid #cbd5e1; border-radius: 12px; font-size: 14px; font-weight: 600; color: #0f172a; outline: none; box-shadow: 0 4px 6px rgba(0,0,0,0.02); font-family: inherit;">
-                        </div>
-                    `,
+                            <div style="font-size: 13px; font-weight: 700; color: #64748b; margin-bottom: 12px;">Select Next Visit:</div>
+                            <div style="position: relative; display: flex; align-items: center;">
+                                <i class="fas fa-calendar-alt" style="position: absolute; left: 15px; color: var(--primary);"></i>
+                                <input type="datetime-local" id="v-swalDate" style="width: 100%; padding: 12px 15px 12px 40px; border: 1px solid #cbd5e1; border-radius: 12px; font-size: 14px; font-weight: 600; color: #0f172a; outline: none; box-shadow: 0 4px 6px rgba(0,0,0,0.02); font-family: inherit;">
+                            </div>
+                        `,
             showCancelButton: true,
             confirmButtonColor: 'var(--primary)',
             confirmButtonText: 'Save',
@@ -1640,18 +1667,12 @@
         }).then((res) => {
             if (res.isConfirmed) {
                 $('#v-mainLoader').css('display', 'flex');
-                $.post("/Flow/ChangeReappointmentDate", { routeId: id, nextVisitDate: res.value }, function(data) {
+
+                // MOCKING AJAX
+                setTimeout(() => {
                     $('#v-mainLoader').hide();
-                    if (data.success || data.status) {
-                        Swal.fire('Saved!', '', 'success')
-                            .then(() => {
-                                window.location.reload();
-                            });
-                    } else Swal.fire('Error', data.message || 'Failed', 'error');
-                }).fail(() => {
-                    $('#v-mainLoader').hide();
-                    Swal.fire('Error', 'Server failed', 'error');
-                });
+                    Swal.fire('Saved!', 'Date updated successfully (Mocked)', 'success');
+                }, 1000);
             }
         });
     }
@@ -1662,7 +1683,7 @@
         const overlay = $('#v-drawerOverlay');
         const body = $('#v-drawerBody');
         const title = $('#v-drawerTitle');
-        const dateFilterWrapper = $('#v-drawerDateWrapper'); // New Wrapper Reference
+        const dateFilterWrapper = $('#v-drawerDateWrapper');
         const dateFilter = $('#v-futureDateFilter');
 
         drawer.addClass('v-open');
@@ -1672,23 +1693,23 @@
         dateFilter.off('change');
 
         if (type === 'backlog') {
-            dateFilterWrapper.hide(); // Hide wrapper for backlog
+            dateFilterWrapper.hide();
             title.html('<i class="fas fa-history text-danger"></i> Pending Backlogs');
-            vFetchDrawerData('/Flow/GetBacklogData', 'backlog');
+            vFetchDrawerData('/Mock/Backlogs', 'backlog');
         } else {
-            dateFilterWrapper.css('display', 'flex'); // Show wrapper with flex for future logs
+            dateFilterWrapper.css('display', 'flex');
 
             const defaultDate = $('#v-SelectedDate').val();
             dateFilter.val(defaultDate);
 
             title.html('<i class="fas fa-calendar-alt text-primary"></i> Future Logs');
-            vFetchDrawerData('/Flow/GetFutureLogsData?searchDate=' + defaultDate, 'future');
+            vFetchDrawerData('/Mock/FutureLogs?date=' + defaultDate, 'future');
 
             dateFilter.on('change', function() {
                 const selectedDate = $(this).val();
                 if (selectedDate) {
                     body.html(`<div class="v-list-card v-shimmer" style="height: 80px;"></div><div class="v-list-card v-shimmer" style="height: 80px;"></div>`);
-                    vFetchDrawerData('/Flow/GetFutureLogsData?searchDate=' + selectedDate, 'future');
+                    vFetchDrawerData('/Mock/FutureLogs?date=' + selectedDate, 'future');
                 }
             });
         }
@@ -1710,15 +1731,23 @@
     }
 
     function vFetchDrawerData(url, type) {
-        $.get(url, function(res) {
+        // MOCKING GET REQUEST
+        setTimeout(() => {
             const body = $('#v-drawerBody');
             body.empty();
-            let arr = res.data || res;
-            if (typeof arr === 'string') arr = JSON.parse(arr);
 
-            if (!arr || arr.length === 0) {
-                body.html(`<div style="text-align:center; padding: 40px 20px; color: var(--txt-light); font-weight:700;">No records found.</div>`);
-                return;
+            // Dummy Arrays for drawer
+            let arr = [];
+            if (type === 'backlog') {
+                arr = [
+                    { CustomerName: "Alpha Corp", Industry: "Manufacturing", DueDays: 18, reAppointmentDate: "2026-08-20", CustomerID: "C1" },
+                    { CustomerName: "Beta LLC", Industry: "Finance", DueDays: 5, reAppointmentDate: "2026-09-01", CustomerID: "C2" }
+                ];
+            } else {
+                arr = [
+                    { CustomerName: "Gamma Inc", Industry: "Software", Priority: "HOT", reAppointmentDate: "2026-10-15", CustomerID: "C3" },
+                    { CustomerName: "Delta Traders", Industry: "Retail", Priority: "COLD", reAppointmentDate: "2026-10-18", CustomerID: "C4" }
+                ];
             }
 
             arr.forEach(item => {
@@ -1746,16 +1775,14 @@
                 }
 
                 body.append(`
-                                    <div class="v-list-card animate__animated animate__fadeInRight" onclick="vTransferFromDrawer('${id}', '${safeName}')">
-                                        ${pill}
-                                        <div class="v-list-org">${name}</div>
-                                        <div class="v-list-detail">${detail}</div>
-                                    </div>
-                                `);
+                                        <div class="v-list-card animate__animated animate__fadeInRight" onclick="vTransferFromDrawer('${id}', '${safeName}')">
+                                            ${pill}
+                                            <div class="v-list-org">${name}</div>
+                                            <div class="v-list-detail">${detail}</div>
+                                        </div>
+                                    `);
             });
-        }).fail(() => {
-            $('#v-drawerBody').html(`<div style="color:red; text-align:center; padding:20px;">Failed to load data.</div>`);
-        });
+        }, 800); // 800ms dummy delay
     }
 
     function vTransferFromDrawer(id, name) {
@@ -1807,15 +1834,12 @@
         }
 
         $('#v-mainLoader').css('display', 'flex');
-        $.post("/Flow/AddRoute", form.serialize(), function(res) {
+
+        // MOCKING POST SAVE
+        setTimeout(() => {
             $('#v-mainLoader').hide();
             vCloseAppointmentModal();
-            Swal.fire({ icon: 'success', title: 'Scheduled!', showConfirmButton: false, timer: 1500 });
-
-            setTimeout(() => location.reload(), 1500);
-        }).fail(() => {
-            $('#v-mainLoader').hide();
-            Swal.fire('Error', 'Failed to save appointment.', 'error');
-        });
+            Swal.fire({ icon: 'success', title: 'Scheduled (Mocked)!', showConfirmButton: false, timer: 1500 });
+        }, 1200);
     }
 </script>
