@@ -28,7 +28,8 @@ namespace HoossH_Services.Models
 
         //8. Ye do properties apne DataToolbarModel class me add kar lo
         public bool IsSalesManager { get; set; }
-        public string SalesPersons { get; set; }
+        // SalesPersons can be a dynamic collection (e.g., list of objects with LoginId and FullName)
+        public IEnumerable<dynamic> SalesPersons { get; set; } = Enumerable.Empty<dynamic>();
     }
 
     // Sort Dropdown ke items ke liye choti si class

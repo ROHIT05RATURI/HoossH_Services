@@ -28,12 +28,10 @@ namespace HoossH_Services.Controllers
 
             try 
             {
-                // Real SQL query call se data fetch hoga yahan
                 var user = await _authRepository.AuthenticateAsync(request.Username, request.Password);
 
                 if (user != null)
                 {
-                    // Login successful, ab aage badho
                     return Json(new { success = true, redirect = Url.Action("AllDashboard","Dashboard") });
                 }
 
@@ -41,7 +39,6 @@ namespace HoossH_Services.Controllers
             }
             catch (System.Exception ex)
             {
-                // Agar SQL mein koi error aaye (jaise table name galat ho) toh error message frontend par bhejo
                 return Json(new { success = false, message = "Database Error: " + ex.Message });
             }
         }
