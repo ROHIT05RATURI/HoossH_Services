@@ -1,0 +1,914 @@
+﻿@using System
+@using HoossH_Services.Models
+@model Profile
+
+@{
+    ViewBag.Title = "Profile Dashboard";
+    Layout = "~/Views/Shared/_LayoutINV.cshtml";
+}
+
+@{
+    var imgBytes = Model?.profileImg;
+    var base64 = imgBytes != null && imgBytes.Length > 0
+        ? Convert.ToBase64String(imgBytes)
+        : null;
+
+    string mime = "image/jpeg";
+
+    if (imgBytes != null && imgBytes.Length > 4)
+    {
+        if (imgBytes[0] == 137 && imgBytes[1] == 80)
+            mime = "image/png";
+        else if (imgBytes[0] == 255 && imgBytes[1] == 216)
+            mime = "image/jpeg";
+        else if (imgBytes[0] == 71 && imgBytes[1] == 73)
+            mime = "image/gif";
+    }
+}
+
+@functions {
+    string D(string? v) => string.IsNullOrWhiteSpace(v) ? "-" : v;
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+<style>
+    :root {
+        --s-prf-primary: #3f6791;
+        --s-prf-primary-dark: #2a4365;
+        --s-prf-primary-light: #ebf2f9;
+        --s-prf-muted: #64748b;
+        --s-prf-border: #e2e8f0;
+        --s-prf-dark: #0f172a;
+        --s-prf-success: #10b981;
+        --s-prf-warning: #f59e0b;
+        --s-prf-bg: #f8fafc;
+        --s-prf-card: #ffffff;
+    }
+
+    body {
+        background: var(--s-prf-bg);
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        color: var(--s-prf-dark);
+    }
+
+    .content-header {
+        padding: 0px .5rem;
+    }
+
+    .s-prf-wrapper {
+        max-width: 1200px;
+        margin: 30px auto;
+        padding: 0 15px;
+    }
+
+    /* --- DASHBOARD GRID LAYOUT --- */
+    .s-prf-dashboard-grid {
+        display: grid;
+        grid-template-columns: 350px 1fr;
+        gap: 25px;
+        align-items: start;
+    }
+
+    .s-prf-sidebar {
+        position: sticky;
+        top: 30px;
+    }
+
+    /* --- CARD STYLES --- */
+    .s-prf-card {
+        background: var(--s-prf-card);
+        border-radius: 24px;
+        padding: 30px;
+        border: 1px solid var(--s-prf-border);
+        position: relative;
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+        margin-bottom: 15px;
+    }
+
+        .s-prf-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 35px rgba(63, 103, 145, 0.08);
+            border-color: #cbd5e1;
+        }
+
+    /* --- SIDEBAR PROFILE OVERVIEW --- */
+    .s-prf-profile-main {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .s-prf-img-wrap {
+        position: relative;
+        margin-bottom: 20px;
+    }
+
+    .s-prf-img {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        border: 6px solid #fff;
+        box-shadow: 0 12px 24px rgba(63, 103, 145, 0.15);
+        object-fit: cover;
+    }
+
+    .s-prf-fullname {
+        font-size: 24px;
+        font-weight: 800;
+        color: var(--s-prf-dark);
+        margin-bottom: 5px;
+        letter-spacing: -0.5px;
+    }
+
+    .s-prf-badge-role {
+        display: inline-block;
+        background: var(--s-prf-primary-light);
+        color: var(--s-prf-primary);
+        padding: 6px 16px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 20px;
+    }
+
+    .s-prf-quick-contact {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        background: #f8fafc;
+        padding: 20px;
+        border-radius: 12px;
+        text-align: left;
+    }
+
+        .s-prf-quick-contact span {
+            color: var(--s-prf-muted);
+            font-size: 13.5px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .s-prf-quick-contact i {
+            color: var(--s-prf-primary);
+            background: #fff;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+    /* --- PROGRESS BAR --- */
+    .s-prf-progress-box {
+        margin-top: 25px;
+        width: 100%;
+        text-align: left;
+    }
+
+    .s-prf-progress-track {
+        height: 10px;
+        border-radius: 10px;
+        background-color: #f1f5f9;
+        overflow: hidden;
+        margin-top: 8px;
+    }
+
+    .s-prf-progress-fill {
+        background-color: var(--s-prf-warning);
+        height: 100%;
+        width: 0%;
+        border-radius: 10px;
+        transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.8s ease;
+    }
+
+    /* --- EDIT ACTION BUTTON --- */
+    .s-prf-action-edit {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: var(--s-prf-primary-light);
+        color: var(--s-prf-primary);
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        z-index: 10;
+    }
+
+        .s-prf-action-edit:hover {
+            background: var(--s-prf-primary);
+            color: #fff;
+            transform: translateY(-3px) rotate(5deg);
+            box-shadow: 0 8px 15px rgba(63, 103, 145, 0.25);
+        }
+
+    /* --- SECTION HEADINGS --- */
+    .s-prf-sec-heading {
+        font-size: 18px;
+        font-weight: 800;
+        margin-bottom: 25px;
+        color: var(--s-prf-dark);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding-bottom: 15px;
+        border-bottom: 1px dashed var(--s-prf-border);
+    }
+
+        .s-prf-sec-heading i {
+            color: var(--s-prf-primary);
+            background: var(--s-prf-primary-light);
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 15px;
+        }
+
+    /* --- DATA GRID --- */
+    .s-prf-data-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 25px;
+    }
+
+    .s-prf-data-block {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        padding: 12px;
+        border-radius: 12px;
+        transition: background 0.3s;
+    }
+
+        .s-prf-data-block:hover {
+            background: #f8fafc;
+        }
+
+    .s-prf-data-lbl {
+        color: var(--s-prf-muted);
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .s-prf-data-val {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--s-prf-dark);
+        word-break: break-word;
+    }
+
+    /* --- MODALS --- */
+    .s-prf-modal-custom {
+        border: none;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(20px);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        overflow: hidden;
+    }
+
+    .s-prf-modal-header {
+        background: var(--s-prf-primary);
+        padding: 25px 30px;
+        color: white;
+        border: none;
+    }
+
+        .s-prf-modal-header h5 {
+            color: white !important;
+        }
+
+        .s-prf-modal-header .btn-close {
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
+
+    .s-prf-modal-body {
+        padding: 20px;
+    }
+
+    .s-prf-label-custom {
+        font-size: 12px;
+        font-weight: 800;
+        color: var(--s-prf-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    .s-prf-input-custom {
+        height: 52px;
+        border-radius: 12px;
+        border: 2px solid var(--s-prf-border);
+        padding: 10px 18px;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--s-prf-dark);
+        transition: all 0.3s;
+        background: #f8fafc;
+        width: 100%;
+    }
+
+        .s-prf-input-custom:focus {
+            background: #fff;
+            border-color: var(--s-prf-primary);
+            box-shadow: 0 0 0 4px rgba(63, 103, 145, 0.1);
+            outline: none;
+        }
+
+    .s-prf-btn-custom {
+        background: linear-gradient(135deg, var(--s-prf-primary) 0%, var(--s-prf-primary-dark) 100%);
+        color: white;
+        border: none;
+        height: 52px;
+        border-radius: 14px;
+        font-weight: 800;
+        font-size: 15px;
+        transition: 0.3s;
+        box-shadow: 0 10px 20px rgba(63, 103, 145, 0.2);
+        width: 100%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+        .s-prf-btn-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(63, 103, 145, 0.3);
+            color: white;
+        }
+
+    /* Modal Camera Overlay */
+    .s-prf-modal-camera-btn {
+        position: absolute;
+        bottom: 5px;
+        right: 15px;
+        background: var(--s-prf-primary);
+        color: white;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        cursor: pointer;
+        border: 3px solid white;
+        transition: 0.3s;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+
+        .s-prf-modal-camera-btn:hover {
+            transform: scale(1.1);
+            background: var(--s-prf-primary-dark);
+        }
+
+    @@media (max-width: 900px) {
+        .s-prf-dashboard-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .s-prf-sidebar {
+            position: relative;
+            top: 0;
+        }
+    }
+
+    .modal-footer button {
+        height: 52px;
+    }
+</style>
+
+<div class="s-prf-wrapper">
+    <div class="s-prf-dashboard-grid">
+
+        <div class="s-prf-sidebar">
+            <div class="s-prf-card s-prf-profile-main animate__animated animate__fadeInLeft">
+                <div class="s-prf-action-edit" data-bs-toggle="modal" data-bs-target="#topModal" title="Edit Profile">
+                    <i class="fa fa-pen"></i>
+                </div>
+
+                <div class="s-prf-img-wrap">
+                    <img id="mainP  rofileImg" class="s-prf-img" src="@(base64 != null ? $"data:{mime};base64,{base64}" : "https://i.pravatar.cc/150?img=32")" alt="Profile Picture">
+                </div>
+
+                <h5 class="s-prf-fullname" id="profile-name">@D(Model?.FullName)</h5>
+                <div class="s-prf-badge-role">@D(Model?.Role)</div>
+
+                <div class="s-prf-quick-contact">
+                    <span class="s-prf-check-val"><i class="fa-regular fa-envelope"></i> @D(Model?.Email)</span>
+                    <span class="s-prf-check-val"><i class="fa-solid fa-phone"></i> @D(Model?.PhoneNo)</span>
+                    <span><i class="fa-solid fa-location-dot"></i> @D(Model?.district), @D(Model?.Country)</span>
+                    <span><i class="fa-solid fa-building"></i> @D(Model?.CompanyName)</span>
+                </div>
+
+                <div class="s-prf-progress-box">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="s-prf-data-lbl">Profile Completion</span>
+                        <span class="s-prf-data-lbl text-primary" id="profileProgressPercent">0%</span>
+                    </div>
+                    <div class="s-prf-progress-track">
+                        <div class="s-prf-progress-fill" id="profileProgress" role="progressbar"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="s-prf-main-content">
+            <div class="s-prf-card animate__animated animate__fadeInRight" style="animation-delay: 0.1s">
+                <div class="s-prf-action-edit" data-bs-toggle="modal" data-bs-target="#identityModal" title="Edit Identity">
+                    <i class="fa fa-pen"></i>
+                </div>
+                <div class="s-prf-sec-heading"><i class="fa-regular fa-id-card"></i> Identity Details</div>
+
+                <div class="s-prf-data-grid">
+                    <div class="s-prf-data-block">
+                        <div class="s-prf-data-lbl">PAN Number</div>
+                        <div class="s-prf-data-val s-prf-check-val">@((Model?.PAN != null) ? Model.PAN.ToString() : "-")</div>
+                    </div>
+                    <div class="s-prf-data-block">
+                        <div class="s-prf-data-lbl">Aadhaar Number</div>
+                        <div class="s-prf-data-val s-prf-check-val">@D(Model?.AadharCard)</div>
+                    </div>
+                    <div class="s-prf-data-block">
+                        <div class="s-prf-data-lbl">Company Name</div>
+                        <div class="s-prf-data-val s-prf-check-val">@((Model?.CompanyName != null) ? Model.CompanyName.ToString() : "-")</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="s-prf-card animate__animated animate__fadeInRight" style="animation-delay: 0.2s">
+                <div class="s-prf-action-edit" data-bs-toggle="modal" data-bs-target="#bankModal" title="Edit Bank Details">
+                    <i class="fa fa-pen"></i>
+                </div>
+                <div class="s-prf-sec-heading"><i class="fa-solid fa-building-columns"></i> Bank Information</div>
+
+                <div class="s-prf-data-grid">
+                    <div class="s-prf-data-block">
+                        <div class="s-prf-data-lbl">Account Holder</div>
+                        <div class="s-prf-data-val s-prf-check-val">@D(Model?.AccountHolder)</div>
+                    </div>
+                    <div class="s-prf-data-block">
+                        <div class="s-prf-data-lbl">Account No</div>
+                        <div class="s-prf-data-val s-prf-check-val">@D(Model?.AccountNo)</div>
+                    </div>
+                    <div class="s-prf-data-block">
+                        <div class="s-prf-data-lbl">Bank Name</div>
+                        <div class="s-prf-data-val s-prf-check-val">@D(Model?.BankName)</div>
+                    </div>
+                    <div class="s-prf-data-block">
+                        <div class="s-prf-data-lbl">IFSC Code</div>
+                        <div class="s-prf-data-val s-prf-check-val">@D(Model?.IFSC)</div>
+                    </div>
+                    <div class="s-prf-data-block">
+                        <div class="s-prf-data-lbl">Branch</div>
+                        <div class="s-prf-data-val s-prf-check-val">@D(Model?.Branch)</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="s-prf-card animate__animated animate__fadeInRight" style="animation-delay: 0.3s">
+                <div class="s-prf-action-edit" data-bs-toggle="modal" data-bs-target="#addressModal" title="Edit Address">
+                    <i class="fa fa-pen"></i>
+                </div>
+                <div class="s-prf-sec-heading"><i class="fa-solid fa-map-location-dot"></i> Address & Location</div>
+
+                <div class="s-prf-data-grid">
+                    <div class="s-prf-data-block" style="grid-column: 1 / -1;">
+                        <div class="s-prf-data-lbl">Full Address</div>
+                        <div class="s-prf-data-val s-prf-check-val">@D(Model?.Address)</div>
+                    </div>
+                    <div class="s-prf-data-block">
+                        <div class="s-prf-data-lbl">City</div>
+                        <div class="s-prf-data-val s-prf-check-val">@D(Model?.district)</div>
+                    </div>
+                    <div class="s-prf-data-block">
+                        <div class="s-prf-data-lbl">State</div>
+                        <div class="s-prf-data-val s-prf-check-val">@D(Model?.State)</div>
+                    </div>
+                    <div class="s-prf-data-block">
+                        <div class="s-prf-data-lbl">Pincode</div>
+                        <div class="s-prf-data-val s-prf-check-val">@D(Model?.PinCode)</div>
+                    </div>
+                    <div class="s-prf-data-block">
+                        <div class="s-prf-data-lbl">Country</div>
+                        <div class="s-prf-data-val s-prf-check-val">@D(Model?.Country)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="topModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content s-prf-modal-custom">
+            <div class="s-prf-modal-header d-flex justify-content-between">
+                <h5 class="mb-0 fw-bold" style="font-size: 20px;"><i class="fa-solid fa-user-edit me-2"></i> Edit Profile</h5>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="profileForm">
+                <div class="s-prf-modal-body row g-4">
+                    <div class="col-md-4 text-center border-end" style="border-color: var(--s-prf-border) !important;">
+                        <div class="position-relative d-inline-block mb-4">
+                            <img id="editProfileImg" class="s-prf-img"
+                                 src="@(base64 != null ? $"data:{mime};base64,{base64}" : "https://i.pravatar.cc/150?img=32")" style="width: 150px; height: 150px; border-color: var(--s-prf-border);">
+                            <label for="ProfileImage" class="s-prf-modal-camera-btn">
+                                <i class="fa-solid fa-camera"></i>
+                            </label>
+                        </div>
+                        <input type="file" id="ProfileImage" name="ProfileImage" class="d-none" accept="image/*" onchange="previewProfileImage(this)">
+                        <p class="s-prf-data-lbl">Upload New Picture (JPG/PNG)</p>
+                    </div>
+
+                    <div class="col-md-8">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="s-prf-label-custom">First Name</label>
+                                <input id="firstname" name="firstname" class="form-control s-prf-input-custom" value="@Model?.firstname" placeholder="John" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="s-prf-label-custom">Middle Name</label>
+                                <input id="middlename" name="middlename" class="form-control s-prf-input-custom" value="@Model?.middlename" placeholder="A.">
+                            </div>
+                            <div class="col-md-12">
+                                <label class="s-prf-label-custom">Last Name</label>
+                                <input id="lastname" name="lastname" class="form-control s-prf-input-custom" value="@Model?.lastname" placeholder="Doe" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="s-prf-label-custom">Email Address</label>
+                                <input type="email" id="Email" class="form-control s-prf-input-custom" name="Email" value="@Model?.Email" placeholder="name@company.com" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="s-prf-label-custom">Phone Number</label>
+                                <input type="tel" id="PhoneNo" class="form-control s-prf-input-custom" name="PhoneNo" value="@Model?.PhoneNo" placeholder="+1 234 567 890" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-top-0 pt-0 px-4 pb-4">
+                    <button class="s-prf-btn-custom" type="button" onclick="updateProfile()"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="identityModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content s-prf-modal-custom">
+            <div class="s-prf-modal-header d-flex justify-content-between">
+                <h5 class="mb-0 fw-bold" style="font-size: 20px;"><i class="fa-solid fa-id-card me-2"></i> Edit Identity</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="s-prf-modal-body g-3">
+                <div class="mb-3">
+                    <label class="s-prf-label-custom">PAN Number</label>
+                    <input id="PAN" class="form-control s-prf-input-custom" value="@Model?.PAN" placeholder="ABCDE1234F">
+                </div>
+                <div class="mb-3">
+                    <label class="s-prf-label-custom">Aadhaar Number</label>
+                    <input id="AadharCard" class="form-control s-prf-input-custom" value="@Model?.AadharCard" placeholder="xxxx xxxx xxxx">
+                </div>
+                <div class="mb-4">
+                    <label class="s-prf-label-custom">Company Name</label>
+                    <input id="CompanyId" class="form-control s-prf-input-custom" name="CompanyName" value="@Model?.CompanyName?.ToString()" placeholder="Company Name" readonly style="background: #e2e8f0; cursor: not-allowed;">
+                </div>
+                <button class="s-prf-btn-custom" type="button" onclick="updateIdentity()"><i class="fa-solid fa-shield-halved"></i> Save Identity</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="bankModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content s-prf-modal-custom">
+            <div class="s-prf-modal-header d-flex justify-content-between">
+                <h5 class="mb-0 fw-bold" style="font-size: 20px;"><i class="fa-solid fa-building-columns me-2"></i> Edit Bank Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="s-prf-modal-body row g-3">
+                <div class="col-md-12">
+                    <label class="s-prf-label-custom">Account Holder Name</label>
+                    <input id="AccountHolder" class="form-control s-prf-input-custom" value="@Model?.AccountHolder" placeholder="Name on bank account">
+                </div>
+                <div class="col-md-6">
+                    <label class="s-prf-label-custom">Account Number</label>
+                    <input id="AccountId" type="hidden" value="@Model?.AccountId">
+                    <input id="AccountNo" class="form-control s-prf-input-custom" value="@Model?.AccountNo" placeholder="Account Number">
+                </div>
+                <div class="col-md-6">
+                    <label class="s-prf-label-custom">IFSC Code</label>
+                    <input id="IFSC" class="form-control s-prf-input-custom" value="@Model?.IFSC" placeholder="BANK0001234">
+                </div>
+                <div class="col-md-6">
+                    <label class="s-prf-label-custom">Bank Name</label>
+                    <input id="BankName" class="form-control s-prf-input-custom" value="@Model?.BankName" placeholder="Bank Name">
+                </div>
+                <div class="col-md-6 mb-2">
+                    <label class="s-prf-label-custom">Branch</label>
+                    <input id="Branch" class="form-control s-prf-input-custom" value="@Model?.Branch" placeholder="Branch City/Area">
+                </div>
+                <div class="col-12 mt-4">
+                    <button class="s-prf-btn-custom" type="button" onclick="updateBank()"><i class="fa-solid fa-shield-check"></i> Save Bank Details</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addressModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content s-prf-modal-custom">
+            <div class="s-prf-modal-header d-flex justify-content-between">
+                <h5 class="mb-0 fw-bold" style="font-size: 20px;"><i class="fa-solid fa-map-location-dot me-2"></i> Edit Address</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="s-prf-modal-body row g-3">
+                <div class="col-12">
+                    <label class="s-prf-label-custom">Street Address</label>
+                    <input id="Address" class="form-control s-prf-input-custom" value="@Model?.Address" placeholder="123 Main Street, Apt 4B">
+                    <input id="AddressId" type="hidden" value="@Model?.AddressId">
+                </div>
+                <div class="col-md-6">
+                    <label class="s-prf-label-custom">City</label>
+                    <input id="district" class="form-control s-prf-input-custom" value="@Model?.district" placeholder="City">
+                </div>
+                <div class="col-md-6">
+                    <label class="s-prf-label-custom">State/Province</label>
+                    <input id="State" class="form-control s-prf-input-custom" value="@Model?.State" placeholder="State">
+                </div>
+                <div class="col-md-6">
+                    <label class="s-prf-label-custom">Pincode / Zip</label>
+                    <input id="PinCode" class="form-control s-prf-input-custom" value="@Model?.PinCode" placeholder="Postal Code">
+                </div>
+                <div class="col-md-6 mb-2">
+                    <label class="s-prf-label-custom">Country</label>
+                    <input id="Country" class="form-control s-prf-input-custom" value="@Model?.Country" placeholder="Country">
+                </div>
+                <div class="col-12 mt-4">
+                    <button class="s-prf-btn-custom" type="button" onclick="updateAddress()"><i class="fa-solid fa-location-arrow"></i> Save Address</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+
+
+
+
+    <script>
+        function calculateProgress() {
+            let totalFields = 0;
+            let filledFields = 0;
+
+            $('.s-prf-check-val').each(function() {
+                totalFields++;
+
+                // Extract exact text without breaking child elements
+                let val = $(this).text().trim();
+
+                // Ignore dashes, empty strings, and "Add..." placeholders
+                if (val &&
+                    val !== '-' &&
+                    val !== 'Not Provided' &&
+                    !val.toLowerCase().startsWith('add ')) {
+                    filledFields++;
+                }
+            });
+
+            let ppercentage = totalFields === 0 ? 0 : Math.round((filledFields / totalFields) * 100);
+
+            // ID (#) ki jagah class (.) selector use karein
+            let progressBar = $('.s-prf-progress-fill');
+
+            // Smooth width update dono bars par apply hoga
+            progressBar.css('width', ppercentage + '%');
+            $('.s-prf-badge-percent').text(ppercentage + '%');
+
+            // Color Logic based on ppercentage
+            if (ppercentage === 0) {
+                progressBar.css('background-color', 'transparent');
+            } else if (ppercentage < 50) {
+                progressBar.css('background-color', '#f59e0b'); // Orange
+            } else if (ppercentage < 80) {
+                progressBar.css('background-color', '#3b82f6'); // Blue
+            } else {
+                progressBar.css('background-color', '#10b981'); // Green
+            }
+        }
+        $(document).ready(function() {
+            calculateProgress();
+
+
+            let correctImgSrc = $('#mainProfileImg').attr('src');
+            if (correctImgSrc) {
+                $('#editProfileImg').attr('src', correctImgSrc);
+            }
+
+            $('#topModal').on('show.bs.modal', function() {
+                let freshImgSrc = $('#mainProfileImg').attr('src');
+                $('#editProfileImg').attr('src', freshImgSrc);
+            });
+        });
+
+        document.addEventListener('hidden.bs.modal', function() {
+            if (document.querySelectorAll('.modal.show').length === 0) {
+                document.body.classList.remove('modal-open');
+                document.body.style = '';
+            }
+        });
+
+        function closeModal(id, callback) {
+            const el = document.getElementById(id);
+            const modal = bootstrap.Modal.getInstance(el) || new bootstrap.Modal(el);
+
+            if (callback) {
+                el.addEventListener('hidden.bs.modal', function handler() {
+                    el.removeEventListener('hidden.bs.modal', handler);
+                    callback();
+                });
+            }
+            modal.hide();
+        }
+
+        function previewProfileImage(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                if (!file.type.startsWith('image/')) {
+                    if (typeof showPremiumAlert !== 'undefined') showPremiumAlert('Invalid File!', 'Please upload only images (JPG/PNG).', 'alert');
+                    input.value = "";
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.src = e.target.result;
+                    img.onload = function() {
+                        const MAX_WIDTH = 500;
+                        const MAX_HEIGHT = 500;
+                        let width = img.width;
+                        let height = img.height;
+                        if (width > height) {
+                            if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                        } else {
+                            if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                        }
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width; canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                        $('#editProfileImg').attr('src', compressedDataUrl);
+                        input.value = "";
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function dataURLtoFile(dataurl, filename) {
+            var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+                bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+            while (n--) { u8arr[n] = bstr.charCodeAt(n); }
+            return new File([u8arr], filename, { type: mime });
+        }
+
+        function updateProfile() {
+            const form = document.getElementById("profileForm");
+            if (!form.checkValidity()) { form.reportValidity(); return; }
+
+            const formData = new FormData(form);
+            const imgSrc = document.getElementById("editProfileImg").src;
+
+            if (imgSrc && imgSrc.startsWith("data:image")) {
+                const finalImageFile = dataURLtoFile(imgSrc, "profile_pic.jpg");
+                formData.set("ProfileImage", finalImageFile);
+
+            }
+
+            $.ajax({
+                url: '/SuperAdmin/UpdateProfile',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if (response.success) {
+                        // FIXED: Changed 'topMoProfileManagerdal' to 'topModal'
+                        closeModal('topModal', () => {
+                            if (typeof showPremiumAlert !== 'undefined') {
+                                showPremiumAlert('Updated!', response.message, 'update');
+                            }
+                            setTimeout(() => window.location.reload(), 1500);
+                        });
+                    } else {
+                        // FIXED: Ensured fallback also targets the correct modal
+                        closeModal('topModal', () => {
+                            if (typeof showPremiumAlert !== 'undefined') {
+                                showPremiumAlert('Oops!', response.message || 'Profile update failed', 'error');
+                            }
+                        });
+                    }
+                },
+                error: function() {
+                    if (typeof showPremiumAlert !== 'undefined') {
+                        showPremiumAlert('Error!', 'Server communication failed.', 'error');
+                    }
+                }
+            });
+        }
+
+        function updateIdentity() {
+            $.post('/SuperAdmin/UpdateIdentity', {
+                PAN: $('#PAN').val(),
+                AadharCard: $('#AadharCard').val()
+            }).done((response) => {
+                if (response.success) {
+
+                    closeModal('identityModal', () => {
+                        if (typeof showPremiumAlert !== 'undefined') showPremiumAlert('Updated!', response.message, 'update');
+                        setTimeout(() => window.location.reload(), 1500);
+                    });
+                } else {
+                    closeModal('identityModal', () => {
+                        if (typeof showPremiumAlert !== 'undefined') showPremiumAlert('Oops!', response.message || 'Identity update failed', 'error');
+                    });
+                }
+            }).fail(function() {
+                if (typeof showPremiumAlert !== 'undefined') showPremiumAlert('Error!', 'Server communication failed.', 'error');
+            });
+        }
+
+        function updateBank() {
+            $.post('/SuperAdmin/UpdateBank', {
+                AccountNo: $('#AccountNo').val(),
+                IFSC: $('#IFSC').val(),
+                AccountId: $('#AccountId').val(),
+                BankName: $('#BankName').val(),
+                Branch: $('#Branch').val(),
+                AccountHolder: $('#AccountHolder').val()
+            }).done((response) => {
+                if (response.success) {
+
+                    closeModal('bankModal', () => {
+                        if (typeof showPremiumAlert !== 'undefined') showPremiumAlert('Updated!', response.message, 'update');
+                        setTimeout(() => window.location.reload(), 1500);
+                    });
+                } else {
+                    closeModal('bankModal', () => {
+                        if (typeof showPremiumAlert !== 'undefined') showPremiumAlert('Oops!', response.message || 'Bank Details update failed', 'error');
+                    });
+                }
+            }).fail(function() {
+                if (typeof showPremiumAlert !== 'undefined') showPremiumAlert('Error!', 'Server communication failed.', 'error');
+            });
+        }
+
+        function updateAddress() {
+            $.post('/SuperAdmin/UpdateAddress', {
+                Address: $('#Address').val(),
+                district: $('#district').val(),
+                AddressId: $('#AddressId').val(),
+                State: $('#State').val(),
+                PinCode: $('#PinCode').val(),
+                Country: $('#Country').val()
+            }).done((response) => {
+                if (response.success) {
+
+                    closeModal('addressModal', () => {
+                        if (typeof showPremiumAlert !== 'undefined') showPremiumAlert('Updated!', response.message, 'update');
+                        setTimeout(() => window.location.reload(), 1500);
+                    });
+                } else {
+                    closeModal('addressModal', () => {
+                        if (typeof showPremiumAlert !== 'undefined') showPremiumAlert('Oops!', response.message || 'Address Details update failed', 'error');
+                    });
+                }
+            }).fail(function() {
+                if (typeof showPremiumAlert !== 'undefined') showPremiumAlert('Error!', 'Server communication failed.', 'error');
+            });
+        }
+    </script>
+}

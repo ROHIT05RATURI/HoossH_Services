@@ -54,5 +54,10 @@ namespace HoossH_Services.Controllers
             // Agar model invalid hai (validation errors), to same form errors ke sath return karo
             return View("Addproduct", model);
         }
+
+        public IActionResult Pricing()
+        {
+            return View();
+        }
     }
 }

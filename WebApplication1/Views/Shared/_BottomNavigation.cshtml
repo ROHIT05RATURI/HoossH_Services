@@ -238,11 +238,6 @@
         }
     }
 
-
-    /* =====================================================
-           REDUCED MOTION
-           ===================================================== */
-
     @@media (prefers-reduced-motion: reduce) {
 
         .bottom-app-bar .nav-item,
@@ -253,34 +248,27 @@
 </style>
 
 <nav class="bottom-app-bar">
-    <a href="@Url.Action("Addproduct","Visit")" class="nav-item">
+    <a href="@Url.Action("AllDashboard","Dashboard")" class="nav-item">
+        <i class="fas fa-home"></i>
+        <span>Home</span>
+    </a>
+
+    <a href="@Url.Action("Addproduct", "Visit")" class="nav-item">
         <i class="fas fa-home"></i>
         <span>Add Product</span>
     </a>
 
-    <a href="javascript:void(0);" onclick="handleMeetingClick(event)" class="nav-item">
-        <i class="fas fa-handshake"></i>
-        <span>inspection default detection</span>
+    
+    <a href="@Url.Action("Pricing", "Visit")" class="nav-item">
+        <i class="fas fa-tags"></i> 
+        <span>Pricing</span>
     </a>
 
-    <!-- Replace "Visit", "Index" with your actual Visit Controller and Action names -->
-    <a href="@Url.Action("Index", "Visit")" class="nav-item">
-        <i class="fas fa-map-marker-alt"></i>
-        <span>Visit</span>
+    <a href="@Url.Action("Attendence", "Team")" class="nav-item">
+        <i class="fas fa-comment-dots"></i> 
+        <span>Feedback</span>
     </a>
-
-    <!-- Replace "HRMS", "Index" with your actual HRMS Controller and Action names -->
-    <a href="@Url.Action("Index", "HRMS")" class="nav-item">
-        <i class="fas fa-id-badge"></i>
-        <span>HRMS</span>
-    </a>
-
-    <!-- Replace "Profile", "Index" with your actual Profile Controller and Action names -->
-    <a href="@Url.Action("Index", "Profile")" class="nav-item">
-        <i class="fas fa-user-circle"></i>
-        <span>Profile</span>
-    </a>
-</nav>
+</nav>   
 
 <script>
     function handleMeetingClick(event) {

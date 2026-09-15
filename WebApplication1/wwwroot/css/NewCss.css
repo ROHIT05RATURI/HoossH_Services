@@ -241,7 +241,7 @@ font-family: var(--font-family) !important;
 
 /* All buttons used in action area */
 .btn-action {
-    height: 25px !important;
+    height: 40px !important;
     width: 110px !important;
     padding: 3px !important;
     border-radius: 5px !important;

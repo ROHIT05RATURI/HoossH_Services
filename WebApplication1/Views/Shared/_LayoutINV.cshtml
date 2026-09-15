@@ -75,8 +75,8 @@
                     <li class="nav-item position-relative">
                         <img src="~/images/service-man.jpg" alt="Rahul Kumar" class="profile-icon-img cursor-pointer" id="profileMenuTrigger" />
                         <div id="profileDropdown" class="profile-dropdown shadow-sm">
-                            <a href="" class="dropdown-item"><i class="fas fa-user me-2"></i> Profile</a>
-                            <a href="/Dashboard/AllDashboard" class="dropdown-item"><i class="fas fa-scroll me-2"></i> Kundali</a>
+                            <a href="@Url.Action("ProfilePage", "SuperAdmin")" class="dropdown-item"><i class="fas fa-user me-2"></i> Profile</a>
+                            <a href="/Dashboard/AllDashboard" class="dropdown-item"><i class="fas fa-scroll me-2"></i> Dashboard</a>
                             <a href="/Login/Logout" class="dropdown-item text-danger"><i class="fas fa-sign-out-alt me-2"></i> Logout</a>
                         </div>
                     </li>
