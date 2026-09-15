@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using HoossH_Services.Models.Login;
+using HoossH_Services.Models.view_page_model;
 using HoossH_Service_DAL.Repositories;
 using System.Threading.Tasks;
 

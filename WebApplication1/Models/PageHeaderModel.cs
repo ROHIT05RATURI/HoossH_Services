@@ -1,4 +1,4 @@
-﻿using HoossH_Services.Models.Login;
+﻿using HoossH_Services.Models.view_page_model;
 
 namespace HoossH_Services.Models
 {
