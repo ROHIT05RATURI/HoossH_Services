@@ -1,5 +1,4 @@
-@using HoossH_Services.Models.Login
-@model LoginRequest
+@model HoossH_Service_DAL.Models.LoginUser
 
 @{
     ViewBag.Title = "Login";
@@ -124,7 +123,7 @@
                 $("#btnText").text("Authenticating...");
 
                 const loginData = {
-                    Username: $("#userName").val(),
+                    username: $("#userName").val(),
                     Password: $("#password").val()
                 };
 

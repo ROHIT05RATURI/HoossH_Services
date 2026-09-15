@@ -15,20 +15,20 @@ namespace HoossH_Services.Controllers
 
         public IActionResult Index()
         {
-            return View(new LoginRequest());
+            return View(new HoossH_Service_DAL.Models.LoginUser());
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login([FromBody] LoginRequest request)
+        public async Task<IActionResult> Login([FromBody] HoossH_Service_DAL.Models.LoginUser request)
         {
-            if (request == null || string.IsNullOrEmpty(request.Username) || string.IsNullOrEmpty(request.Password))
+            if (request == null || string.IsNullOrEmpty(request.username) || string.IsNullOrEmpty(request.Password))
             {
                 return Json(new { success = false, message = "Please enter username and password" });
             }
 
             try 
             {
-                var user = await _authRepository.AuthenticateAsync(request.Username, request.Password);
+                var user = await _authRepository.AuthenticateAsync(request.username, request.Password);
 
                 if (user != null)
                 {

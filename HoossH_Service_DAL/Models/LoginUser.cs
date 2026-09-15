@@ -7,5 +7,6 @@ namespace HoossH_Service_DAL.Models
         public string role { get; set; } = string.Empty;
         public bool active { get; set; }
         public string hashpassword { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
     }
 }

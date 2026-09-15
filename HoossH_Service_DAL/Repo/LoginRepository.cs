@@ -4,7 +4,7 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.AspNetCore.Identity;
     using System.Threading.Tasks;
-using Microsoft.Identity.Client;
+    using Microsoft.Identity.Client;
 
 namespace HoossH_Service_DAL.Repositories
     {
