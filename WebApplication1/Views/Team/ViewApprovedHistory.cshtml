@@ -1,70 +1,15 @@
-﻿@using HoossH_Services.Models
+﻿@using HoossH_Services.Models;
 @{
     ViewBag.Title = "Team Leaves";
     Layout = "~/Views/Shared/_LayoutINV.cshtml";
-    string role = "SalesPerson";
-
-    // DUMMY DATA: Mocking the leaves history list
-    var dummyLeavesHistory = new List<MockLeave>
-    {
-        new MockLeave {
-            FullName = "Amit Patel",
-            AllocationJSON = "[{\"Description\":\"CL\",\"Used\":3.0,\"Allocated\":12.0},{\"Description\":\"EL\",\"Used\":2.0,\"Allocated\":15.0}]",
-            SalesPersonImg = null,
-            name = "Casual Leave",
-            StartDate = new DateTime(2026, 8, 10),
-            EndDate = new DateTime(2026, 8, 12),
-            CreatedDate = new DateTime(2026, 8, 5),
-            ActualLeaves = 3,
-            status = "Approved"
-        },
-        new MockLeave {
-            FullName = "Amit Patel",
-            AllocationJSON = "[{\"Description\":\"CL\",\"Used\":3.0,\"Allocated\":12.0},{\"Description\":\"EL\",\"Used\":2.0,\"Allocated\":15.0}]",
-            SalesPersonImg = null,
-            name = "Earned Leave",
-            StartDate = new DateTime(2026, 12, 1),
-            EndDate = new DateTime(2026, 12, 5),
-            CreatedDate = new DateTime(2026, 11, 20),
-            ActualLeaves = 5,
-            status = "Pending"
-        },
-        new MockLeave {
-            FullName = "Priya Sharma",
-            AllocationJSON = "[{\"Description\":\"CL\",\"Used\":1.0,\"Allocated\":10.0},{\"Description\":\"PL\",\"Used\":0.0,\"Allocated\":5.0}]",
-            SalesPersonImg = null,
-            name = "Sick Leave",
-            StartDate = new DateTime(2026, 9, 15),
-            EndDate = new DateTime(2026, 9, 16),
-            CreatedDate = new DateTime(2026, 9, 14),
-            ActualLeaves = 2,
-            status = "Rejected"
-        }
-    };
-
-    int totalRecords = dummyLeavesHistory.Count;
 }
-
+@model ManagerAttendance
 @functions {
     public class LeaveAllocationItem
     {
         public string Description { get; set; }
         public decimal Used { get; set; }
         public decimal Allocated { get; set; }
-    }
-
-    // DUMMY DATA: Mock class for leaves
-    public class MockLeave
-    {
-        public string FullName { get; set; }
-        public string AllocationJSON { get; set; }
-        public byte[] SalesPersonImg { get; set; }
-        public string name { get; set; }
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public decimal ActualLeaves { get; set; }
-        public string status { get; set; }
     }
 }
 
@@ -73,7 +18,7 @@
 <link rel="stylesheet" href="/css/HRMS.css">
 
 <style>
-    /* Profile Image CSS */
+    /* Profile Image CSS - Same as your previous code */
     .sp-profile-img {
         width: 45px;
         height: 45px;
@@ -91,37 +36,32 @@
     }
 </style>
 
-<div class="d-flex gap-2 mb-4">
-    <a href="/Team/LeaveManagement" class="btn btn-primary btn-sm rounded-pill px-3 active shadow-sm">
-        <i class="fas fa-plus-circle me-1"></i> Apply Leave
-    </a>
-    <a href="/Team/ViewApprovedHistory" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
-        <i class="fas fa-list-ul me-1"></i> Leave History
-    </a>
-</div>
+@await Html.PartialAsync("_suspect", new List<SuspectNavItem>
+{
+    new SuspectNavItem { Text = "Apply Leave", Url = "/Team/LeaveManagement", Icon = "fas fa-user-plus" },
+    new SuspectNavItem { Text = "Leave History", Url = "/Team/ViewApprovedHistory", Icon = "fas fa-users" }
+})
+
 
 <div id="pageHeaderWrapper">
-    @* Uncomment this when connecting to your backend
-    @await Html.PartialAsync("PageHeader", new
+    @await Html.PartialAsync("PageHeader", new PageHeaderModel
     {
         Title = "Approve Leaves",
         Description = "Total Leave Applications Generated",
-        CountText = $"{totalRecords}",
+        CountText = $"",
         ShowDetailedUI = true,
         BadgeColorClass = "primary"
-    }) 
-    *@
+    })
 </div>
 
 <div class="premium-container mx-lg-5 w-auto">
-    @* Uncomment this when connecting to your backend
-    @await Html.PartialAsync("_DataToolbar2", new
+    @await Html.PartialAsync("_DataToolbar2", new HoossH_Services.Models.DataToolbarModel
     {
         SearchPlaceholder = "Search Employee Name, Leave Type...",
         ControllerName = "Team",
         ActionName = "ViewApproveLeave",
         IsSalesManager = false,
-        SalesPersons = "",
+        SalesPersons = null,
         FilterOptions = new Dictionary<string, string> {
             { "all", "Total Leaves" },
             { "pending", "Pending" },
@@ -137,13 +77,12 @@
         CustomFilterHtml = @"<div class='date-range-wrapper'>
                             <div class='date-input-group'><span>From</span><input type='date' name='fromDate' class='custom-dynamic-input' title='From Date'></div>
                             <div class='date-input-group'><span>To</span><input type='date' name='toDate' class='custom-dynamic-input' title='To Date'></div></div>"
-    }) 
-    *@
+    })
 
     <div class="leave-list-container" id="leaveList">
-        @if (dummyLeavesHistory != null && dummyLeavesHistory.Count > 0)
+        @if (Model.LeavesHistory != null && Model.LeavesHistory.Count > 0)
         {
-            var groupedLeaves = dummyLeavesHistory.GroupBy(x => x.FullName).ToList();
+            var groupedLeaves = Model.LeavesHistory.GroupBy(x=> x.FullName).ToList();
 
             foreach (var group in groupedLeaves)
             {
@@ -156,7 +95,7 @@
                 {
                     try
                     {
-                        allocations =  new List<LeaveAllocationItem>();
+                        allocations = new List<LeaveAllocationItem>();
                     }
                     catch { }
                 }
@@ -167,13 +106,14 @@
                         <div class="sp-Avtar-box">
                             @if (empData.SalesPersonImg != null && empData.SalesPersonImg.Length > 0)
                             {
+                                // convert byte[] image to base64 data URL
                                 var base64 = Convert.ToBase64String(empData.SalesPersonImg);
                                 var finalImgSrc = $"data:image/jpeg;base64,{base64}";
                                 <img src="@finalImgSrc" class="sp-profile-img" alt="Profile" />
                             }
                             else
                             {
-                                <img src="https://ui-avatars.com/api/?name=@Uri.EscapeDataString(empName)&background=random" class="sp-profile-img" alt="Default" />
+                                <img src="/Images/Sadie_Sink.jpg" class="sp-profile-img" alt="Default" />
                             }
                         </div>
 
@@ -224,7 +164,7 @@
                         </div>
                     </div>
 
-                    <div class="card-body-table" style="display:none;">
+                    <div class="card-body-table">
                         <div class="table-responsive">
                             <table class="detail-table">
                                 <thead>
@@ -234,7 +174,7 @@
                                         <th style="text-align:center;">END DATE</th>
                                         <th style="text-align:center;">APPLIED ON</th>
                                         <th style="text-align:center;">DAYS</th>
-                                        <th style="text-align:center;">ACTUAL DAYS</th>
+                                        <th style="text-align:center;">ACTUAL DAYS</th> <!-- NAYA COLUMN YAHAN H -->
                                         <th style="text-align:end;">STATUS</th>
                                     </tr>
                                 </thead>
@@ -259,11 +199,13 @@
                                             <td data-label="Total Days" style="text-align:center;">
                                                 <span class="outline-pill outline-gray">@days Day(s)</span>
                                             </td>
+
                                             <td data-label="Actual Days" style="text-align:center;">
                                                 <span class="outline-pill outline-gray">@Convert.ToInt32(leave.ActualLeaves) Day(s)</span>
                                             </td>
+
                                             <td data-label="Status" style="text-align:end;">
-                                                <span class="status-pill status-@leave.status.ToLower()">@leave.status</span>
+                                                <span class="status-pill status-@leave.status">@leave.status</span>
                                             </td>
                                         </tr>
                                     }
@@ -295,7 +237,7 @@
     }
 
     $(document).ready(function() {
-        // State variables for toolbar filtering
+        // State variables jo toolbar se aayengi
         let activeSearch = '';
         let activeStatus = 'all';
         let activeFromDate = '';
@@ -345,12 +287,13 @@
             });
         }
 
-        // Custom event listener for DataToolbar2
+        // _DataToolbar2 ke custom event ko listen karna
         $(document).off('onToolbarChange').on('onToolbarChange', function(event, state) {
             if (state) {
                 if (state.search !== undefined) activeSearch = state.search;
                 if (state.status !== undefined) activeStatus = state.status;
 
+                // Agar toolbar custom date fields ya HTML bhej raha hai toh unhe yahan uthayein
                 activeFromDate = $('input[name="fromDate"]').val() || '';
                 activeToDate = $('input[name="toDate"]').val() || '';
 
@@ -358,7 +301,7 @@
             }
         });
 
-        // Trigger filters when dates change
+        // Date fields ke manually change hone par bhi filter chale
         $(document).on('change', 'input[type="date"]', function() {
             activeFromDate = $('input[name="fromDate"]').val() || '';
             activeToDate = $('input[name="toDate"]').val() || '';

@@ -12,48 +12,12 @@
 
 <link rel="stylesheet" href="/Attendance/Attendance.css">
 
+@await Html.PartialAsync("_suspect", new List<SuspectNavItem>
+{
+    new SuspectNavItem { Text = "Attendence", Url = "/Team/Attendence", Icon = "fas fa-user-plus" },
+    new SuspectNavItem { Text = "View Attendence", Url = "/Team/ViewAttendence", Icon = "fas fa-users" }
+})
 
-<div class="attendance-dashboard">
-
-    <!-- =====================================================
-         PAGE ACTIONS
-         ===================================================== -->
-
-    <div class="attendance-actions">
-
-        <div class="attendance-action-left">
-
-            <a href="/Team/Attendence"
-               class="attendance-tab active">
-
-                <i class="fas fa-plus-circle"></i>
-
-                <span>Mark Attendance</span>
-
-            </a>
-
-
-            <a href="/Team/ViewAttendence"
-               class="attendance-tab">
-
-                <i class="fas fa-list-ul"></i>
-
-                <span>Attendance History</span>
-
-            </a>
-
-        </div>
-
-
-        <div class="attendance-page-status">
-
-            <span class="attendance-status-dot"></span>
-
-            <span>Attendance</span>
-
-        </div>
-
-    </div>
 
 
 

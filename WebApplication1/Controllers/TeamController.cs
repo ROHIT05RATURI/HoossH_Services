@@ -25,12 +25,15 @@ namespace HoossH_Services.Controllers
 
         public IActionResult LeaveManagement()
         {
-            return View(new Leaves());
+            // 1. Create your model
+            var model = new HoossH_Services.Models.Leaves();
+            return View(model);
         }
 
         public IActionResult ViewApprovedHistory()
         {
-            return View(new Leaves());
+            ManagerAttendance model = new ManagerAttendance();
+            return View(model);
         }
     }
 

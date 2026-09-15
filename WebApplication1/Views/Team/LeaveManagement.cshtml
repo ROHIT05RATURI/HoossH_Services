@@ -1,24 +1,26 @@
 @using HoossH_Services.Models
+@using System.Security.Claims
+@inject IHttpContextAccessor HttpContextAccessor
 @model Leaves
 
 @{
-    
+    var user = HttpContextAccessor.HttpContext?.User;
+    var role = user?.FindFirst(ClaimTypes.Role)?.Value;
     ViewBag.Title = "Leave Dashboard";
     Layout = "~/Views/Shared/_LayoutINV.cshtml";
 }
 
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
 <link rel="stylesheet" href="/css/HRMS.css">
 
 
-<div class="d-flex gap-2 mb-4">
-    <a href="/Team/LeaveManagement" class="btn btn-primary btn-sm rounded-pill px-3 active shadow-sm">
-        <i class="fas fa-plus-circle me-1"></i> Apply Leave
-    </a>
-    <a href="/Team/ViewApprovedHistory" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
-        <i class="fas fa-list-ul me-1"></i> Leave History
-    </a>
-</div>
+@await Html.PartialAsync("_suspect", new List<SuspectNavItem>
+{
+    new SuspectNavItem { Text = "Apply Leave", Url = "/Team/LeaveManagement", Icon = "fas fa-user-plus" },
+    new SuspectNavItem { Text = "Leave History", Url = "/Team/ViewApprovedHistory", Icon = "fas fa-users" }
+})
+
 <div class="hrms-wrapper mx-lg-5">
 
     <div class="leave-balance-row">
@@ -26,8 +28,8 @@
         <div class="balance-card">
             <i class="fas fa-hospital-user" style="color: #3b82f6;"></i>
             <span class="count">
-               
-                <span class="out-of"></span>
+                @Model.TotalDays
+                <span class="out-of">/ @Model.TotalAllocatedDays</span>
             </span>
             <span class="label">Total Leave</span>
         </div>
@@ -36,8 +38,8 @@
         <div class="balance-card">
             <i class="fas fa-umbrella-beach" style="color: #10b981;"></i>
             <span class="count">
-               
-                <span class="out-of"></span>
+                @Model.CasualLeaves
+                <span class="out-of">/ @Model.TotalAllocatedCasual</span>
             </span>
             <span class="label">Casual</span>
         </div>
@@ -46,8 +48,8 @@
         <div class="balance-card">
             <i class="fas fa-plane-departure" style="color: #f59e0b;"></i>
             <span class="count">
-              
-                <span class="out-of"></span>
+                @Model.EarnedLeaves
+                <span class="out-of">/ @Model.TotalAllocatedEarned</span>
             </span>
             <span class="label">Earned</span>
         </div>
@@ -56,13 +58,13 @@
         <div class="balance-card">
             <i class="fas fa-briefcase-medical" style="color: #e29e0b;"></i>
             <span class="count">
-               
-                <span class="out-of"></span>
+                @Model.OtherLeaves
+                <span class="out-of">/ @Model.TotalAllocatedOthers</span>
             </span>
             <span class="label">Others</span>
         </div>
     </div>
-    
+
     <div class="premium-form-card">
         <div class="section-header">
             <i class="fas fa-calendar-plus"></i> Leave Request
@@ -73,10 +75,13 @@
                     <label>Type of Leave</label>
                     <select class="modern-input" id="LeaveType" name="LeaveType" required>
                         <option value="">Choose leave type...</option>
-                        @* @foreach (var leave in Model.LeaveTypes)
+                        @if (Model.LeaveTypes != null)
                         {
-                            <option value="@leave.LeaveId">@leave.Name (Remaining Days = @leave.RemainingDays)</option>
-                        } *@
+                            @foreach (var leave in Model.LeaveTypes)
+                            {
+                                <option value="@leave.LeaveId">@leave.Name (Remaining Days = @leave.RemainingDays)</option>
+                            }
+                        }
                     </select>
                 </div>
                 <div class="input-group-custom">
@@ -103,62 +108,61 @@
     <!-- Context setting for Recent Applications -->
 
     <div class="premium-form-card">
-    <div class="history-section-header">
-        <h5>Recent Applications</h5>
-        <p>Track the status of your previously submitted leave requests</p>
-    </div>
+        <div class="history-section-header">
+            <h5>Recent Applications</h5>
+            <p>Track the status of your previously submitted leave requests</p>
+        </div>
 
-    <div class="history-grid" id="visit-card-list">
-        @* @if (Model.GetLeaves != null && Model.GetLeaves.Any())
-        {
-            foreach (var v in Model.GetLeaves)
-            { *@
-                <div class="history-card visit-data-div">
-                    <div class="card-top-flex">
-                        <div class="leave-type-info">
-                            <div class="leave-type-icon">
-                                <i class="fas fa-file-alt"></i>
+        <div class="history-grid" id="visit-card-list">
+            @if (Model.GetLeaves != null && Model.GetLeaves.Any())
+            {
+                foreach (var v in Model.GetLeaves)
+                {
+                    <div class="history-card visit-data-div">
+                        <div class="card-top-flex">
+                            <div class="leave-type-info">
+                                <div class="leave-type-icon">
+                                    <i class="fas fa-file-alt"></i>
+                                </div>
+                                <span class="leave-type-title">@v.Name</span>
                             </div>
-                            <span class="leave-type-title"></span>
+                            <div class="status-badge status-@v.Status">
+                                <i class="fas fa-circle" style="font-size: 6px;"></i> @v.Status
+                            </div>
                         </div>
-                        <div class="status-badge">
-                            <i class="fas fa-circle" style="font-size: 6px;"></i> 
-                        </div>
-                    </div>
 
-                    <div class="date-strip">
-                        <div class="date-col">
-                            <span class="d-lbl">From</span>
-                            <span class="d-val"></span>
-                        </div>
-                        <div class="date-col">
-                            <span class="d-lbl">To</span>
-                            <span class="d-val"></span>
-                        </div>
-                        <div class="days-badge">
-                           
+                        <div class="date-strip">
+                            <div class="date-col">
+                                <span class="d-lbl">From</span>
+                                <span class="d-val">@v.StartDate.ToString("dd MMM yyyy")</span>
+                            </div>
+                            <div class="date-col">
+                                <span class="d-lbl">To</span>
+                                <span class="d-val">@v.EndDate.ToString("dd MMM yyyy")</span>
+                            </div>
+                            <div class="days-badge">
+                                @v.TotalDays Days
+                            </div>
                         </div>
                     </div>
+                }
+            }
+            else
+            {
+                <!-- Empty state handling psychologically -->
+                <div style="grid-column: 1 / -1; padding: 30px; text-align: center; color: var(--text-muted); background: white; border-radius: 16px; border: 1px dashed #cbd5e1;">
+                    <i class="fas fa-folder-open" style="font-size: 24px; margin-bottom: 10px; opacity: 0.5;"></i>
+                    <p style="font-size: 13px; margin: 0;">No recent leave applications found.</p>
                 </div>
-            @* } *@
-        @* } *@
-        @* else *@
-        @* { *@
-            <!-- Empty state handling psychologically -->
-            <div style="grid-column: 1 / -1; padding: 30px; text-align: center; color: var(--text-muted); background: white; border-radius: 16px; border: 1px dashed #cbd5e1;">
-                <i class="fas fa-folder-open" style="font-size: 24px; margin-bottom: 10px; opacity: 0.5;"></i>
-                <p style="font-size: 13px; margin: 0;">No recent leave applications found.</p>
-            </div>
-        @* } *@
-    </div>
+            }
+        </div>
     </div>
 </div>
 
-@* @await Html.PartialAsync("_PremiumAlerts")
-@await Html.PartialAsync("_PremiumConfirm") *@
+
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
         const currentPath = window.location.pathname.toLowerCase();
         document.querySelectorAll(".navbarmid .tab").forEach(tab => {
             if (currentPath.includes(tab.getAttribute("href").toLowerCase())) {
@@ -169,7 +173,7 @@
         const leaveForm = document.getElementById("registerForm");
         const startDateInput = document.querySelector('input[name="StartDate"]');
         const endDateInput = document.querySelector('input[name="EndDate"]');
-        
+
         // Dynamically set minimum dates to today
         const todayStr = new Date().toLocaleDateString('en-CA'); // Gets YYYY-MM-DD
         startDateInput.setAttribute('min', todayStr);
@@ -179,13 +183,13 @@
             endDateInput.setAttribute('min', this.value);
         });
 
-        leaveForm.addEventListener("submit", function (e) {
+        leaveForm.addEventListener("submit", function(e) {
             e.preventDefault();
 
             // Date validation client-side
             let startDateVal = $('input[name="StartDate"]').val();
             let endDateVal = $('input[name="EndDate"]').val();
-            
+
             const todayDate = new Date();
             todayDate.setHours(0, 0, 0, 0);
             const selectedStartDate = new Date(startDateVal);
@@ -219,7 +223,7 @@
                         data: formData,
                         processData: false,
                         contentType: false,
-                        success: function (response) {
+                        success: function(response) {
                             if (response.success !== false) {
                                 showPremiumAlert('Submitted!', response.message || 'Your leave request has been sent to your manager.', 'add', function() {
                                     window.location.reload();
@@ -237,19 +241,19 @@
         });
     });
 
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
         const leaveDropdown = document.getElementById("LeaveType");
         const leaveOptionsCount = leaveDropdown.options.length;
 
         if (leaveOptionsCount <= 1) {
             setTimeout(() => {
                 showPremiumAlert('Leaves Not Assigned!', 'It looks like your leave quota isn\'t set yet. Please ask your <b>Higher Authorities</b> to add leave types for you.', 'alert');
-            }, 500); 
+            }, 500);
         }
     });
 </script>
 
-@* @if (Model.LeaveTypes == null || !Model.LeaveTypes.Any() || Model.LeaveTypes.Sum(x => x.AllocatedDays) == 0)
+@if (Model.LeaveTypes == null || !Model.LeaveTypes.Any() || Model.LeaveTypes.Sum(x => x.AllocatedDays) == 0)
 {
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -258,4 +262,4 @@
             }, 600);
         });
     </script>
-} *@
+}

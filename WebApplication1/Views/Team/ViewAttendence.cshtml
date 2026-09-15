@@ -1,4 +1,4 @@
-
+@using HoossH_Services.Models;
 @{
     ViewBag.Title = "Attendance Tracker";
     Layout = "~/Views/Shared/_LayoutINV.cshtml";
@@ -37,15 +37,11 @@
     }
 </style>
 
-<!-- Clean Sub Navigation bar matching HRMS flow -->
-<div class="d-flex gap-2 mb-4">
-    <a href="/Team/Attendence" class="btn btn-primary btn-sm rounded-pill px-3 active shadow-sm">
-        <i class="fas fa-plus-circle me-1"></i> Mark Attendance
-    </a>
-    <a href="/Team/ViewAttendence" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
-        <i class="fas fa-list-ul me-1"></i> Attendance History
-    </a>
-</div>
+@await Html.PartialAsync("_suspect", new List<SuspectNavItem>
+{
+    new SuspectNavItem { Text = "Attendence", Url = "/Team/Attendence", Icon = "fas fa-user-plus" },
+    new SuspectNavItem { Text = "View Attendence", Url = "/Team/ViewAttendence", Icon = "fas fa-users" }
+})
 
 <div class="hrms-wrapper mx-lg-5">
     <div class="stats-container my-3">
