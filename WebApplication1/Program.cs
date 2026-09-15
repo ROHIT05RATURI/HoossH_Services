@@ -8,7 +8,7 @@ builder.Services.AddScoped<HoossH_Service_DAL.Repositories.IAuthRepository, Hoos
 // Session support
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options => {
-    options.IdleTimeout = TimeSpan.FromMinutes(20);
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
     options.Cookie.HttpOnly = true;
 });
 
