@@ -48,7 +48,7 @@ namespace HoossH_Services.Controllers
                 }
 
                 // Save hone ke baad redirect karna
-                return RedirectToAction("Addproduct"); 
+                return RedirectToAction("Addproduct");
             }
 
             // Agar model invalid hai (validation errors), to same form errors ke sath return karo
@@ -56,6 +56,11 @@ namespace HoossH_Services.Controllers
         }
 
         public IActionResult Pricing()
+        {
+            return View();
+        }
+
+        public IActionResult Feedback()
         {
             return View();
         }

@@ -1,0 +1,511 @@
+﻿@{
+    ViewBag.Title = "Meeting Feedback";
+    Layout = "~/Views/Shared/_LayoutINV.cshtml";
+}
+
+<!-- Fonts and Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+    /* Base Background */
+    body {
+        background-color: #f8fafc;
+    }
+
+    .pro-container {
+        max-width: 700px;
+        margin: 40px auto;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    /* Page Header */
+    .pro-header {
+        text-align: center;
+        margin-bottom: 35px;
+    }
+
+        .pro-header .icon-wrapper {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 65px;
+            height: 65px;
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            color: white;
+            font-size: 1.8rem;
+            border-radius: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+        }
+
+        .pro-header h2 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin: 0 0 5px 0;
+        }
+
+        .pro-header p {
+            font-size: 0.95rem;
+            color: #64748b;
+            margin: 0;
+        }
+
+    /* Main Unified Form Card */
+    .pro-form-card {
+        background: #ffffff;
+        border-radius: 24px;
+        padding: 40px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.04);
+        border: 1px solid #f1f5f9;
+    }
+
+    /* Form Layout Grid */
+    .form-grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 25px;
+        margin-bottom: 25px;
+    }
+
+    .form-row {
+        margin-bottom: 25px;
+    }
+
+    /* Modern Input Groups */
+    .input-group {
+        background: #ffffff;
+        border: 2px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 10px 15px;
+        display: flex;
+        align-items: center;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+        .input-group:hover {
+            border-color: #cbd5e1;
+        }
+
+        .input-group:focus-within {
+            border-color: #6366f1;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.1);
+        }
+
+    .input-icon-box {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        margin-right: 15px;
+    }
+
+    /* Pastel Color Combinations */
+    .icon-time-start {
+        background: #fff7ed;
+        color: #f97316;
+    }
+
+    .icon-time-end {
+        background: #fef2f2;
+        color: #ef4444;
+    }
+
+    .icon-outcome {
+        background: #f5f3ff;
+        color: #8b5cf6;
+    }
+
+    .icon-price {
+        background: #ecfdf5;
+        color: #10b981;
+    }
+
+    .input-content {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+        .input-content label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #64748b;
+            margin-bottom: 3px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            cursor: pointer;
+        }
+
+    .pro-input {
+        background: transparent;
+        border: none;
+        padding: 0;
+        font-size: 1rem;
+        color: #0f172a;
+        font-weight: 600;
+        outline: none;
+        width: 100%;
+        font-family: inherit;
+        appearance: none;
+        -webkit-appearance: none;
+    }
+
+        .pro-input::placeholder {
+            color: #94a3b8;
+            font-weight: 400;
+        }
+
+    .dropdown-chevron {
+        color: #cbd5e1;
+        font-size: 1rem;
+        pointer-events: none;
+    }
+
+    /* Primary Action Button */
+    .btn-primary-action {
+        width: 100%;
+        background: linear-gradient(135deg, #6366f1, #4f46e5);
+        color: #ffffff;
+        border: none;
+        border-radius: 16px;
+        padding: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        font-family: inherit;
+        font-size: 1.05rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 35px;
+        box-shadow: 0 10px 25px rgba(79, 70, 229, 0.3);
+    }
+
+        .btn-primary-action:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(79, 70, 229, 0.4);
+        }
+
+    /* =========================================
+           MODAL (POPUP BOX) CSS
+           ========================================= */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(15, 23, 42, 0.5);
+        backdrop-filter: blur(8px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+    .modal-card {
+        background: #ffffff;
+        width: 100%;
+        max-width: 520px;
+        border-radius: 24px;
+        padding: 40px;
+        box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+        transform: translateY(30px) scale(0.95);
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        position: relative;
+        text-align: center;
+    }
+
+    .modal-overlay.active .modal-card {
+        transform: translateY(0) scale(1);
+    }
+
+    .btn-close-modal {
+        position: absolute;
+        top: 25px;
+        right: 25px;
+        background: #f8fafc;
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        color: #64748b;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+        .btn-close-modal:hover {
+            background: #fee2e2;
+            color: #ef4444;
+        }
+
+    .modal-card h3 {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #1e293b;
+        margin: 0 0 5px 0;
+    }
+
+    .modal-card p {
+        color: #64748b;
+        font-size: 0.95rem;
+        margin: 0 0 20px 0;
+    }
+
+    /* =========================================
+           PRO JS STAR RATING CSS
+           ========================================= */
+    .star-rating-container {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        margin-bottom: 25px;
+    }
+
+    .star-icon {
+        font-size: 2.2rem;
+        color: #cbd5e1; /* Default gray outline color */
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+        .star-icon.active {
+            color: #f59e0b; /* Golden Yellow when selected */
+            transform: scale(1.1); /* Slight pop effect */
+        }
+
+        .star-icon:hover {
+            transform: scale(1.15);
+        }
+    /* ========================================= */
+
+    .pro-textarea {
+        width: 100%;
+        height: 120px;
+        background: #f8fafc;
+        border: 2px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 20px;
+        font-family: inherit;
+        font-size: 0.95rem;
+        color: #334155;
+        resize: none;
+        outline: none;
+        transition: all 0.3s;
+        margin-bottom: 25px;
+        text-align: left;
+    }
+
+        .pro-textarea:focus {
+            background: #ffffff;
+            border-color: #a855f7;
+            box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.1);
+        }
+
+    .btn-submit-final {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: #fff;
+        width: 100%;
+        border: none;
+        padding: 18px;
+        border-radius: 16px;
+        font-weight: 700;
+        font-size: 1.05rem;
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 10px 20px rgba(16, 185, 129, 0.25);
+    }
+
+        .btn-submit-final:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(16, 185, 129, 0.35);
+        }
+
+    @@media (max-width: 600px) {
+        .form-grid-2 {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .pro-form-card {
+            padding: 30px 20px;
+        }
+
+        .modal-card {
+            padding: 30px 20px;
+        }
+    }
+</style>
+
+<div class="pro-container">
+
+    <div class="pro-header">
+        <div class="icon-wrapper"><i class="fas fa-handshake"></i></div>
+        <h2>Meeting Wrap-up</h2>
+        <p>Log details and finalize the client interaction</p>
+    </div>
+
+    <div class="pro-form-card">
+        <form id="meetingForm" method="post" action="javascript:void(0);">
+
+            <div class="form-grid-2">
+                <div class="input-group" onclick="document.getElementById('StartTime').focus();">
+                    <div class="input-icon-box icon-time-start"><i class="fas fa-clock"></i></div>
+                    <div class="input-content">
+                        <label for="StartTime">Start Time</label>
+                        <input type="time" id="StartTime" name="StartTime" class="pro-input" required />
+                    </div>
+                </div>
+
+                <div class="input-group" onclick="document.getElementById('EndTime').focus();">
+                    <div class="input-icon-box icon-time-end"><i class="fas fa-hourglass-half"></i></div>
+                    <div class="input-content">
+                        <label for="EndTime">End Time</label>
+                        <input type="time" id="EndTime" name="EndTime" class="pro-input" required />
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="input-group" onclick="document.getElementById('MeetingOutcome').focus();">
+                    <div class="input-icon-box icon-outcome"><i class="fas fa-comments-dollar"></i></div>
+                    <div class="input-content">
+                        <label for="MeetingOutcome">Meeting Outcome</label>
+                        <select id="MeetingOutcome" name="MeetingOutcome" class="pro-input" required>
+                            <option value="" disabled selected>Select the final status...</option>
+                            <option value="Initial Meeting Completed">Initial Meeting Completed</option>
+                            <option value="Client Response / Relationship Building">Client Response / Relationship Building</option>
+                            <option value="Understanding Client Situation">Understanding Client Situation</option>
+                            <option value="Enquiry Generated">Enquiry Generated</option>
+                        </select>
+                    </div>
+                    <div class="dropdown-chevron"><i class="fas fa-chevron-down"></i></div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="input-group" onclick="document.getElementById('Price').focus();">
+                    <div class="input-icon-box icon-price"><i class="fas fa-rupee-sign"></i></div>
+                    <div class="input-content">
+                        <label for="Price">Quoted Amount (₹)</label>
+                        <input type="number" id="Price" name="Price" class="pro-input" placeholder="0.00" min="0" step="0.01" />
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" class="btn-primary-action" onclick="openFeedbackModal()">
+                <i class="fas fa-comment-dots"></i> Add Feedback & Complete
+            </button>
+
+            <!-- POPUP MODAL -->
+            <div class="modal-overlay" id="feedbackModal">
+                <div class="modal-card">
+                    <button type="button" class="btn-close-modal" onclick="closeFeedbackModal()">
+                        <i class="fas fa-times"></i>
+                    </button>
+
+                    <h3>Rate This Meeting</h3>
+                    <p>How did the client interaction go?</p>
+
+                    <!-- NEW: JS BASED STAR RATING -->
+                    <div class="star-rating-container">
+                        <!-- Default is outline star (far) -->
+                        <i class="far fa-star star-icon" data-rating="1"></i>
+                        <i class="far fa-star star-icon" data-rating="2"></i>
+                        <i class="far fa-star star-icon" data-rating="3"></i>
+                        <i class="far fa-star star-icon" data-rating="4"></i>
+                        <i class="far fa-star star-icon" data-rating="5"></i>
+
+                        <!-- Hidden input to store rating for the backend -->
+                        <input type="hidden" name="Rating" id="MeetingRating" value="0" required />
+                    </div>
+
+                    <textarea name="FeedbackText" class="pro-textarea" placeholder="Type detailed meeting notes or remarks here..." required></textarea>
+
+                    <button type="submit" class="btn-submit-final">
+                        <i class="fas fa-check-circle"></i> Save Complete Record
+                    </button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<!-- JavaScript for Popup and Star Rating -->
+<script>
+    // --- 1. MODAL LOGIC ---
+    function openFeedbackModal() {
+        document.getElementById('feedbackModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeFeedbackModal() {
+        document.getElementById('feedbackModal').classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+
+    document.getElementById('feedbackModal').addEventListener('click', function(e) {
+        if (e.target === this) { closeFeedbackModal(); }
+    });
+
+    // --- 2. STAR RATING LOGIC ---
+    const stars = document.querySelectorAll('.star-icon');
+    const ratingInput = document.getElementById('MeetingRating');
+
+    stars.forEach(star => {
+        // Hover effect dikhane ke liye
+        star.addEventListener('mouseover', function() {
+            const hoverValue = this.getAttribute('data-rating');
+            updateStarsUI(hoverValue);
+        });
+
+        // Mouse hatane par wapas original click ki hui rating par aane ke liye
+        star.addEventListener('mouseout', function() {
+            const selectedValue = ratingInput.value;
+            updateStarsUI(selectedValue);
+        });
+
+        // Click karne par rating ko save karne ke liye
+        star.addEventListener('click', function() {
+            const ratingValue = this.getAttribute('data-rating');
+            ratingInput.value = ratingValue; // Hidden input mein value save ho gayi
+            updateStarsUI(ratingValue);
+        });
+    });
+
+    // UI update karne ka function (far = empty star, fas = filled star)
+    function updateStarsUI(count) {
+        stars.forEach(star => {
+            const starValue = star.getAttribute('data-rating');
+            if (starValue <= count) {
+                star.classList.remove('far'); // Empty hatao
+                star.classList.add('fas');    // Fill wala lagao
+                star.classList.add('active'); // Golden color add karo
+            } else {
+                star.classList.remove('fas');
+                star.classList.add('far');
+                star.classList.remove('active');
+            }
+        });
+    }
+</script>
