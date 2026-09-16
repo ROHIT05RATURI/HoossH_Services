@@ -1,10 +1,11 @@
 @using HoossH_Services.Models
+@using System.Globalization
 @using System.Security.Claims
 @inject IHttpContextAccessor HttpContextAccessor
 @using Microsoft.AspNetCore.Http
 
 @{
-    ViewBag.Title = "View Client";
+    ViewBag.Title = "Client Management";
     Layout = "~/Views/Shared/_LayoutINV.cshtml";
     var user = HttpContextAccessor.HttpContext?.User;
     var role = user?.FindFirst(ClaimTypes.Role)?.Value;
@@ -15,7 +16,6 @@
 @model Client
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -23,64 +23,81 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link rel="stylesheet" href="/css/Pipeline.css">
 
-<style>
-    .metrics-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
-        gap: 12px;
-        margin-bottom: 15px;
-        background: #f8fafc;
-        padding: 12px;
-        border-radius: 8px;
-        border: 1px solid #e2e8f0;
-    }
-
-    .metric-item span {
-        font-size: 11px;
-        color: #64748b;
-        font-weight: 600;
-        text-transform: uppercase;
-    }
-
-    .metric-item strong {
-        display: block;
-        color: #0f172a;
-        font-size: 13px;
-        margin-top: 4px;
-    }
-
-    .suspect-expanded-box {
-        display: none;
-        padding: 15px;
-        border-top: 1px solid #f1f5f9;
-    }
-</style>
-
-
 @await Html.PartialAsync("_suspect", new List<SuspectNavItem>
 {
-    new SuspectNavItem { Text = "Add Client", Url = "/Client/AddClient", Icon = "fas fa-user-plus" },
-    new SuspectNavItem { Text = "View Client", Url = "/Client/ViewClient", Icon = "fas fa-users" }
+    new SuspectNavItem { Text = "Add Client", Url = "/Client/Addclient", Icon = "fas fa-user-plus" },
+    new SuspectNavItem { Text = "View Client", Url = "/Client/Viewclient", Icon = "fas fa-users" }
 })
 
+<div id="pageHeaderWrapper">
+    @await Html.PartialAsync("PageHeader", new PageHeaderModel
+    {
+        Title = "Client Management",
+        Description = "Track and manage Clients",
+        CountText = $"{ViewBag.TotalClients}",
+        ShowDetailedUI = true,
+        ControllerName = "Customer",
+        ActionName = "ViewClients"
+    })
+</div>
+
 <div class="premium-container w-auto mx-lg-5">
+
+    <!-- 1. MAIN DATA TOOLBAR -->
+    @await Html.PartialAsync("_DataToolbar2", new HoossH_Services.Models.DataToolbarModel
+    {
+        SearchPlaceholder = "Search Organization or Contact...",
+        ControllerName = "Customer",
+        ActionName = "ViewClients",
+        IsSalesManager = role == "SalesManager",
+        SortOptions = new List<HoossH_Services.Models.ToolbarSortOption> {
+            new HoossH_Services.Models.ToolbarSortOption { Value = "date_desc", Text = "Newest Date", IconClass = "fa-solid fa-calendar-plus" },
+            new HoossH_Services.Models.ToolbarSortOption { Value = "date_asc", Text = "Oldest Date", IconClass = "fa-solid fa-calendar-minus" },
+            new HoossH_Services.Models.ToolbarSortOption { Value = "az", Text = "Name (A-Z)", IconClass = "fa-solid fa-arrow-down-a-z" },
+            new HoossH_Services.Models.ToolbarSortOption { Value = "za", Text = "Name (Z-A)", IconClass = "fa-solid fa-arrow-up-z-a" }
+        },
+        CustomFilterHtml = @"
+        <div class='date-range-wrapper'>
+            <div class='date-input-group'>
+                <span>From</span>
+                <input type='date' id='fromDate' name='fromDate' class='custom-dynamic-input' title='From Date'>
+            </div>
+            <div class='date-input-group'>
+                <span>To</span>
+                <input type='date' id='toDate' name='toDate' class='custom-dynamic-input' title='To Date'>
+            </div>
+        </div>"
+    })
+
+    <!-- 2. STANDALONE ALPHABET FILTER -->
+    <div id="alphabetFilterWrapper" style="display: flex;">
+        <div class="standalone-alphabet-container animate__animated animate__fadeIn">
+            <button type="button" class="alpha-btn-standalone active" data-letter="all">All</button>
+            @for (int i = 65; i <= 90; i++)
+            {
+                char letter = (char)i;
+                <button type="button" class="alpha-btn-standalone" data-letter="@letter.ToString().ToLower()">@letter</button>
+            }
+        </div>
+    </div>
+
     <!-- 3. DATA LIST CONTAINER -->
     <div id="leadContainer">
         <div class="hero-content animate__animated animate__fadeIn" id="initialPlaceholder">
             <div class="hero-icon-main"><i class="fa-solid fa-users"></i></div>
-            <h1 class="soft-heading">Suspect Dashboard</h1>
-            <p>Manage your suspects easily. Click any card below to expand details and perform quick actions.</p>
+            <h1 class="soft-heading">Client Dashboard</h1>
+            <p>Manage your clients easily. Click any card below to expand details and perform quick actions.</p>
         </div>
     </div>
 </div>
 
 <script>
-    let loadedSuspects = [];
+    let loadedClients = [];
     let isDataLoaded = false;
     let isLoading = false;
     let hasMoreRecords = true;
     let currentPageIndex = 1;
-    let pageSize = 150; 
+    let pageSize = 15000000;
 
     let currentLayout = localStorage.getItem('erp_view_pref_Customer') || 'card';
     let currentPayload = { sort: 'date_desc', view: currentLayout, search: '', salesPersonId: '@(selectedId)' };
@@ -95,12 +112,13 @@
 
     function makeSafeId(str) { return str ? str.toString().replace(/[^a-zA-Z0-9]/g, '_') : 'unknown'; }
 
+    // Helper formatter for currency
     const formatCurrency = (val) => {
         if (!val) return '₹0';
         return '₹' + parseFloat(val).toLocaleString('en-IN', { maximumFractionDigits: 0 });
     };
 
-    // 🟢 1. MAP SUSPECT DATA
+    // 🟢 1. MAP SUSPECT DATA (Live Metrics Added)
     function mapSuspectData(item) {
         let rawDate = item.rawDate || item.VisitDate || null;
         let dueDays = 0;
@@ -150,7 +168,6 @@
             if (domName !== '') spName = domName;
         }
         if (!spName || spName === '') spName = 'Unassigned Suspect';
-
         let territory = item.territoryName || item.TerritoryName || 'Unassigned Territory';
         let rawOrgName = item.custName || item.CustName || item.CustomerName || item.customerName || item.organizationName || 'Unknown Organization';
         let industryVal = item.industry || item.Industry || item.industryType || item.IndustryType || '';
@@ -173,6 +190,8 @@
             territory: territory,
             spId: spId,
             profileImage: item.ProfileImage || item.profileImage || '',
+
+            // 🟢 LIVE METRICS MAPPED HERE
             liveEnquiryCount: item.liveEnquiryCount || 0,
             liveEnquiryAmount: item.liveEnquiryAmount || 0,
             liveQualifiedCount: item.liveQualifiedCount || 0,
@@ -258,7 +277,6 @@
             }
         });
 
-        // 🟢 EXPORT FUNCTIONALITY
         $(document).off('onExportData').on('onExportData', function(event, payload) {
             if (!loadedSuspects || loadedSuspects.length === 0) {
                 if (typeof window.showStandardExportPopup === 'function') window.showStandardExportPopup('nodata', 'There are no suspects loaded to export.');
@@ -342,10 +360,10 @@
         if (!isAppending) {
             loadedSuspects = [];
             $('#leadContainer').html(`
-                    <div class="animate__animated animate__fadeIn" style="display:flex; justify-content:center; align-items:center; height:200px;">
-                        <i class="fas fa-spinner fa-spin" style="font-size:30px; color:#3f6791;"></i>
-                    </div>
-                `);
+                        <div class="animate__animated animate__fadeIn" style="display:flex; justify-content:center; align-items:center; height:200px;">
+                            <i class="fas fa-spinner fa-spin" style="font-size:30px; color:#3f6791;"></i>
+                        </div>
+                    `);
         } else {
             if ($('#bottomScrollLoader').length === 0) {
                 $('#leadContainer').append(`<div id="bottomScrollLoader" style="text-align:center; padding:20px; color:#94a3b8; font-weight:600;"><i class="fas fa-spinner fa-spin"></i> Loading more suspects...</div>`);
@@ -358,7 +376,7 @@
         let activeSalesPersonId = currentPayload.salesPersonId !== undefined && currentPayload.salesPersonId !== '' ? currentPayload.salesPersonId : selectedSalesPersonId;
 
         $.ajax({
-            url: `/Customer/ProspectSummaryData`, // 👈 Your API endpoint
+            url: `/Customer/ProspectSummaryData`, // 👈 Make sure this matches your Controller Endpoint name
             type: 'POST',
             data: {
                 status: currentPayload.status || 'all',
@@ -379,8 +397,8 @@
 
                 if (response.summary) {
                     $('.card-action .val').text(response.summary.totalRecords || 0);
-                    $('.card-volume .val').text(response.summary.totalVolume || 0);
-                    $('.card-value .val').text(formatCurrency(response.summary.totalAmount || 0));
+                    $('.card-volume .val').text(response.summary.totalVolume || 0); // Enquiry Count as generic Volume
+                    $('.card-value .val').text(formatCurrency(response.summary.totalAmount || 0)); // Enquiry Amount as generic Value
                     $('#dynamicTotalCount').text(response.summary.totalRecords || 0);
                 }
 
@@ -388,16 +406,16 @@
                 if (Array.isArray(dataArray)) {
                     if (dataArray.length < pageSize) hasMoreRecords = false;
 
-                    let newMappedData = dataArray.map(item => mapSuspectData(item));
+                    let newMappedData = dataArray.map(item => mapClientData(item));
 
                     if (isAppending) {
                         newMappedData.forEach(newItem => {
-                            if (!loadedSuspects.some(existing => existing.id === newItem.id && newItem.id !== '')) {
-                                loadedSuspects.push(newItem);
+                            if (!loadedClients.some(existing => existing.id === newItem.id && newItem.id !== '')) {
+                                loadedClients.push(newItem);
                             }
                         });
                     } else {
-                        loadedSuspects = newMappedData;
+                        loadedClients = newMappedData;
                     }
 
                     if (dataArray.length === 0 && !isAppending) {
@@ -413,117 +431,104 @@
             error: function() {
                 isLoading = false; $('#bottomScrollLoader').remove();
                 if (!isAppending) {
-                    $('#leadContainer').html('<div class="empty-state-container"><div class="empty-state-icon"><i class="fas fa-exclamation-triangle"></i></div><div class="empty-state-title">Error Loading Data</div></div>');
-                }
+    $('#leadContainer').html(`
+                <div class="empty-state-container animate__animated animate__fadeIn">
+                    <div class="empty-state-icon"><i class="fas fa-users-slash"></i></div>
+                    <div class="empty-state-title">No Client Records</div>
+                    <div class="empty-state-desc">There are no pending or history records available for clients.</div>
+                </div>`);                }
             }
         });
     }
 
     function renderEmptyState() {
         $('#leadContainer').html(`
-                <div class="empty-state-container animate__animated animate__fadeIn">
-                    <div class="empty-state-icon"><i class="fas fa-search"></i></div>
-                    <div class="empty-state-title">No Suspects Found</div>
-                    <div class="empty-state-desc">Try adjusting your search query, dates, or alphabet filter.</div>
-                </div>`);
+                        <div class="empty-state-container animate__animated animate__fadeIn">
+                            <div class="empty-state-icon"><i class="fas fa-search"></i></div>
+                            <div class="empty-state-title">No Clients Found</div>
+                            <div class="empty-state-desc">Try adjusting your search query, dates, or alphabet filter.</div>
+                        </div>`);
     }
 
     // 🟢 3. HTML GENERATOR (CARD, GRID, TABLE)
-    function generateSuspectsHtml(items, viewType) {
+    function generateClientsHtml(items, viewType) {
         let html = '';
         if (!items || items.length === 0) return html;
 
         items.forEach((data, i) => {
             let callBtn = data.phone ? `<a href="tel:${data.phone}" class="btn-action btn-call" onclick="event.stopPropagation();"><i class="fas fa-phone-alt"></i> Call</a>` : '';
-            let leftBadges = `<span class="suspect-badge badge-contact"><i class="far fa-user"></i> ${data.contact}</span>`;
-            let rightSideStats = `<div class="suspect-stat-num" style="color: ${data.dueTextColor};">${data.dueDays}</div><div class="suspect-stat-label">DAYS DUE</div>`;
+
+            let leftBadges = `<span class="client-badge badge-contact"><i class="far fa-user"></i> ${data.contact}</span>`;
+            let rightSideStats = `<div class="client-stat-num" style="color: ${data.dueTextColor};">${data.dueDays}</div><div class="client-stat-label">DAYS DUE</div>`;
 
             if (viewType === 'table') {
                 let tableDaysDue = `${data.dueDays} Days`;
                 html += `
-                        <tr class="suspect-item-tr" onclick="toggleTableUpdateRow('${data.id}')" style="cursor:pointer;">
-                            <td style="font-weight:700; color:#0f172a; font-size:13px;">
-                                <div style="display:flex; align-items:center; gap:10px;">
-                                    <div style="width:28px; height:28px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#64748b; font-size:11px;"><i class="fas fa-building"></i></div>
-                                    ${data.custName}
-                                </div>
-                            </td>
-                            <td style="font-weight:600; color:#475569; font-size:12px;">${data.contact}</td>
-                            <td style="text-align:center; font-weight:700; color:${data.dueTextColor}; font-size:13px;">${tableDaysDue}</td>
-                            <td style="text-align:center;">
-                                <div style="display:flex; justify-content:flex-end; gap:10px;">
-                                    ${callBtn}
-                                    <a href="/Flow/CreateRoute?customerid=${data.id}" class="btn-action btn-route" style="flex:none; width:auto; padding:6px 14px;"><i class="fas fa-directions"></i> Route</a>
-                                    <a href="https://maps.google.com/?q=${encodeURIComponent(data.area)}" target="_blank" class="btn-action btn-map" style="flex:none; width:auto; padding:6px 14px;"><i class="fas fa-map-marker-alt" style="color: #ef4444; font-size: 1.2rem;"></i> Map</a>
-                                </div>
-                            </td>
-                        </tr>
-                        <!-- 🟢 BUG FIX: ADDED EXPANSION ROW FOR TABLE -->
-                        <tr id="expand_${data.id}" class="expandable-table-row" style="display:none;">
-                            <td colspan="4" style="padding:0; border:none; background:#f8fafc;">
-                                <div class="table-expanded-content" style="display:none; padding:15px; border-bottom:1px solid #e2e8f0;">
-                                    <div class="metrics-grid" style="margin-bottom:0; background:#fff;">
-                                        <div class="metric-item"><span>Total Visits</span><strong>${data.totalVisits}</strong></div>
-                                        <div class="metric-item"><span>Enquiries</span><strong>${data.liveEnquiryCount} <span style="color:#10b981">(${formatCurrency(data.liveEnquiryAmount)})</span></strong></div>
-                                        <div class="metric-item"><span>Qualified</span><strong>${data.liveQualifiedCount} <span style="color:#3b82f6">(${formatCurrency(data.liveQualifiedAmount)})</span></strong></div>
-                                        <div class="metric-item"><span>Orders</span><strong>${data.liveOrderCount} <span style="color:#f59e0b">(${formatCurrency(data.liveOrderAmount)})</span></strong></div>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>`;
+                    <tr class="client-item-tr" onclick="toggleTableUpdateRow('${data.id}')">
+                        <td style="font-weight:700; color:#0f172a; font-size:13px;">
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <div style="width:28px; height:28px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#64748b; font-size:11px;"><i class="fas fa-building"></i></div>
+                                ${data.custName}
+                            </div>
+                        </td>
+                        <td style="font-weight:600; color:#475569; font-size:12px;">${data.contact}</td>
+                        <td style="text-align:center; font-weight:700; color:${data.dueTextColor}; font-size:13px;">${tableDaysDue}</td>
+
+
+                        <td style="text-align:center;">
+                            <div style="display:flex; justify-content:flex-end; gap:10px;">
+                                ${callBtn}
+                                <a href="/Flow/CreateRoute?customerid=${data.id}" class="btn-action btn-route" style="flex:none; width:auto; padding:6px 14px;"><i class="fas fa-directions"></i> Route</a>
+                                <a href="https://maps.google.com/?q=${encodeURIComponent(data.area)}" target="_blank" class="btn-action btn-map" style="flex:none; width:auto; padding:6px 14px;"><i class="fas fa-map-marker-alt" style="color: #ef4444; font-size: 1.2rem;"></i> Map</a>
+                            </div>
+                        </td>
+                    </tr>`;
             } else if (viewType === 'grid') {
                 let gridRightStats = `<span class="ui-status-lbl">Due Days</span><span class="ui-status-val" style="color:${data.dueTextColor}; font-size:18px;">${data.dueDays}</span>`;
+
                 html += `
-                        <div class="ui-card animate__animated animate__fadeInUp" style="animation-delay: ${(i % 15) * 0.02}s;">
-                            <div class="ui-card-top">
-                                <div class="ui-center">
-                                    <h4 style="font-size:15px; font-weight:700; color:#1e293b; margin:0 0 6px 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${data.custName}">${data.custName}</h4>
-                                    <p style="color:#64748b; font-size:12px; margin:0 0 5px 0;"><i class="fas fa-user" style="margin-right:6px; color:#94a3b8;"></i>${data.contact}</p>
-                                    <!-- 🟢 LIVE METRICS ROW FOR GRID -->
-                                    <div style="display:flex; gap:12px; margin-top:8px; font-size:11px; color:#64748b; font-weight:600;">
-                                        <span><i class="fas fa-shoe-prints" style="color:#3b82f6"></i> Vst: ${data.totalVisits}</span>
-                                        <span><i class="fas fa-file-alt" style="color:#f59e0b"></i> Enq: ${data.liveEnquiryCount}</span>
+                                <div class="ui-card animate__animated animate__fadeInUp" style="animation-delay: ${(i % 15) * 0.02}s;">
+                                    <div class="ui-card-top">
+                                        <div class="ui-center">
+                                            <h4 style="font-size:15px; font-weight:700; color:#1e293b; margin:0 0 6px 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${data.custName}">${data.custName}</h4>
+                                            <p style="color:#64748b; font-size:12px; margin:0 0 5px 0;"><i class="fas fa-user" style="margin-right:6px; color:#94a3b8;"></i>${data.contact}</p>
+
+                                            <!-- 🟢 LIVE METRICS ROW FOR GRID -->
+                                           
+                                        </div>
+                                        <div class="ui-status-side">${gridRightStats}</div>
                                     </div>
-                                </div>
-                                <div class="ui-status-side">${gridRightStats}</div>
-                            </div>
-                            <div class="ui-divider"></div>
-                            <div class="ui-actions">
-                                ${callBtn}
-                                <a href="/Flow/CreateRoute?customerid=${data.id}" class="btn-action btn-route" title="Route Planner"><i class="fas fa-directions"></i> Route</a>
-                                <a href="https://maps.google.com/?q=${encodeURIComponent(data.area)}" target="_blank" class="btn-action btn-map" title="View Map"><i class="fas fa-map-marker-alt" style="color: #ef4444; font-size: 1.2rem;"></i> Map</a>
-                            </div>
-                        </div>`;
+                                    <div class="ui-divider"></div>
+                                    <div class="ui-actions">
+                                        ${callBtn}
+                                        <a href="/Flow/CreateRoute?customerid=${data.id}" class="btn-action btn-route" title="Route Planner"><i class="fas fa-directions"></i> Route</a>
+                                        <a href="https://maps.google.com/?q=${encodeURIComponent(data.area)}" target="_blank" class="btn-action btn-map" title="View Map"><i class="fas fa-map-marker-alt" style="color: #ef4444; font-size: 1.2rem;"></i> Map</a>
+                                    </div>
+                                </div>`;
             } else {
-                // LIST VIEW (Card View)
                 html += `
-                        <div class="suspect-item-modern animate__animated animate__fadeInUp" style="animation-delay: ${(i % 15) * 0.02}s">
-                            <div class="suspect-card-body" onclick="toggleRow(this)">
-                                <div class="sp-Avtar-box"><div class="sp-user-icon" style="color:var(--accent-blue)"><i class="far fa-building suspect-org-icon"></i></div></div>
-                                <div class="suspect-card-left">
-                                    <div class="suspect-name-row"><span class="suspect-name-text">${data.custName}</span></div>
-                                    <div class="suspect-badges-row">${leftBadges}</div>
-                                </div>
-                                <div class="suspect-card-right">
-                                    ${rightSideStats}
-                                    <i class="fas fa-chevron-down suspect-chevron"></i>
-                                </div>
-                            </div>
-                            <div class="suspect-expanded-box">
-                                <!-- 🟢 ADDED METRICS TO CARD EXPANSION -->
-                                <div class="metrics-grid">
-                                    <div class="metric-item"><span>Total Visits</span><strong>${data.totalVisits}</strong></div>
-                                    <div class="metric-item"><span>Enquiries</span><strong>${data.liveEnquiryCount} (${formatCurrency(data.liveEnquiryAmount)})</strong></div>
-                                    <div class="metric-item"><span>Qualified</span><strong>${data.liveQualifiedCount} (${formatCurrency(data.liveQualifiedAmount)})</strong></div>
-                                    <div class="metric-item"><span>Orders</span><strong>${data.liveOrderCount} (${formatCurrency(data.liveOrderAmount)})</strong></div>
-                                </div>
-                                <div class="card-actions">
-                                    ${callBtn}
-                                    <a href="/Flow/CreateRoute?customerid=${data.id}" class="btn-action btn-route" onclick="event.stopPropagation();"><i class="fas fa-directions"></i> RoutePlanner</a>
-                                    <a href="https://maps.google.com/?q=${encodeURIComponent(data.area)}" target="_blank" class="btn-action btn-map" onclick="event.stopPropagation();"><i class="fas fa-map-marker-alt" style="color: #ef4444; font-size: 1.2rem;"></i> ${data.area}</a>
-                                </div>
-                            </div>
-                        </div>`;
+                                <div class="client-item-modern animate__animated animate__fadeInUp" style="animation-delay: ${(i % 15) * 0.02}s">
+                                    <div class="client-card-body" onclick="toggleRow(this)">
+                                        <div class="sp-Avtar-box"><div class="sp-user-icon" style="color:var(--accent-blue)"><i class="far fa-building client-org-icon"></i></div></div>
+                                        <div class="client-card-left">
+                                            <div class="client-name-row"><span class="client-name-text">${data.custName}</span></div>
+                                            <div class="client-badges-row">${leftBadges}</div>
+                                        </div>
+                                        <div class="client-card-right">
+                                            ${rightSideStats}
+                                            <i class="fas fa-chevron-down client-chevron"></i>
+                                        </div>
+                                    </div>
+                                    <div class="client-expanded-box">
+                                       
+
+                                        <div class="card-actions">
+                                            ${callBtn}
+                                            <a href="/Flow/CreateRoute?customerid=${data.id}" class="btn-action btn-route" onclick="event.stopPropagation();"><i class="fas fa-directions"></i> RoutePlanner</a>
+                                            <a href="https://maps.google.com/?q=${encodeURIComponent(data.area)}" target="_blank" class="btn-action btn-map" onclick="event.stopPropagation();"><i class="fas fa-map-marker-alt" style="color: #ef4444; font-size: 1.2rem;"></i> ${data.area}</a>
+                                        </div>
+                                    </div>
+                                </div>`;
             }
         });
         return html;
@@ -568,7 +573,7 @@
                     } else if (currentPayload.view === 'grid') {
                         existingAccordion.find('.standard-grid-view').append(itemsHtml);
                     } else {
-                        existingAccordion.find('.suspect-list').append(itemsHtml);
+                        existingAccordion.find('.client-list').append(itemsHtml);
                     }
                 } else {
                     let uniqueTerritories = [...new Set(spItems.map(i => i.territory).filter(Boolean))];
@@ -583,6 +588,7 @@
                     let itemsHtml = generateSuspectsHtml(spItems, currentPayload.view);
 
                     if (currentPayload.view === 'table') {
+                        // 🟢 Table Header Matches The Row Columns Exactly
                         innerHtml = `<div class="table-responsive"><table class="enquiry-table"><thead><tr><th>Organization</th><th>Contact</th><th style="text-align:center;">Days Due</th><th style="text-align:end;">Action</th></tr></thead><tbody>${itemsHtml}</tbody></table></div>`;
                     } else if (currentPayload.view === 'grid') {
                         innerHtml = `<div class="standard-grid-view">${itemsHtml}</div>`;
@@ -591,26 +597,26 @@
                     }
 
                     let accordionHtml = `
-                            <div class="sp-accordion-card salesperson-group animate__animated animate__fadeInUp" id="${safeSpId}">
-                                <div class="sp-header" onclick="toggleSalespersonAccordion(this)">
-                                    <div class="sp-Avtar-box">${avatarHtml}</div>
-                                    <div class="sp-left-box">
-                                        <div class="sp-name-area">
-                                            <h4 class="sp-name">${group.spName}</h4>
-                                            <div class="sp-stats">
-                                                <span class="sp-stat-pill" title="${territoryText}">
-                                                    <i class="fa-solid fa-location-dot" style="color:#2563eb;"></i> ${territoryText}
-                                                </span>
+                                    <div class="sp-accordion-card salesperson-group animate__animated animate__fadeInUp" id="${safeSpId}">
+                                        <div class="sp-header" onclick="toggleSalespersonAccordion(this)">
+                                            <div class="sp-Avtar-box">${avatarHtml}</div>
+                                            <div class="sp-left-box">
+                                                <div class="sp-name-area">
+                                                    <h4 class="sp-name">${group.spName}</h4>
+                                                    <div class="sp-stats">
+                                                        <span class="sp-stat-pill" title="${territoryText}">
+                                                            <i class="fa-solid fa-location-dot" style="color:#2563eb;"></i> ${territoryText}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="sp-right-box">
+                                                <div class="sp-count-number group-count-display">${spItems.length}</div>
+                                                <div class="sp-toggle-icon"><i class="fas fa-chevron-down"></i></div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="sp-right-box">
-                                        <div class="sp-count-number group-count-display">${spItems.length}</div>
-                                        <div class="sp-toggle-icon"><i class="fas fa-chevron-down"></i></div>
-                                    </div>
-                                </div>
-                                <div class="sp-body" style="display:none; background:#f8fafc;">${innerHtml}</div>
-                            </div>`;
+                                        <div class="sp-body" style="display:none; background:#f8fafc;">${innerHtml}</div>
+                                    </div>`;
 
                     container.append(accordionHtml);
                 }
@@ -624,6 +630,7 @@
             } else {
                 let wrapperHtml = '';
                 if (currentPayload.view === 'table') {
+                    // 🟢 Table Header Matches The Row Columns Exactly
                     wrapperHtml = `<div class="table-responsive"><table class="enquiry-table"><thead><tr><th>Organization</th><th>Contact</th><th style="text-align:center;">Days Due</th><th style="text-align:center;">Action</th></tr></thead><tbody>${itemsHtml}</tbody></table></div>`;
                 } else if (currentPayload.view === 'grid') {
                     wrapperHtml = `<div class="standard-grid-view">${itemsHtml}</div>`;
@@ -666,22 +673,12 @@
         if (!isVisible) { expandedBox.slideDown(220); currentRow.addClass('active'); }
     }
 
-    // 🟢 BUG FIX: Fixed Table Expansion Logic
     function toggleTableUpdateRow(id) {
         let expandRow = $('#expand_' + id);
         if (!expandRow.length) return;
-
         let contentBox = expandRow.find('.table-expanded-content');
         let isVisible = contentBox.is(':visible');
-
-        // Close all other expanded table rows first
-        $('.table-expanded-content').slideUp(200, function() {
-            $(this).closest('tr').hide();
-        });
-
-        if (!isVisible) {
-            expandRow.show();
-            contentBox.slideDown(200);
-        }
+        $('.table-expanded-content').slideUp(200);
+        if (!isVisible) { contentBox.slideDown(200); }
     }
 </script>
