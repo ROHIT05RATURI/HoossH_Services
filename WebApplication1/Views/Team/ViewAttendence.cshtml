@@ -1,4 +1,3 @@
-@using HoossH_Services.Models;
 @{
     ViewBag.Title = "Attendance Tracker";
     Layout = "~/Views/Shared/_LayoutINV.cshtml";
@@ -8,478 +7,1333 @@
     int selectedMonth;
     int selectedYear;
 
-    if (!int.TryParse(Context.Request.Query["selectedMonth"], out selectedMonth) || selectedMonth < 1 || selectedMonth > 12)
+    if (!int.TryParse(Context.Request.Query["selectedMonth"], out selectedMonth) ||
+        selectedMonth < 1 ||
+        selectedMonth > 12)
     {
         selectedMonth = DateTime.Today.Month;
     }
 
-    if (!int.TryParse(Context.Request.Query["year"], out selectedYear) || selectedYear < 1)
+    if (!int.TryParse(Context.Request.Query["year"], out selectedYear) ||
+        selectedYear < 1)
     {
         selectedYear = DateTime.Today.Year;
     }
 
     var daysInMonth = DateTime.DaysInMonth(selectedYear, selectedMonth);
     var firstOfMonth = new DateTime(selectedYear, selectedMonth, 1);
-    int startDayOfWeek = (int)firstOfMonth.DayOfWeek; // 0 = Sunday
+    int startDayOfWeek = (int)firstOfMonth.DayOfWeek; 
     int totalRows = (int)Math.Ceiling((startDayOfWeek + daysInMonth) / 7.0);
 }
 
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
 <link rel="stylesheet" href="/css/HRMS.css">
 <link rel="stylesheet" href="/Attendance/Attendance.css">
 
-<style>
-    .not-joined-bg {
-        background-color: #f1f5f9 !important;
-        color: #94a3b8 !important;
-        cursor: not-allowed;
-    }
-</style>
+<div class="attendance-dashboard attendance-tracker-page">
 
-@await Html.PartialAsync("_suspect", new List<SuspectNavItem>
-{
-    new SuspectNavItem { Text = "Attendence", Url = "/Team/Attendence", Icon = "fas fa-user-plus" },
-    new SuspectNavItem { Text = "View Attendence", Url = "/Team/ViewAttendence", Icon = "fas fa-users" }
-})
+    <!-- =====================================================
+         PAGE ACTIONS
+         ===================================================== -->
 
-<div class="hrms-wrapper mx-lg-5">
-    <div class="stats-container my-3">
-        <div class="stat-premium span-2-rows">
-            <i class="fas fa-calendar-day" style="background: #eff6ff; color: #3b82f6;"></i>
-            <div class="stat-data"><h3></h3><p>Total Days</p></div>
+    <div class="attendance-actions">
+
+        <div class="attendance-action-left">
+
+            <a href="/Team/Attendence"
+               class="attendance-tab">
+
+                <i class="fas fa-plus-circle"></i>
+
+                <span>Mark Attendance</span>
+
+            </a>
+
+            <a href="/Team/ViewAttendence"
+               class="attendance-tab active">
+
+                <i class="fas fa-list-ul"></i>
+
+                <span>Attendance History</span>
+
+            </a>
+
         </div>
 
-        <div class="stat-premium">
-            <i class="fas fa-check" style="background: #d1f7c4; color: #2e7d32;"></i>
-            <div class="stat-data"><h3></h3><p>Present</p></div>
+        <div class="attendance-page-status">
+
+            <span class="attendance-status-dot"></span>
+
+            <span>Attendance History</span>
+
         </div>
-        <div class="stat-premium">
-            <i class="fas fa-walking" style="background: #fff9c4; color: #f59e0b;"></i>
-            <div class="stat-data"><h3></h3><p>Leaves</p></div>
-        </div>
-        <div class="stat-premium">
-            <i class="fas fa-times" style="background: #ffdce0; color: #dc2626;"></i>
-            <div class="stat-data"><h3></h3><p>Absent</p></div>
-        </div>
-        <div class="stat-premium">
-            <i class="fas fa-bed" style="background: #ebf4fa; color: #0b5ed7;"></i>
-            <div class="stat-data"><h3></h3><p>Week Offs</p></div>
-        </div>
+
     </div>
 
-    <div class="calendar-card">
-        <div class="calendar-top-header">
-            <form method="get" id="filterForm" class="month-nav-wrapper">
-                <button type="button" class="month-nav-btn" onclick="navigateMonth(-1)">
-                    <i class="fas fa-chevron-left"></i>
-                </button>
 
-                @* Hidden inputs used by the month navigation JavaScript. Kept hidden instead of the full select to provide arrow navigation. *@
-                <input type="hidden" name="selectedMonth" id="selectedMonth" value="@selectedMonth" />
-                <input type="hidden" name="year" id="selectedYear" value="@selectedYear" />
+    <!-- =====================================================
+         MONTH / YEAR HEADER
+         ===================================================== -->
 
-                <button type="button" class="month-nav-btn" onclick="navigateMonth(1)">
-                    <i class="fas fa-chevron-right"></i>
-                </button>
-            </form>
+    <section class="tracker-header-card">
+
+        <div class="tracker-header-left">
+
+            <div class="tracker-header-icon">
+
+                <i class="fa-solid fa-calendar-days"></i>
+
+            </div>
+
+            <div class="tracker-header-content">
+
+                <span class="tracker-overline">
+                    ATTENDANCE OVERVIEW
+                </span>
+
+                <h1>
+                    Attendance Tracker
+                </h1>
+
+                <p>
+                    Review your attendance, leaves and working days.
+                </p>
+
+            </div>
+
         </div>
 
-        <table class="table-calendar" id="calendar">
-            <thead>
-                <tr>
-                    <th>Sun</th>
-                    <th>Mon</th>
-                    <th>Tue</th>
-                    <th>Wed</th>
-                    <th>Thu</th>
-                    <th>Fri</th>
-                    <th>Sat</th>
-                </tr>
-            </thead>
-                <tbody>  @{  
-                    int currentDay = 1;
-                    for (int r = 0; r < totalRows; r++)
-                    {
-                        <tr>
-                            @for (int c = 0; c < 7; c++)
-                            {
-                                if ((r == 0 && c < startDayOfWeek) || currentDay > daysInMonth)
-                                {
-                                    <td class="empty-cell"></td>
-                                }
-                                else
-                                {
-                                    var loopDate = new DateTime(selectedYear, selectedMonth, currentDay);
-                                    var loopDateOnly = DateOnly.FromDateTime(loopDate);
-                                    var attendances = Model?.Attendances as System.Collections.IEnumerable;
-                                    dynamic record = null;
-                                    if (attendances != null)
-                                    {
-                                        // Iterate to find matching record without relying on dynamic LINQ lambda which can fail at compile-time
-                                        foreach (dynamic a in attendances)
-                                        {
-                                            try
-                                            {
-                                                // AttendanceDate may be DateOnly or DateTime; normalize for comparison
-                                                DateOnly ad;
-                                                if (a.AttendanceDate is DateOnly)
-                                                    ad = a.AttendanceDate;
-                                                else if (a.AttendanceDate is DateTime)
-                                                    ad = DateOnly.FromDateTime(a.AttendanceDate);
-                                                else
-                                                    continue;
 
-                                                if (ad == loopDateOnly)
+        <div class="tracker-month-control">
+
+            <button type="button"
+                    class="month-nav-btn"
+                    onclick="navigateMonth(-1)"
+                    aria-label="Previous month">
+
+                <i class="fas fa-chevron-left"></i>
+
+            </button>
+
+            <div class="tracker-month-display">
+
+                <span>
+                    @firstOfMonth.ToString("MMMM")
+                </span>
+
+                <strong>
+                    @selectedYear
+                </strong>
+
+            </div>
+
+            <button type="button"
+                    class="month-nav-btn"
+                    onclick="navigateMonth(1)"
+                    aria-label="Next month">
+
+                <i class="fas fa-chevron-right"></i>
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         HIDDEN FILTER FORM
+         ===================================================== -->
+
+    <form method="get"
+          id="filterForm"
+          class="tracker-hidden-form">
+
+        <input type="hidden"
+               name="selectedMonth"
+               id="selectedMonth"
+               value="@selectedMonth" />
+
+        <input type="hidden"
+               name="year"
+               id="selectedYear"
+               value="@selectedYear" />
+
+    </form>
+
+
+    <!-- =====================================================
+         STATISTICS
+         ===================================================== -->
+
+    <section class="attendance-stats-grid">
+
+        <!-- TOTAL DAYS -->
+
+        <div class="attendance-stat-card">
+
+            <div class="attendance-stat-icon total-icon">
+
+                <i class="fas fa-calendar-day"></i>
+
+            </div>
+
+            <div class="attendance-stat-content">
+
+                <span class="attendance-stat-label">
+                    TOTAL DAYS
+                </span>
+
+                <h3 id="totalDaysCount">
+                    @daysInMonth
+                </h3>
+
+                <p>
+                    Days in selected month
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- PRESENT -->
+
+        <div class="attendance-stat-card">
+
+            <div class="attendance-stat-icon present-icon">
+
+                <i class="fas fa-check"></i>
+
+            </div>
+
+            <div class="attendance-stat-content">
+
+                <span class="attendance-stat-label">
+                    PRESENT
+                </span>
+
+                <h3 id="presentCount">
+                    0
+                </h3>
+
+                <p>
+                    Days marked present
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- LEAVE -->
+
+        <div class="attendance-stat-card">
+
+            <div class="attendance-stat-icon leave-icon">
+
+                <i class="fas fa-person-walking"></i>
+
+            </div>
+
+            <div class="attendance-stat-content">
+
+                <span class="attendance-stat-label">
+                    LEAVES
+                </span>
+
+                <h3 id="leaveCount">
+                    0
+                </h3>
+
+                <p>
+                    Approved or recorded leave
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- ABSENT -->
+
+        <div class="attendance-stat-card">
+
+            <div class="attendance-stat-icon absent-icon">
+
+                <i class="fas fa-times"></i>
+
+            </div>
+
+            <div class="attendance-stat-content">
+
+                <span class="attendance-stat-label">
+                    ABSENT
+                </span>
+
+                <h3 id="absentCount">
+                    0
+                </h3>
+
+                <p>
+                    Days marked absent
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- WEEK OFF -->
+
+        <div class="attendance-stat-card">
+
+            <div class="attendance-stat-icon weekoff-icon">
+
+                <i class="fas fa-bed"></i>
+
+            </div>
+
+            <div class="attendance-stat-content">
+
+                <span class="attendance-stat-label">
+                    WEEK OFF
+                </span>
+
+                <h3 id="weekoffCount">
+                    0
+                </h3>
+
+                <p>
+                    Scheduled Sundays
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         CALENDAR CARD
+         ===================================================== -->
+
+    <section class="attendance-calendar-card tracker-calendar-card">
+
+        <!-- CALENDAR HEADER -->
+
+        <div class="calendar-top tracker-calendar-top">
+
+            <div class="calendar-heading">
+
+                <div class="calendar-heading-icon">
+
+                    <i class="fa-solid fa-calendar-days"></i>
+
+                </div>
+
+                <div class="calendar-title">
+
+                    <span class="calendar-overline">
+                        ATTENDANCE RECORD
+                    </span>
+
+                    <h2>
+                        @firstOfMonth.ToString("MMMM yyyy")
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <!-- MONTH NAVIGATION -->
+
+            <div class="tracker-header-navigation">
+
+                <button type="button"
+                        class="month-nav-btn"
+                        onclick="navigateMonth(-1)"
+                        aria-label="Previous month">
+
+                    <i class="fas fa-chevron-left"></i>
+
+                </button>
+
+                <button type="button"
+                        class="month-nav-btn"
+                        onclick="navigateMonth(1)"
+                        aria-label="Next month">
+
+                    <i class="fas fa-chevron-right"></i>
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             CALENDAR
+             ================================================= -->
+
+        <div class="attendance-calendar-wrapper">
+
+            <table class="table-calendar tracker-calendar"
+                   id="calendar">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Sun</th>
+                        <th>Mon</th>
+                        <th>Tue</th>
+                        <th>Wed</th>
+                        <th>Thu</th>
+                        <th>Fri</th>
+                        <th>Sat</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    @{
+                        int currentDay = 1;
+
+                        for (int r = 0; r < totalRows; r++)
+                        {
+                            <tr>
+
+                                @for (int c = 0; c < 7; c++)
+                                {
+                                    if ((r == 0 && c < startDayOfWeek) ||
+                                        currentDay > daysInMonth)
+                                    {
+                                        <td class="empty-cell"></td>
+                                    }
+                                    else
+                                    {
+                                        var loopDate =
+                                            new DateTime(
+                                                selectedYear,
+                                                selectedMonth,
+                                                currentDay
+                                            );
+
+                                        var loopDateOnly =
+                                            DateOnly.FromDateTime(loopDate);
+
+                                        var attendances =
+                                            Model?.Attendances as System.Collections.IEnumerable;
+
+                                        dynamic record = null;
+
+                                        if (attendances != null)
+                                        {
+                                            foreach (dynamic a in attendances)
+                                            {
+                                                try
                                                 {
-                                                    record = a;
-                                                    break;
+                                                    DateOnly ad;
+
+                                                    if (a.AttendanceDate is DateOnly)
+                                                    {
+                                                        ad = a.AttendanceDate;
+                                                    }
+                                                    else if (a.AttendanceDate is DateTime)
+                                                    {
+                                                        ad = DateOnly.FromDateTime(
+                                                            a.AttendanceDate
+                                                        );
+                                                    }
+                                                    else
+                                                    {
+                                                        continue;
+                                                    }
+
+                                                    if (ad == loopDateOnly)
+                                                    {
+                                                        record = a;
+                                                        break;
+                                                    }
+                                                }
+                                                catch
+                                                {
                                                 }
                                             }
-                                            catch { }
                                         }
-                                    }
 
-                                    string bgClass = "";
-                                    string timeStr = "";
-                                    string displayStatus = "";
-                                    bool isSunday = (c == 0);
-                                    bool showRedDot = false;
 
-                                    var joinDateStr = ViewBag.JoinDate as string;
-                                    var joinDate = string.IsNullOrEmpty(joinDateStr) ? DateTime.MinValue : DateTime.Parse(joinDateStr);
+                                        string bgClass = "";
+                                        string timeStr = "";
+                                        string displayStatus = "";
+                                        bool isSunday = (c == 0);
+                                        bool showRedDot = false;
 
-                                    if (loopDate.Date < joinDate.Date)
-                                    {
-                                        bgClass = "not-joined-bg";
-                                        displayStatus = "Not Joined";
-                                    }
-                                    else if (record != null)
-                                    {
-                                        if (record.ManagerStatus == "Present")
+
+                                        var joinDateStr =
+                                            ViewBag.JoinDate as string;
+
+                                        var joinDate =
+                                            string.IsNullOrEmpty(joinDateStr)
+                                                ? DateTime.MinValue
+                                                : DateTime.Parse(joinDateStr);
+
+
+                                        if (loopDate.Date < joinDate.Date)
                                         {
-                                            bgClass = "present-approved-bg";
-                                            timeStr = record.CheckinTime;
-                                            displayStatus = "Present";
+                                            bgClass = "not-joined-bg";
+                                            displayStatus = "Not Joined";
                                         }
-                                        else if (record.ManagerStatus == "Pending")
+                                        else if (record != null)
                                         {
-                                            bgClass = "present-not-approved-bg";
-                                            timeStr = record.CheckinTime;
-                                            displayStatus = "Pending";
+                                            if (record.ManagerStatus == "Present")
+                                            {
+                                                bgClass = "present-approved-bg";
+                                                timeStr = record.CheckinTime;
+                                                displayStatus = "Present";
+                                            }
+                                            else if (record.ManagerStatus == "Pending")
+                                            {
+                                                bgClass = "present-not-approved-bg";
+                                                timeStr = record.CheckinTime;
+                                                displayStatus = "Pending";
+                                            }
+                                            else if (record.ManagerStatus == "Absent")
+                                            {
+                                                bgClass = "absent-bg";
+                                                displayStatus = "Absent";
+                                                showRedDot = true;
+                                            }
+                                            else if (record.ManagerStatus == "Leave")
+                                            {
+                                                bgClass = "leave-bg";
+                                                displayStatus = "Leave";
+                                            }
+                                            else if (record.ManagerStatus == "Working on Leave")
+                                            {
+                                                bgClass = "working-leave-bg";
+                                                timeStr = record.CheckinTime;
+                                                displayStatus = "Working on Leave";
+                                            }
                                         }
-                                        else if (record.ManagerStatus == "Absent")
+                                        else if (isSunday)
+                                        {
+                                            bgClass = "weekend-bg";
+                                            displayStatus = "Week Off";
+                                        }
+                                        else if (loopDate.Date <= DateTime.Today)
                                         {
                                             bgClass = "absent-bg";
                                             displayStatus = "Absent";
                                             showRedDot = true;
                                         }
-                                        else if (record.ManagerStatus == "Leave")
+
+
+                                        bool isToday =
+                                            loopDate.Date == DateTime.Today;
+
+                                        string todayClass =
+                                            isToday
+                                                ? "today-highlight"
+                                                : "";
+
+
+                                        if (displayStatus == "Not Joined")
                                         {
-                                            bgClass = "leave-bg";
-                                            displayStatus = "Leave";
+                                            <td class="@bgClass @todayClass">
+
+                                                <span class="c-day-num">
+                                                    @currentDay
+                                                </span>
+
+                                                <span class="calendar-status-text">
+                                                    Not Joined
+                                                </span>
+
+                                            </td>
                                         }
-                                        else if (record.ManagerStatus == "Working on Leave")
+                                        else
                                         {
-                                            bgClass = "working-leave-bg";
-                                            timeStr = record.CheckinTime;
-                                            displayStatus = "Working on Leave";
+                                            <td class="@bgClass @todayClass"
+                                                onclick="showDayDetails(
+                                                '@loopDate.ToString("yyyy-MM-dd")',
+                                                '@displayStatus',
+                                                '@timeStr',
+                                                '@(record?.CheckOutTime ?? "")'
+                                                )">
+
+                                                <span class="c-day-num">
+                                                    @currentDay
+                                                </span>
+
+
+                                                @if (!string.IsNullOrEmpty(timeStr))
+                                                {
+                                                    <span class="attendance-time">
+                                                        @timeStr
+                                                    </span>
+                                                }
+
+
+                                                @if (displayStatus == "Week Off")
+                                                {
+                                                    <span class="calendar-status-text">
+                                                        Week Off
+                                                    </span>
+                                                }
+
+
+                                                @if (showRedDot &&
+                                                     string.IsNullOrEmpty(timeStr) &&
+                                                     !isSunday)
+                                                {
+                                                    <div class="red-dot-indicator"></div>
+                                                }
+
+                                            </td>
                                         }
-                                    }
-                                    else if (isSunday)
-                                    {
-                                        bgClass = "weekend-bg";
-                                        displayStatus = "Week Off";
-                                    }
-                                    else if (loopDate.Date <= DateTime.Today)
-                                    {
-                                        bgClass = "absent-bg";
-                                        displayStatus = "Absent";
-                                        showRedDot = true;
-                                    }
 
-                                    bool isToday = (loopDate.Date == DateTime.Today);
-                                    string todayClass = isToday ? "today-highlight" : "";
-
-                                    if (displayStatus == "Not Joined")
-                                    {
-                                        <td class="@bgClass @todayClass">
-                                            <span class="c-day-num">@currentDay</span>
-                                        </td>
+                                        currentDay++;
                                     }
-                                    else
-                                    {
-                                        <td class="@bgClass @todayClass" onclick="showDayDetails('@loopDate.ToString("yyyy-MM-dd")', '@displayStatus', '@timeStr', '@(record?.CheckOutTime ?? "")')">
-                                            <span class="c-day-num">@currentDay</span>
-
-                                            @if (!string.IsNullOrEmpty(timeStr))
-                                            {
-                                                <span class="attendance-time">@timeStr</span>
-                                            }
-
-                                            @if (showRedDot && string.IsNullOrEmpty(timeStr) && !isSunday)
-                                            {
-                                                <div class="red-dot-indicator"></div>
-                                            }
-                                        </td>
-                                    }
-                                    currentDay++;
                                 }
-                            }
-                        </tr>
+
+                            </tr>
+                        }
                     }
-                }
-            </tbody>
-       
-            </table> 
 
-        <div class="legend-marquee-wrapper">
-            <div class="attendance-legend">
+                </tbody>
 
-                <div class="legend-item">
-                    <span class="legend-color present-dark"></span>
-                    <span>Present / Approved</span>
-                </div>
+            </table>
 
-                <div class="legend-item">
-                    <span class="legend-color pending-bg"></span>
-                    <span>Present / Not Approved</span>
-                </div>
+        </div>
 
-                <div class="legend-item">
-                    <span class="legend-color absent-bg"></span>
-                    <span>Absent</span>
-                </div>
 
-                <div class="legend-item">
-                    <span class="legend-color Weekoff-bg"></span>
-                    <span>Weekend</span>
-                </div>
+        <!-- =================================================
+             LEGEND
+             ================================================= -->
 
-                <div class="legend-item">
-                    <span class="legend-color leave-bg"></span>
-                    <span>Leave</span>
-                </div>
+        <div class="attendance-legend tracker-legend">
 
-                <div class="legend-item">
-                    <span class="legend-color working-leave-bg"></span>
-                    <span>Working on Leave</span>
-                </div>
+            <div class="legend-item">
 
-                <div class="legend-item">
-                    <span class="legend-color not-joined-bg"></span>
-                    <span>Not Joined</span>
-                </div>
+                <span class="legend-dot present-approved"></span>
+
+                <span>Present / Approved</span>
 
             </div>
+
+
+            <div class="legend-item">
+
+                <span class="legend-dot present-not-approved"></span>
+
+                <span>Present / Not Approved</span>
+
+            </div>
+
+
+            <div class="legend-item">
+
+                <span class="legend-dot absent"></span>
+
+                <span>Absent</span>
+
+            </div>
+
+
+            <div class="legend-item">
+
+                <span class="legend-dot weekend"></span>
+
+                <span>Weekend</span>
+
+            </div>
+
+
+            <div class="legend-item">
+
+                <span class="legend-dot leave"></span>
+
+                <span>Leave</span>
+
+            </div>
+
+
+            <div class="legend-item">
+
+                <span class="legend-dot working-leave"></span>
+
+                <span>Working on Leave</span>
+
+            </div>
+
+
+            <div class="legend-item">
+
+                <span class="legend-dot not-joined"></span>
+
+                <span>Not Joined</span>
+
+            </div>
+
         </div>
-    </div>
+
+    </section>
+
 </div>
 
 
-<script>
-    function showDayDetails(dateStr, status, inTime, outTime) {
-        if (!status) status = "Not Marked";
-        if (!inTime) inTime = "--:--";
-        if (!outTime) outTime = "--:--";
+<!-- =========================================================
+     DAY DETAILS
+     ========================================================= -->
 
-        let headerBg = "linear-gradient(to right, #94a3b8, #cbd5e1)";
-        let icon = "fa-calendar-day";
+<script>
+
+    function showDayDetails(dateStr, status, inTime, outTime) {
+
+        if (!status)
+            status = "Not Marked";
+
+        if (!inTime)
+            inTime = "--:--";
+
+        if (!outTime)
+            outTime = "--:--";
+
+
+        let headerBg =
+            "linear-gradient(135deg, #378da6, #287e98)";
+
+        let icon =
+            "fa-calendar-day";
+
 
         if (status === "Present" || status === "Pending") {
-            headerBg = "linear-gradient(to right, #52a762, #68c078)";
-            if (status === "Pending") headerBg = "linear-gradient(to right, #eeba75, #facd8a)";
-            icon = "fa-check-circle";
-        } else if (status === "Absent") {
-            headerBg = "linear-gradient(to right, #ef4444, #f87171)";
-            icon = "fa-times-circle";
-        } else if (status === "Leave" || status === "Week Off") {
-            headerBg = "linear-gradient(to right, #8bbbe3, #72aae0)";
-            icon = "fa-bed";
-        } else if (status === "Working on Leave") {
-            headerBg = "linear-gradient(to right, #a855f7, #c084fc)";
-            icon = "fa-briefcase";
+
+            headerBg =
+                "linear-gradient(135deg, #10b947, #35d86c)";
+
+            icon =
+                "fa-check-circle";
+
+
+            if (status === "Pending") {
+
+                headerBg =
+                    "linear-gradient(135deg, #e29a2f, #f5c76a)";
+
+            }
+
+        }
+        else if (status === "Absent") {
+
+            headerBg =
+                "linear-gradient(135deg, #ff4545, #ff7070)";
+
+            icon =
+                "fa-times-circle";
+
+        }
+        else if (status === "Leave" || status === "Week Off") {
+
+            headerBg =
+                "linear-gradient(135deg, #7186d8, #91a6ef)";
+
+            icon =
+                status === "Leave"
+                    ? "fa-person-walking"
+                    : "fa-bed";
+
+        }
+        else if (status === "Working on Leave") {
+
+            headerBg =
+                "linear-gradient(135deg, #8b5cf6, #b18af8)";
+
+            icon =
+                "fa-briefcase";
+
         }
 
-        let d = new Date(dateStr);
-        let displayDate = d.toLocaleDateString('en-US', {
-            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-        });
+
+        let d =
+            new Date(dateStr);
+
+
+        let displayDate =
+            d.toLocaleDateString(
+                'en-US',
+                {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                }
+            );
+
 
         let actionFormHtml = "";
-        let today = new Date();
-        today.setHours(0, 0, 0, 0);
 
-        let joinDateStr = '@ViewBag.JoinDate';
-        let joinDate = new Date(joinDateStr);
-        joinDate.setHours(0, 0, 0, 0);
 
-        if ((status === "Absent" || status === "Not Marked" || status === "Leave") && d <= today && d.getDay() !== 0 && d >= joinDate) {
+        let today =
+            new Date();
+
+        today.setHours(
+            0,
+            0,
+            0,
+            0
+        );
+
+
+        let joinDateStr =
+            '@ViewBag.JoinDate';
+
+        let joinDate =
+            new Date(joinDateStr);
+
+        joinDate.setHours(
+            0,
+            0,
+            0,
+            0
+        );
+
+
+        if (
+            (
+                status === "Absent" ||
+                status === "Not Marked" ||
+                status === "Leave"
+            ) &&
+            d <= today &&
+            d.getDay() !== 0 &&
+            d >= joinDate
+        ) {
+
             actionFormHtml = `
-                        <div style="padding: 0 20px 20px;">
-                            <hr style="border: 0; height: 1px; background: #e2e8f0; margin-bottom: 15px;">
-                            <label style="font-size: 0.75rem; font-weight: 800; color: #475569; margin-bottom: 6px; display: block;">CHECK-IN TIME</label>
-                            <input type="time" id="manualCheckInTime" value="09:30" style="width: 100%; padding: 12px 15px; border-radius: 8px; border: 1px solid #cbd5e1; font-family: 'Courier New', monospace; font-weight: 700; font-size: 1rem; color: #1e293b; background: #f8fafc; outline: none; margin-bottom: 15px;">
-                            <button onclick="submitManualAttendance('${dateStr}')" style="width: 100%; background: #3b5982; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px;">
-                                <i class="fas fa-check-circle"></i> MARK PRESENT
-                            </button>
-                        </div>
-                    `;
-        }
 
-        let htmlContent = `
-                    <div class="premium-day-card">
-                        <div class="pdc-header" style="background: ${headerBg}; text-align: left;">
-                            <h4 style="margin: 0; font-weight: 800; font-size: 18px;">${displayDate}</h4>
-                            <p style="margin: 4px 0 0; opacity: 0.9; font-size: 14px; font-weight: 700;">
-                                <i class="fas ${icon} me-1"></i> ${status}
-                            </p>
-                        </div>
-                        <div class="pdc-body" style="padding-top: 15px;">
-                            <div class="pdc-row">
-                                <div style="display: flex; align-items: center;">
-                                    <div class="pdc-icon-box" style="background: #ebf4fa; color: #0b5ed7;">
-                                        <i class="fas fa-sign-in-alt"></i>
-                                    </div>
-                                    <div>
-                                        <h6 style="margin: 0; font-weight: 700; color: #1e293b; font-size: 13px;">In Time</h6>
-                                        <span style="font-size: 11px; color: #64748b; font-weight: 600;">Punch In</span>
-                                    </div>
-                                </div>
-                                <div style="font-weight: 800; color: #0f172a; font-size: 13px;">${inTime}</div>
-                            </div>
-                            <div class="pdc-row" style="margin-bottom: 0;">
-                                <div style="display: flex; align-items: center;">
-                                    <div class="pdc-icon-box" style="background: #fee2e2; color: #dc2626;">
-                                        <i class="fas fa-sign-out-alt"></i>
-                                    </div>
-                                    <div>
-                                        <h6 style="margin: 0; font-weight: 700; color: #1e293b; font-size: 13px;">Out Time</h6>
-                                        <span style="font-size: 11px; color: #64748b; font-weight: 600;">Punch Out</span>
-                                    </div>
-                                </div>
-                                <div style="font-weight: 800; color: #0f172a; font-size: 13px;">${outTime}</div>
-                            </div>
-                        </div>
-                        ${actionFormHtml}
+                    <div class="manual-attendance-section">
+
+                        <div class="manual-section-divider"></div>
+
+                        <label class="manual-label">
+                            CHECK-IN TIME
+                        </label>
+
+                        <input
+                            type="time"
+                            id="manualCheckInTime"
+                            value="09:30"
+                            class="manual-time-input"
+                        >
+
+                        <button
+                            onclick="submitManualAttendance('${dateStr}')"
+                            class="manual-attendance-button">
+
+                            <i class="fas fa-check-circle"></i>
+
+                            MARK PRESENT
+
+                        </button>
+
                     </div>
+
                 `;
 
-        Swal.fire({
-            html: htmlContent,
-            showConfirmButton: false,
-            showCloseButton: true,
-            customClass: {
-                popup: 'swal-premium-popup'
-            }
-        });
-    }
-    function applyWeekoffs() {
-        const rows = document.querySelectorAll('.table-calendar tbody tr');
-        rows.forEach(row => {
-            const sundayCell = row.cells[0];
-
-            if (sundayCell &&
-                !sundayCell.classList.contains('empty-cell') &&
-                !sundayCell.classList.contains('present-approved-bg') &&
-                !sundayCell.classList.contains('present-not-approved-bg') &&
-                !sundayCell.classList.contains('absent-bg') &&
-                !sundayCell.classList.contains('leave-bg') &&
-                !sundayCell.classList.contains('working-leave-bg')) {
-
-                sundayCell.classList.add('weekend-bg');
-
-                const timeSpan = sundayCell.querySelector('.attendance-time');
-                if (!timeSpan) {
-                    const span = document.createElement('span');
-                    span.className = 'attendance-time';
-                    span.innerText = 'Week Off';
-                    sundayCell.appendChild(span);
-                }
-            }
-        });
-    }
-
-    document.addEventListener("DOMContentLoaded", applyWeekoffs);
-
-    function submitManualAttendance(dateStr) {
-        let timeStr = document.getElementById("manualCheckInTime").value;
-        if (!timeStr) {
-            Swal.fire({
-                title: 'Time Missing',
-                text: 'Please select a valid time.',
-                icon: 'warning'
-            });
-            return;
         }
 
-        let dateTimeString = `${dateStr}T${timeStr}:00`;
-        let pastDateTime = new Date(dateTimeString);
-        let localISO = new Date(pastDateTime - (pastDateTime.getTimezoneOffset() * 60000)).toISOString().slice(0, 19);
+
+        let htmlContent = `
+
+                <div class="premium-day-card">
+
+                    <div
+                        class="pdc-header"
+                        style="background:${headerBg};"
+                    >
+
+                        <div class="pdc-header-content">
+
+                            <span class="pdc-date">
+                                ${displayDate}
+                            </span>
+
+                            <span class="pdc-status">
+
+                                <i class="fas ${icon}"></i>
+
+                                ${status}
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="pdc-body">
+
+                        <div class="pdc-row">
+
+                            <div class="pdc-row-left">
+
+                                <div class="pdc-icon-box pdc-in-icon">
+
+                                    <i class="fas fa-sign-in-alt"></i>
+
+                                </div>
+
+                                <div>
+
+                                    <h6>
+                                        In Time
+                                    </h6>
+
+                                    <span>
+                                        Punch In
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="pdc-time">
+                                ${inTime}
+                            </div>
+
+                        </div>
+
+
+                        <div class="pdc-row">
+
+                            <div class="pdc-row-left">
+
+                                <div class="pdc-icon-box pdc-out-icon">
+
+                                    <i class="fas fa-sign-out-alt"></i>
+
+                                </div>
+
+                                <div>
+
+                                    <h6>
+                                        Out Time
+                                    </h6>
+
+                                    <span>
+                                        Punch Out
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="pdc-time">
+                                ${outTime}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    ${actionFormHtml}
+
+                </div>
+
+            `;
+
 
         Swal.fire({
-            title: 'Updating...',
-            allowOutsideClick: false,
-            didOpen: () => {
-                Swal.showLoading();
-            }
+
+            html: htmlContent,
+
+            showConfirmButton: false,
+
+            showCloseButton: true,
+
+            customClass: {
+
+                popup:
+                    'swal-premium-popup'
+
+            },
+
+            buttonsStyling: false
+
         });
 
-        $.post("/Team/MarkAttendence", {
-            Status: "Present",
-            AttendenceDate: localISO,
-            location: "Manual Entry",
-            description: "Past Attendance Manual Entry"
-        }, function () {
-            Swal.fire({
-                title: 'Updated!',
-                text: 'Attendance has been recorded.',
-                icon: 'success',
-                timer: 2000,
-                showConfirmButton: false
-            }).then(() => {
-                window.location.reload();
-            });
-        }).fail(function () {
-            Swal.fire('Error', 'Failed to update attendance', 'error');
-        });
     }
+
+
+    /* =====================================================
+       MANUAL ATTENDANCE
+       ===================================================== */
+
+    function submitManualAttendance(dateStr) {
+
+        let timeStr =
+            document.getElementById(
+                "manualCheckInTime"
+            ).value;
+
+
+        if (!timeStr) {
+
+            Swal.fire({
+
+                title: 'Time Missing',
+
+                text:
+                    'Please select a valid time.',
+
+                icon: 'warning'
+
+            });
+
+            return;
+
+        }
+
+
+        let dateTimeString =
+            `${dateStr}T${timeStr}:00`;
+
+
+        let pastDateTime =
+            new Date(dateTimeString);
+
+
+        let localISO =
+            new Date(
+                pastDateTime -
+                (
+                    pastDateTime.getTimezoneOffset() *
+                    60000
+                )
+            )
+                .toISOString()
+                .slice(0, 19);
+
+
+        Swal.fire({
+
+            title: 'Updating...',
+
+            allowOutsideClick: false,
+
+            didOpen: () => {
+
+                Swal.showLoading();
+
+            }
+
+        });
+
+
+        $.post(
+            "/Team/MarkAttendence",
+            {
+
+                Status: "Present",
+
+                AttendenceDate: localISO,
+
+                location: "Manual Entry",
+
+                description:
+                    "Past Attendance Manual Entry"
+
+            },
+
+            function() {
+
+                Swal.fire({
+
+                    title: 'Updated!',
+
+                    text:
+                        'Attendance has been recorded.',
+
+                    icon: 'success',
+
+                    timer: 2000,
+
+                    showConfirmButton: false
+
+                }).then(() => {
+
+                    window.location.reload();
+
+                });
+
+            }
+
+        ).fail(function() {
+
+            Swal.fire(
+                'Error',
+                'Failed to update attendance',
+                'error'
+            );
+
+        });
+
+    }
+
+
+    /* =====================================================
+       MONTH NAVIGATION
+       ===================================================== */
 
     function navigateMonth(offset) {
 
-        let monthSelect = document.getElementById('selectedMonth');
-        let yearInput = document.getElementById('selectedYear');
+        let monthSelect =
+            document.getElementById(
+                'selectedMonth'
+            );
 
-        let currentMonth = parseInt(monthSelect.value);
-        let currentYear = parseInt(yearInput.value);
 
-        let joinDateStr = '@ViewBag.JoinDate';
-        let joinDate = new Date(joinDateStr);
-        let joinMonth = joinDate.getMonth() + 1; // 1-12
-        let joinYear = joinDate.getFullYear();
+        let yearInput =
+            document.getElementById(
+                'selectedYear'
+            );
+
+
+        let currentMonth =
+            parseInt(
+                monthSelect.value
+            );
+
+
+        let currentYear =
+            parseInt(
+                yearInput.value
+            );
+
+
+        let joinDateStr =
+            '@ViewBag.JoinDate';
+
+
+        let joinDate =
+            new Date(joinDateStr);
+
+
+        let joinMonth =
+            joinDate.getMonth() + 1;
+
+
+        let joinYear =
+            joinDate.getFullYear();
+
 
         currentMonth += offset;
 
-       
+
         if (currentMonth > 12) {
+
             currentMonth = 1;
+
             currentYear++;
-        }
 
+        }
         else if (currentMonth < 1) {
+
             currentMonth = 12;
+
             currentYear--;
+
         }
 
-        if (currentYear < joinYear || (currentYear === joinYear && currentMonth < joinMonth)) {
-            // Do not navigate before joining month
+
+        if (
+            currentYear < joinYear ||
+            (
+                currentYear === joinYear &&
+                currentMonth < joinMonth
+            )
+        ) {
+
             return;
+
         }
 
-        
-        monthSelect.value = currentMonth;
-        yearInput.value = currentYear;
 
-        document.getElementById('filterForm').submit();
+        monthSelect.value =
+            currentMonth;
+
+
+        yearInput.value =
+            currentYear;
+
+
+        document
+            .getElementById(
+                'filterForm'
+            )
+            .submit();
+
     }
+
+
+    /* =====================================================
+       CALENDAR STATISTICS
+       ===================================================== */
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function() {
+
+            calculateAttendanceStats();
+
+        }
+    );
+
+
+    function calculateAttendanceStats() {
+
+        const calendar =
+            document.getElementById(
+                "calendar"
+            );
+
+
+        if (!calendar)
+            return;
+
+
+        let present = 0;
+        let leaves = 0;
+        let absent = 0;
+        let weekoffs = 0;
+
+
+        const cells =
+            calendar.querySelectorAll(
+                "tbody td"
+            );
+
+
+        cells.forEach(function(cell) {
+
+            if (
+                cell.classList.contains(
+                    "empty-cell"
+                )
+            ) {
+                return;
+            }
+
+
+            if (
+                cell.classList.contains(
+                    "not-joined-bg"
+                )
+            ) {
+                return;
+            }
+
+
+            if (
+                cell.classList.contains(
+                    "present-approved-bg"
+                ) ||
+                cell.classList.contains(
+                    "present-not-approved-bg"
+                ) ||
+                cell.classList.contains(
+                    "working-leave-bg"
+                )
+            ) {
+
+                present++;
+
+            }
+            else if (
+                cell.classList.contains(
+                    "leave-bg"
+                )
+            ) {
+
+                leaves++;
+
+            }
+            else if (
+                cell.classList.contains(
+                    "absent-bg"
+                )
+            ) {
+
+                absent++;
+
+            }
+            else if (
+                cell.classList.contains(
+                    "weekend-bg"
+                )
+            ) {
+
+                weekoffs++;
+
+            }
+
+        });
+
+
+        const presentElement =
+            document.getElementById(
+                "presentCount"
+            );
+
+
+        const leaveElement =
+            document.getElementById(
+                "leaveCount"
+            );
+
+
+        const absentElement =
+            document.getElementById(
+                "absentCount"
+            );
+
+
+        const weekoffElement =
+            document.getElementById(
+                "weekoffCount"
+            );
+
+
+        if (presentElement)
+            presentElement.textContent = present;
+
+
+        if (leaveElement)
+            leaveElement.textContent = leaves;
+
+
+        if (absentElement)
+            absentElement.textContent = absent;
+
+
+        if (weekoffElement)
+            weekoffElement.textContent = weekoffs;
+
+    }
+
 </script>

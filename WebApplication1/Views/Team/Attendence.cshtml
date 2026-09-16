@@ -12,21 +12,15 @@
 
 <link rel="stylesheet" href="/Attendance/Attendance.css">
 
-@await Html.PartialAsync("_suspect", new List<SuspectNavItem>
-{
-    new SuspectNavItem { Text = "Attendence", Url = "/Team/Attendence", Icon = "fas fa-user-plus" },
-    new SuspectNavItem { Text = "View Attendence", Url = "/Team/ViewAttendence", Icon = "fas fa-users" }
-})
 
 
-
+<div class="attendance-dashboard">
 
     <!-- =====================================================
          ATTENDANCE HERO
          ===================================================== -->
 
     <section class="attendance-hero">
-
 
         <!-- =================================================
              LEFT : GREETING + CHECK IN
@@ -831,7 +825,7 @@
 
                 },
 
-                function () {
+                function() {
 
                     loader.style.display =
                         "none";
@@ -876,7 +870,7 @@
 
     document
         .getElementById('calendar-body')
-        .addEventListener('click', function (e) {
+        .addEventListener('click', function(e) {
 
 
             const cell =
@@ -1030,7 +1024,7 @@
                 description: "Past Attendance"
 
             },
-            function () {
+            function() {
 
                 window.location.reload();
 

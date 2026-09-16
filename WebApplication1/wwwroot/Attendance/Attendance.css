@@ -1,13 +1,15 @@
 /* =========================================================
-   ATTENDANCE DASHBOARD
-   IMPORTANT:
-   Everything is scoped to .attendance-dashboard
-   so the main sidebar/header are not affected.
+   ATTENDANCE MODULE
+   Shared by:
+   - Attendance.cshtml
+   - ViewAttendance.cshtml
+
+   Unified calendar sizing / spacing
    ========================================================= */
 
 
 /* =========================================================
-   VARIABLES
+   1. SHARED VARIABLES
    ========================================================= */
 
 .attendance-dashboard {
@@ -26,7 +28,7 @@
 
 
 /* =========================================================
-   PAGE ACTION BAR
+   2. PAGE ACTIONS
    ========================================================= */
 
 .attendance-actions {
@@ -37,13 +39,11 @@
     margin-bottom: 18px;
 }
 
-
 .attendance-action-left {
     display: flex;
     align-items: center;
     gap: 9px;
 }
-
 
 .attendance-tab {
     height: 36px;
@@ -52,16 +52,15 @@
     justify-content: center;
     gap: 8px;
     padding: 0 17px;
-    border-radius: 22px;
     border: 1px solid #aebbc4;
+    border-radius: 22px;
     background: #ffffff;
     color: #6d7d88;
     text-decoration: none;
     font-size: 13px;
     font-weight: 500;
-    transition: all .2s ease;
+    transition: color .2s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease, transform .2s ease;
 }
-
 
     .attendance-tab:hover {
         color: var(--attendance-primary);
@@ -69,19 +68,16 @@
         text-decoration: none;
     }
 
-
     .attendance-tab.active {
-        background: linear-gradient( 135deg, #318ba7, #3d839b );
+        background: linear-gradient(135deg, #318ba7, #3d839b);
         border-color: #318ba7;
-        color: white;
-        box-shadow: 0 6px 15px rgba(61,131,155,.20);
+        color: #ffffff;
+        box-shadow: 0 6px 15px rgba(61, 131, 155, .20);
     }
-
 
     .attendance-tab i {
         font-size: 12px;
     }
-
 
 .attendance-page-status {
     display: flex;
@@ -92,21 +88,402 @@
     font-weight: 600;
 }
 
-
 .attendance-status-dot {
     width: 8px;
     height: 8px;
     border-radius: 50%;
     background: #15a34a;
-    box-shadow: 0 0 0 4px rgba(21,163,74,.10);
+    box-shadow: 0 0 0 4px rgba(21, 163, 74, .10);
 }
 
 
 /* =========================================================
-   HERO CARD
+   3. SHARED CALENDAR CARD
+   IMPORTANT:
+   Both Attendance and History use EXACTLY the same card.
    ========================================================= */
 
-.attendance-hero {
+.attendance-calendar-card {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 22px 25px 25px;
+    background: #ffffff;
+    border: 1px solid var(--attendance-border);
+    border-radius: 18px;
+    box-shadow: 0 9px 28px rgba(35, 65, 80, .08);
+}
+
+
+/* =========================================================
+   4. CALENDAR HEADER
+   ========================================================= */
+
+.calendar-top {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 14px;
+}
+
+.calendar-heading {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+}
+
+.calendar-heading-icon {
+    width: 45px;
+    height: 45px;
+    min-width: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 13px;
+    background: linear-gradient( 135deg, #e3f8ff, #c5effb );
+    color: #168fc2;
+    font-size: 18px;
+    box-shadow: 0 6px 15px rgba(22, 143, 194, .10);
+}
+
+.calendar-title {
+    min-width: 175px;
+}
+
+.calendar-overline {
+    display: block;
+    margin-bottom: 2px;
+    color: #92a0a9;
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.calendar-heading h2 {
+    margin: 0;
+    color: #263f55;
+    font-size: 25px;
+    line-height: 1.1;
+    font-weight: 750;
+}
+
+
+/* =========================================================
+   5. MONTH NAVIGATION
+   ========================================================= */
+
+.month-navigation,
+.tracker-header-navigation {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.month-nav-btn {
+    width: 33px;
+    height: 33px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e0e9ed;
+    border-radius: 50%;
+    background: #ffffff;
+    color: #78909c;
+    cursor: pointer;
+    transition: background .2s ease, border-color .2s ease, color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+
+    .month-nav-btn:hover {
+        background: var(--attendance-primary);
+        border-color: var(--attendance-primary);
+        color: #ffffff;
+        box-shadow: 0 5px 12px rgba(61, 131, 155, .18);
+        transform: translateY(-1px);
+    }
+
+    .month-nav-btn i {
+        font-size: 10px;
+    }
+
+
+/* =========================================================
+   6. LEGEND
+   IMPORTANT:
+   Legend is now part of the calendar content and sits
+   BEFORE the calendar on BOTH pages.
+   ========================================================= */
+
+.attendance-legend {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 7px 14px;
+    margin: 0 0 8px;
+    padding: 8px 12px;
+    border: 1px solid #e1e9ed;
+    border-radius: 8px;
+    background: #ffffff;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #506270;
+    font-size: 10px;
+    white-space: nowrap;
+}
+
+.legend-dot {
+    width: 8px;
+    height: 8px;
+    display: inline-block;
+    border-radius: 50%;
+}
+
+    .legend-dot.present-approved {
+        background: #16a34a;
+    }
+
+    .legend-dot.present-not-approved {
+        background: #df8a12;
+    }
+
+    .legend-dot.absent {
+        background: #dc2626;
+    }
+
+    .legend-dot.weekend {
+        background: #cbd5e1;
+    }
+
+    .legend-dot.leave {
+        background: #7c3aed;
+    }
+
+    .legend-dot.working-leave {
+        background: #3d8ca5;
+    }
+
+    .legend-dot.not-joined {
+        background: #dce3e7;
+    }
+
+
+/* =========================================================
+   7. CALENDAR WRAPPER
+   ========================================================= */
+
+.attendance-calendar-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+    .attendance-calendar-wrapper::-webkit-scrollbar {
+        height: 5px;
+    }
+
+    .attendance-calendar-wrapper::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .attendance-calendar-wrapper::-webkit-scrollbar-thumb {
+        background: #d1dde2;
+        border-radius: 10px;
+    }
+
+
+/* =========================================================
+   8. CALENDAR TABLE
+   EXACT SAME DIMENSIONS FOR BOTH PAGES
+   ========================================================= */
+
+.table-calendar {
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+    border-collapse: separate;
+    border-spacing: 5px 7px;
+    table-layout: fixed;
+}
+
+
+    /* =========================================================
+   9. WEEKDAY HEADERS
+   ========================================================= */
+
+    .table-calendar thead th {
+        height: 43px;
+        padding: 0;
+        border: 0;
+        border-radius: 9px;
+        background: linear-gradient( 135deg, #378da6, #287e98 );
+        color: #ffffff;
+        text-align: center;
+        vertical-align: middle;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+
+    /* =========================================================
+   10. CALENDAR CELLS
+   ========================================================= */
+
+    .table-calendar tbody td {
+        position: relative;
+        height: 76px;
+        padding: 10px 11px;
+        border: 1px solid #e6edf0;
+        border-radius: 10px;
+        background: #ffffff;
+        color: #20394e;
+        text-align: center;
+        vertical-align: middle;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background .18s ease, border-color .18s ease, transform .18s ease, box-shadow .18s ease;
+    }
+
+        .table-calendar tbody td:hover {
+            background: #f7fcfe;
+            border-color: #b8d5de;
+            transform: translateY(-1px);
+        }
+
+
+        /* =========================================================
+   11. STATUS BACKGROUNDS
+   ========================================================= */
+
+        .table-calendar tbody td.present-approved-bg {
+            background: #effaf2;
+            border-color: #ccebd5;
+            color: #23743b;
+        }
+
+        .table-calendar tbody td.present-not-approved-bg {
+            background: #fff8e9;
+            border-color: #f2dfb0;
+            color: #9b6812;
+        }
+
+        .table-calendar tbody td.absent-bg {
+            background: #fff1f1;
+            border-color: #f3cccc;
+            color: #b52b2b;
+        }
+
+        .table-calendar tbody td.leave-bg {
+            background: #f5f0ff;
+            border-color: #ddd0fa;
+            color: #6941a5;
+        }
+
+        .table-calendar tbody td.working-leave-bg {
+            background: #edf8fb;
+            border-color: #c9e7ed;
+            color: #28788e;
+        }
+
+        .table-calendar tbody td.weekend-bg {
+            background: #f4f7f9;
+            border-color: #e3e9ed;
+            color: #8ca0ae;
+        }
+
+        .table-calendar tbody td.not-joined-bg {
+            background: #f7f9fa;
+            border-color: #e6edf0;
+            color: #aab5bc;
+            cursor: default;
+        }
+
+            .table-calendar tbody td.not-joined-bg:hover {
+                transform: none;
+                background: #f7f9fa;
+                border-color: #e6edf0;
+            }
+
+
+        /* =========================================================
+   12. EMPTY CELLS
+   ========================================================= */
+
+        .table-calendar tbody td.empty-cell {
+            background: transparent;
+            border-color: transparent;
+            cursor: default;
+        }
+
+            .table-calendar tbody td.empty-cell:hover {
+                background: transparent;
+                border-color: transparent;
+                transform: none;
+            }
+
+
+        /* =========================================================
+   13. TODAY
+   ========================================================= */
+
+        .table-calendar tbody td.today-highlight {
+            box-shadow: inset 0 0 0 2px var(--attendance-primary), 0 5px 15px rgba(61, 131, 155, .15);
+        }
+
+
+/* =========================================================
+   14. CALENDAR TEXT
+   ========================================================= */
+
+.c-day-num {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 14px;
+    font-weight: 750;
+}
+
+.calendar-status-text {
+    display: block;
+    margin-top: 4px;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.attendance-time {
+    display: block;
+    margin-top: 4px;
+    color: inherit;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.red-dot-indicator {
+    width: 7px;
+    height: 7px;
+    margin: 6px auto 0;
+    border-radius: 50%;
+    background: #dc2626;
+}
+
+.table-calendar .status-dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    margin-right: 5px;
+    border-radius: 50%;
+}
+
+
+/* =========================================================
+   15. ATTENDANCE DASHBOARD ONLY
+   ========================================================= */
+
+.attendance-dashboard:not(.attendance-tracker-page) .attendance-hero {
     width: 100%;
     min-height: 205px;
     display: grid;
@@ -115,33 +492,27 @@
     border: 1px solid var(--attendance-border);
     border-radius: 18px;
     overflow: hidden;
-    box-shadow: 0 9px 28px rgba(35,65,80,.08);
+    box-shadow: 0 9px 28px rgba(35, 65, 80, .08);
     margin-bottom: 22px;
 }
 
 
 /* =========================================================
-   HERO LEFT
+   16. HERO LEFT
    ========================================================= */
 
-.hero-greeting {
+.attendance-dashboard:not(.attendance-tracker-page) .hero-greeting {
     padding: 25px 24px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 }
 
-
-.greeting-top {
+.attendance-dashboard:not(.attendance-tracker-page) .greeting-top {
     display: flex;
     align-items: flex-start;
     gap: 14px;
 }
-
-
-/* =========================================================
-   ATTRACTIVE SUN
-   ========================================================= */
 
 .greeting-icon.sun-icon {
     position: relative;
@@ -153,21 +524,19 @@
     justify-content: center;
     border-radius: 50%;
     background: radial-gradient( circle at 35% 30%, #ffe978 0%, #ffc400 45%, #ff9500 100% );
-    color: #fff;
+    color: #ffffff;
     font-size: 28px;
     border: 5px solid #fff4bd;
-    box-shadow: 0 8px 20px rgba(255,169,0,.30);
+    box-shadow: 0 8px 20px rgba(255, 169, 0, .30);
 }
-
 
     .greeting-icon.sun-icon::before {
         content: "";
         position: absolute;
         inset: -9px;
         border-radius: 50%;
-        border: 3px dashed rgba(255,170,0,.45);
+        border: 3px dashed rgba(255, 170, 0, .45);
     }
-
 
     .greeting-icon.sun-icon::after {
         content: "";
@@ -180,15 +549,9 @@
         right: 9px;
     }
 
-
-/* =========================================================
-   GREETING TEXT
-   ========================================================= */
-
 .greeting-content {
     padding-top: 2px;
 }
-
 
 .hero-small-label {
     display: block;
@@ -199,8 +562,7 @@
     letter-spacing: 1px;
 }
 
-
-.hero-greeting h2 {
+.attendance-dashboard:not(.attendance-tracker-page) .hero-greeting h2 {
     margin: 0;
     color: var(--attendance-text);
     font-size: 28px;
@@ -208,8 +570,7 @@
     font-weight: 750;
 }
 
-
-.hero-greeting p {
+.attendance-dashboard:not(.attendance-tracker-page) .hero-greeting p {
     margin: 6px 0 0;
     color: var(--attendance-muted);
     font-size: 13px;
@@ -217,7 +578,7 @@
 
 
 /* =========================================================
-   ATTENDANCE BUTTONS
+   17. CHECK-IN / CHECK-OUT
    ========================================================= */
 
 .attendance-buttons {
@@ -226,7 +587,6 @@
     gap: 10px;
     margin-top: 15px;
 }
-
 
 .attendance-checkin-btn,
 .attendance-checkout-btn {
@@ -238,38 +598,34 @@
     padding: 7px 11px;
     border: 0;
     border-radius: 30px;
-    color: white;
+    color: #ffffff;
     cursor: pointer;
     text-align: left;
     transition: transform .2s ease, box-shadow .2s ease;
 }
 
-
 .attendance-checkin-btn {
     background: linear-gradient( 135deg, #08a83e 0%, #25d366 100% );
-    box-shadow: 0 8px 20px rgba(12,171,65,.27);
+    box-shadow: 0 8px 20px rgba(12, 171, 65, .27);
 }
-
 
 .attendance-checkout-btn {
     background: linear-gradient( 135deg, #ff3636 0%, #ff6262 100% );
-    box-shadow: 0 8px 20px rgba(255,60,60,.25);
+    box-shadow: 0 8px 20px rgba(255, 60, 60, .25);
 }
-
 
     .attendance-checkin-btn:hover,
     .attendance-checkout-btn:hover {
         transform: translateY(-2px);
     }
 
-
     .attendance-checkin-btn:active,
     .attendance-checkout-btn:active {
         transform: translateY(0);
     }
 
-
-.button-icon {
+.attendance-checkin-icon,
+.attendance-checkout-icon {
     width: 37px;
     height: 37px;
     min-width: 37px;
@@ -277,28 +633,28 @@
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    background: rgba(255,255,255,.22);
+    background: rgba(255, 255, 255, .22);
 }
 
-
-    .button-icon i {
+    .attendance-checkin-icon i,
+    .attendance-checkout-icon i {
         font-size: 15px;
     }
 
-
-.button-text {
+.attendance-checkin-text,
+.attendance-checkout-text {
     display: block;
 }
 
-
-    .button-text strong {
+    .attendance-checkin-text strong,
+    .attendance-checkout-text strong {
         display: block;
         font-size: 13px;
         line-height: 16px;
     }
 
-
-    .button-text small {
+    .attendance-checkin-text small,
+    .attendance-checkout-text small {
         display: block;
         margin-top: 1px;
         font-size: 8px;
@@ -306,8 +662,8 @@
         opacity: .82;
     }
 
-
-.button-arrow {
+.attendance-checkin-arrow,
+.attendance-checkout-arrow {
     margin-left: auto;
     font-size: 11px;
     opacity: .85;
@@ -315,10 +671,10 @@
 
 
 /* =========================================================
-   CENTER VISUAL BANNER
+   18. DASHBOARD CENTER VISUAL
    ========================================================= */
 
-.attendance-visual {
+.attendance-dashboard:not(.attendance-tracker-page) .attendance-visual {
     position: relative;
     min-height: 175px;
     margin: 15px 0;
@@ -327,18 +683,12 @@
     background: linear-gradient( 120deg, #b8edff 0%, #dff8ff 48%, #b8e3ed 100% );
 }
 
-
-    .attendance-visual::before {
+    .attendance-dashboard:not(.attendance-tracker-page) .attendance-visual::before {
         content: "";
         position: absolute;
         inset: 0;
         background: linear-gradient( 110deg, rgba(255,255,255,.20), transparent 45%, rgba(255,255,255,.20) );
     }
-
-
-/* =========================================================
-   BANNER DECORATION
-   ========================================================= */
 
 .visual-circle {
     position: absolute;
@@ -346,14 +696,12 @@
     background: rgba(255,255,255,.35);
 }
 
-
 .visual-circle-one {
     width: 190px;
     height: 190px;
     left: -75px;
     top: -120px;
 }
-
 
 .visual-circle-two {
     width: 260px;
@@ -365,7 +713,7 @@
 
 
 /* =========================================================
-   CLOCK
+   19. DASHBOARD CLOCK
    ========================================================= */
 
 .visual-clock {
@@ -383,7 +731,6 @@
     box-shadow: 0 12px 25px rgba(31,111,140,.13);
 }
 
-
 .clock-face {
     position: relative;
     width: 71px;
@@ -394,15 +741,11 @@
     box-shadow: inset 0 0 0 2px #dff5fb;
 }
 
-
-/* clock markers */
-
 .clock-mark {
     position: absolute;
     background: #1e6686;
     border-radius: 4px;
 }
-
 
 .clock-mark-12,
 .clock-mark-6 {
@@ -412,16 +755,13 @@
     transform: translateX(-50%);
 }
 
-
 .clock-mark-12 {
     top: 5px;
 }
 
-
 .clock-mark-6 {
     bottom: 5px;
 }
-
 
 .clock-mark-3,
 .clock-mark-9 {
@@ -431,18 +771,13 @@
     transform: translateY(-50%);
 }
 
-
 .clock-mark-3 {
     right: 5px;
 }
 
-
 .clock-mark-9 {
     left: 5px;
 }
-
-
-/* hands */
 
 .clock-hand {
     position: absolute;
@@ -452,14 +787,12 @@
     border-radius: 5px;
 }
 
-
 .hour-hand {
     width: 4px;
     height: 21px;
     background: #173d62;
     transform: translateX(-50%) rotate(0deg);
 }
-
 
 .minute-hand {
     width: 3px;
@@ -468,22 +801,21 @@
     transform: translateX(-50%) rotate(48deg);
 }
 
-
 .clock-center {
     position: absolute;
     width: 9px;
     height: 9px;
     left: 50%;
     top: 50%;
-    transform: translate(-50%,-50%);
+    transform: translate(-50%, -50%);
     border-radius: 50%;
     background: #ff9800;
-    border: 2px solid #fff;
+    border: 2px solid #ffffff;
 }
 
 
 /* =========================================================
-   BANNER TEXT
+   20. DASHBOARD VISUAL TEXT
    ========================================================= */
 
 .visual-copy {
@@ -494,7 +826,6 @@
     z-index: 3;
 }
 
-
 .visual-small-text {
     display: block;
     margin-bottom: 4px;
@@ -504,7 +835,6 @@
     letter-spacing: .8px;
 }
 
-
 .visual-copy strong {
     display: block;
     color: #0879bd;
@@ -513,13 +843,11 @@
     font-weight: 800;
 }
 
-
 .visual-copy .visual-ease-text {
     margin-top: 6px;
     color: #183f65;
     font-size: 27px;
 }
-
 
 .visual-dots {
     display: flex;
@@ -528,7 +856,6 @@
     margin-top: 14px;
 }
 
-
     .visual-dots span {
         height: 5px;
         display: block;
@@ -536,11 +863,9 @@
         background: #1498be;
     }
 
-
         .visual-dots span:nth-child(1) {
             width: 34px;
         }
-
 
         .visual-dots span:nth-child(2),
         .visual-dots span:nth-child(3) {
@@ -549,7 +874,7 @@
 
 
 /* =========================================================
-   PLANT
+   21. DASHBOARD PLANT
    ========================================================= */
 
 .visual-plant {
@@ -561,7 +886,6 @@
     z-index: 3;
 }
 
-
 .plant-stem {
     position: absolute;
     left: 51px;
@@ -572,7 +896,6 @@
     background: #258653;
 }
 
-
 .leaf {
     position: absolute;
     width: 31px;
@@ -582,13 +905,11 @@
     transform-origin: bottom center;
 }
 
-
 .leaf-one {
     left: 39px;
     top: 14px;
     transform: rotate(-5deg);
 }
-
 
 .leaf-two {
     left: 9px;
@@ -596,13 +917,11 @@
     transform: rotate(-45deg);
 }
 
-
 .leaf-three {
     right: 4px;
     top: 38px;
     transform: rotate(42deg);
 }
-
 
 .leaf-four {
     left: 23px;
@@ -610,20 +929,17 @@
     transform: rotate(-27deg);
 }
 
-
 .leaf-five {
     left: 53px;
     top: 30px;
     transform: rotate(32deg);
 }
 
-
 .leaf-six {
     left: 29px;
     top: 43px;
     transform: rotate(8deg);
 }
-
 
 .plant-pot {
     position: absolute;
@@ -638,17 +954,16 @@
 
 
 /* =========================================================
-   RIGHT INFO
+   22. DASHBOARD RIGHT INFO
    ========================================================= */
 
-.hero-info {
+.attendance-dashboard:not(.attendance-tracker-page) .hero-info {
     display: flex;
     flex-direction: column;
     justify-content: center;
     gap: 10px;
     padding: 20px 23px 20px 18px;
 }
-
 
 .today-card {
     display: flex;
@@ -661,7 +976,6 @@
     background: linear-gradient( 135deg, #f5f1ff, #edf5ff );
 }
 
-
 .today-icon {
     width: 43px;
     height: 43px;
@@ -670,21 +984,18 @@
     align-items: center;
     justify-content: center;
     border-radius: 12px;
-    color: white;
+    color: #ffffff;
     font-size: 17px;
 }
-
 
 .calendar-color-icon {
     background: linear-gradient( 135deg, #8d7df7, #5758df );
     box-shadow: 0 7px 16px rgba(87,88,223,.22);
 }
 
-
 .today-details {
     min-width: 0;
 }
-
 
 .today-label {
     display: block;
@@ -695,7 +1006,6 @@
     letter-spacing: 1px;
 }
 
-
 .today-date {
     color: #173d62;
     font-size: 13px;
@@ -703,27 +1013,19 @@
     white-space: nowrap;
 }
 
-
-/* =========================================================
-   LIVE SHIFT
-   ========================================================= */
-
 .live-card {
     background: linear-gradient( 135deg, #edffe9, #d8faeb );
     border-color: #c9ecd9;
 }
-
 
 .live-color-icon {
     background: linear-gradient( 135deg, #20d491, #009f98 );
     box-shadow: 0 7px 16px rgba(0,159,152,.22);
 }
 
-
 .live-label {
     color: #07976f;
 }
-
 
 .timer-value {
     font-family: "Courier New", monospace;
@@ -732,348 +1034,239 @@
 
 
 /* =========================================================
-   CALENDAR CARD
+   23. VIEW ATTENDANCE / HISTORY
    ========================================================= */
 
-.attendance-calendar-card {
+.attendance-tracker-page {
     width: 100%;
-    background: #ffffff;
-    border: 1px solid var(--attendance-border);
-    border-radius: 18px;
-    padding: 22px 25px 25px;
-    box-shadow: 0 9px 28px rgba(35,65,80,.08);
-}
-
-
-/* =========================================================
-   CALENDAR HEADER
-   ========================================================= */
-
-.calendar-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-    margin-bottom: 18px;
-}
-
-
-.calendar-heading {
-    display: flex;
-    align-items: center;
-    gap: 11px;
-}
-
-
-.calendar-heading-icon {
-    width: 45px;
-    height: 45px;
-    min-width: 45px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 13px;
-    background: linear-gradient( 135deg, #e3f8ff, #c5effb );
-    color: #168fc2;
-    font-size: 18px;
-    box-shadow: 0 6px 15px rgba(22,143,194,.10);
-}
-
-
-.calendar-title {
-    min-width: 175px;
-}
-
-
-.calendar-overline {
-    display: block;
-    margin-bottom: 2px;
-    color: #92a0a9;
-    font-size: 8px;
-    font-weight: 800;
-    letter-spacing: 1px;
-}
-
-
-.calendar-heading h2 {
-    margin: 0;
-    color: #263f55;
-    font-size: 25px;
-    line-height: 1.1;
-    font-weight: 750;
-}
-
-
-/* =========================================================
-   MONTH BUTTONS
-   ========================================================= */
-
-.month-navigation {
-    display: flex;
-    gap: 7px;
-    margin-left: 3px;
-}
-
-
-.month-nav-btn {
-    width: 33px;
-    height: 33px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid #e0e9ed;
-    border-radius: 50%;
-    background: #ffffff;
-    color: #78909c;
-    cursor: pointer;
-    transition: all .2s ease;
-}
-
-
-    .month-nav-btn:hover {
-        background: var(--attendance-primary);
-        border-color: var(--attendance-primary);
-        color: white;
-        box-shadow: 0 5px 12px rgba(61,131,155,.18);
-    }
-
-
-    .month-nav-btn i {
-        font-size: 10px;
-    }
-
-
-/* =========================================================
-   LEGEND
-   ========================================================= */
-
-.attendance-legend {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    flex-wrap: wrap;
-    gap: 7px 14px;
-    padding: 8px 12px;
-    border: 1px solid #e1e9ed;
-    border-radius: 8px;
-    background: #ffffff;
-}
-
-
-.legend-item {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    color: #506270;
-    font-size: 10px;
-    white-space: nowrap;
-}
-
-
-.legend-dot {
-    width: 8px;
-    height: 8px;
-    display: inline-block;
-    border-radius: 50%;
 }
 
 
     /* =========================================================
-   LEGEND COLORS
+   24. TRACKER HEADER
    ========================================================= */
 
-    .legend-dot.present-approved {
-        background: #16a34a;
+    .attendance-tracker-page .tracker-header-card {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 25px;
+        margin-bottom: 20px;
+        padding: 20px 24px;
+        background: #ffffff;
+        border: 1px solid var(--attendance-border);
+        border-radius: 18px;
+        box-shadow: 0 9px 28px rgba(35,65,80,.08);
     }
 
-
-    .legend-dot.present-not-approved {
-        background: #df8a12;
+    .attendance-tracker-page .tracker-header-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        min-width: 0;
     }
 
-
-    .legend-dot.absent {
-        background: #dc2626;
+    .attendance-tracker-page .tracker-header-icon {
+        width: 50px;
+        height: 50px;
+        min-width: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 14px;
+        background: linear-gradient( 135deg, #e3f8ff, #c5effb );
+        color: #168fc2;
+        font-size: 20px;
     }
 
-
-    .legend-dot.weekend {
-        background: #cbd5e1;
+    .attendance-tracker-page .tracker-header-content {
+        min-width: 0;
     }
 
-
-    .legend-dot.leave {
-        background: #7c3aed;
+    .attendance-tracker-page .tracker-overline {
+        display: block;
+        margin-bottom: 3px;
+        color: #92a0a9;
+        font-size: 8px;
+        font-weight: 800;
+        letter-spacing: 1px;
     }
 
-
-    .legend-dot.working-leave {
-        background: #3d8ca5;
+    .attendance-tracker-page .tracker-header-content h1 {
+        margin: 0;
+        color: var(--attendance-text);
+        font-size: 24px;
+        line-height: 1.1;
+        font-weight: 750;
     }
 
-
-    .legend-dot.not-joined {
-        background: #dce3e7;
-    }
-
-
-/* =========================================================
-   CALENDAR WRAPPER
-   ========================================================= */
-
-.attendance-calendar-wrapper {
-    width: 100%;
-    overflow-x: auto;
-}
-
-
-    .attendance-calendar-wrapper::-webkit-scrollbar {
-        height: 5px;
-    }
-
-
-    .attendance-calendar-wrapper::-webkit-scrollbar-track {
-        background: transparent;
-    }
-
-
-    .attendance-calendar-wrapper::-webkit-scrollbar-thumb {
-        background: #d1dde2;
-        border-radius: 10px;
-    }
-
-
-/* =========================================================
-   CALENDAR TABLE
-   ========================================================= */
-
-.table-calendar {
-    width: 100%;
-    margin: 0 !important;
-    border-collapse: separate !important;
-    border-spacing: 5px 7px !important;
-    table-layout: fixed;
-}
-
-
-    /* =========================================================
-   WEEKDAY HEADER
-   ========================================================= */
-
-    .table-calendar thead th {
-        height: 43px !important;
-        padding: 0 !important;
-        border: 0 !important;
-        border-radius: 9px !important;
-        background: linear-gradient( 135deg, #378da6, #287e98 ) !important;
-        color: #ffffff !important;
-        text-align: center !important;
-        vertical-align: middle !important;
-        font-size: 11px !important;
-        font-weight: 700 !important;
-    }
-
-
-    /* =========================================================
-   CALENDAR CELLS
-   ========================================================= */
-
-    .table-calendar tbody td {
-        position: relative;
-        height: 76px !important;
-        padding: 10px 11px !important;
-        border: 1px solid #e6edf0 !important;
-        border-radius: 10px !important;
-        background: #ffffff !important;
-        color: #20394e;
-        text-align: center !important;
-        vertical-align: middle !important;
+    .attendance-tracker-page .tracker-header-content p {
+        margin: 5px 0 0;
+        color: var(--attendance-muted);
         font-size: 12px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all .18s ease;
     }
 
 
-        .table-calendar tbody td:hover {
-            background: #f7fcfe !important;
-            border-color: #b8d5de !important;
-            transform: translateY(-1px);
-        }
-
-
-        /* =========================================================
-   WEEKEND
+    /* =========================================================
+   25. TRACKER MONTH CONTROL
    ========================================================= */
 
-        .table-calendar tbody td.weekend-bg {
-            background: #f4f7f9 !important;
-            color: #8ca0ae;
+    .attendance-tracker-page .tracker-month-control {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-shrink: 0;
+    }
+
+    .attendance-tracker-page .tracker-month-display {
+        min-width: 115px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        line-height: 1.15;
+    }
+
+        .attendance-tracker-page .tracker-month-display span {
+            color: #78909c;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .attendance-tracker-page .tracker-month-display strong {
+            color: var(--attendance-text);
+            font-size: 16px;
+            font-weight: 750;
         }
 
 
-        /* =========================================================
-   NOT JOINED
-   ========================================================= */
+    /* Hidden form */
 
-        .table-calendar tbody td.not-joined-bg {
-            background: #f7f9fa !important;
-            color: #aab5bc;
-            cursor: default;
-        }
-
-
-            .table-calendar tbody td.not-joined-bg:hover {
-                transform: none;
-                border-color: #e6edf0 !important;
-            }
-
-
-        /* =========================================================
-   EMPTY CELLS
-   ========================================================= */
-
-        .table-calendar tbody td.empty-cell {
-            background: transparent !important;
-            border-color: transparent !important;
-            cursor: default;
-        }
-
-
-            .table-calendar tbody td.empty-cell:hover {
-                background: transparent !important;
-                border-color: transparent !important;
-                transform: none;
-            }
-
-
-        /* =========================================================
-   TODAY
-   ========================================================= */
-
-        .table-calendar tbody td.today {
-            background: linear-gradient( 135deg, #258fa9, #1684a1 ) !important;
-            border: 0 !important;
-            color: white !important;
-            box-shadow: 0 6px 16px rgba(37,143,169,.25);
-        }
+    .attendance-tracker-page .tracker-hidden-form {
+        display: none;
+    }
 
 
     /* =========================================================
-   STATUS DOTS CREATED BY Attendence.js
+   26. STATISTICS
    ========================================================= */
 
-    .table-calendar .status-dot {
-        display: inline-block;
-        width: 7px;
-        height: 7px;
-        margin-right: 5px;
-        border-radius: 50%;
+    .attendance-tracker-page .attendance-stats-grid {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 14px;
+        margin-bottom: 20px;
+    }
+
+    .attendance-tracker-page .attendance-stat-card {
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px;
+        background: #ffffff;
+        border: 1px solid var(--attendance-border);
+        border-radius: 16px;
+        box-shadow: 0 7px 22px rgba(35,65,80,.06);
+        transition: transform .2s ease, box-shadow .2s ease;
+    }
+
+        .attendance-tracker-page .attendance-stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(35,65,80,.09);
+        }
+
+    .attendance-tracker-page .attendance-stat-icon {
+        width: 42px;
+        height: 42px;
+        min-width: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        font-size: 15px;
+    }
+
+    .attendance-tracker-page .total-icon {
+        background: #edf7fa;
+        color: #287e98;
+    }
+
+    .attendance-tracker-page .present-icon {
+        background: #edf9f1;
+        color: #16a34a;
+    }
+
+    .attendance-tracker-page .leave-icon {
+        background: #f4efff;
+        color: #7c3aed;
+    }
+
+    .attendance-tracker-page .absent-icon {
+        background: #fff0f0;
+        color: #dc2626;
+    }
+
+    .attendance-tracker-page .weekoff-icon {
+        background: #f1f4f6;
+        color: #71808c;
+    }
+
+    .attendance-tracker-page .attendance-stat-content {
+        min-width: 0;
+    }
+
+    .attendance-tracker-page .attendance-stat-label {
+        display: block;
+        margin-bottom: 1px;
+        color: #8a9aa4;
+        font-size: 8px;
+        font-weight: 800;
+        letter-spacing: .8px;
+    }
+
+    .attendance-tracker-page .attendance-stat-content h3 {
+        margin: 0;
+        color: var(--attendance-text);
+        font-size: 22px;
+        line-height: 1.1;
+        font-weight: 750;
+    }
+
+    .attendance-tracker-page .attendance-stat-content p {
+        margin: 3px 0 0;
+        color: #94a1a9;
+        font-size: 9px;
+        white-space: nowrap;
+    }
+
+
+    /* =========================================================
+   27. TRACKER CALENDAR
+   IMPORTANT:
+   No extra margin below calendar.
+   Legend uses the SAME shared position as Attendance.
+   ========================================================= */
+
+    .attendance-tracker-page .tracker-calendar-card {
+        width: 100%;
+        margin-bottom: 0;
+    }
+
+    .attendance-tracker-page .tracker-calendar-top {
+        margin-bottom: 14px;
+    }
+
+    .attendance-tracker-page .tracker-legend {
+        margin-top: 0;
+        margin-bottom: 8px;
+        justify-content: flex-end;
     }
 
 
 /* =========================================================
-   POPUP
+   28. POPUP
    ========================================================= */
 
 .popup-modal-overlay {
@@ -1087,85 +1280,254 @@
     backdrop-filter: blur(5px);
 }
 
-
 .popup-content-card {
-    border: 1px solid #e2eaee !important;
-    box-shadow: 0 25px 70px rgba(20,40,50,.20) !important;
+    border: 1px solid #e2eaee;
+    box-shadow: 0 25px 70px rgba(20,40,50,.20);
 }
 
 
 /* =========================================================
-   RESPONSIVE
+   29. SWEETALERT
+   ========================================================= */
+
+.swal-premium-popup {
+    width: min(430px, calc(100% - 30px)) !important;
+    padding: 0 !important;
+    overflow: hidden;
+    border-radius: 18px !important;
+    box-shadow: 0 25px 70px rgba(20,40,50,.20) !important;
+}
+
+.premium-day-card {
+    width: 100%;
+    overflow: hidden;
+    background: #ffffff;
+    border-radius: 18px;
+}
+
+.pdc-header {
+    padding: 20px;
+    color: #ffffff;
+}
+
+.pdc-header-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.pdc-date {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.pdc-status {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 20px;
+    font-weight: 750;
+}
+
+.pdc-body {
+    padding: 15px 18px;
+}
+
+.pdc-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 12px 0;
+    border-bottom: 1px solid #edf1f3;
+}
+
+    .pdc-row:last-child {
+        border-bottom: 0;
+    }
+
+.pdc-row-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.pdc-icon-box {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    font-size: 13px;
+}
+
+.pdc-in-icon {
+    background: #edf9f1;
+    color: #16a34a;
+}
+
+.pdc-out-icon {
+    background: #fff0f0;
+    color: #dc2626;
+}
+
+.pdc-row h6 {
+    margin: 0;
+    color: #30485a;
+    font-size: 11px;
+    font-weight: 750;
+}
+
+.pdc-row-left span {
+    display: block;
+    margin-top: 2px;
+    color: #91a0a8;
+    font-size: 9px;
+}
+
+.pdc-time {
+    color: #173d62;
+    font-family: "Courier New", monospace;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.manual-attendance-section {
+    padding: 5px 18px 18px;
+}
+
+.manual-section-divider {
+    height: 1px;
+    margin-bottom: 15px;
+    background: #e8eef1;
+}
+
+.manual-label {
+    display: block;
+    margin-bottom: 6px;
+    color: #7b8d98;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .8px;
+}
+
+.manual-time-input {
+    width: 100%;
+    height: 42px;
+    margin-bottom: 10px;
+    padding: 0 12px;
+    border: 1px solid #dce6ea;
+    border-radius: 10px;
+    outline: none;
+}
+
+    .manual-time-input:focus {
+        border-color: var(--attendance-primary);
+        box-shadow: 0 0 0 3px rgba(61,131,155,.10);
+    }
+
+.manual-attendance-button {
+    width: 100%;
+    height: 43px;
+    border: 0;
+    border-radius: 22px;
+    background: linear-gradient( 135deg, #318ba7, #3d839b );
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 750;
+    cursor: pointer;
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+    .manual-attendance-button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 7px 17px rgba(61,131,155,.20);
+    }
+
+
+/* =========================================================
+   30. RESPONSIVE - 1250
    ========================================================= */
 
 @media (max-width: 1250px) {
 
-    .attendance-hero {
+    .attendance-dashboard:not(.attendance-tracker-page) .attendance-hero {
         grid-template-columns: minmax(230px, 1fr) minmax(350px, 1.7fr) 195px;
     }
-
 
     .visual-clock {
         left: 30px;
         transform: translateY(-50%) scale(.9);
     }
 
-
     .visual-copy {
         left: 140px;
     }
-
 
         .visual-copy strong {
             font-size: 26px;
         }
 
-
         .visual-copy .visual-ease-text {
             font-size: 24px;
         }
-
 
     .visual-plant {
         right: 12px;
         transform: scale(.85);
         transform-origin: bottom right;
     }
+
+    .attendance-tracker-page .attendance-stats-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
 }
 
 
+/* =========================================================
+   31. RESPONSIVE - 1050
+   ========================================================= */
+
 @media (max-width: 1050px) {
 
-    .attendance-hero {
+    .attendance-dashboard:not(.attendance-tracker-page) .attendance-hero {
         grid-template-columns: 1fr 1.5fr;
     }
 
-
-    .hero-info {
+    .attendance-dashboard:not(.attendance-tracker-page) .hero-info {
         grid-column: 1 / -1;
         display: grid;
         grid-template-columns: 1fr 1fr;
         padding: 0 20px 20px;
     }
 
-
-    .attendance-visual {
+    .attendance-dashboard:not(.attendance-tracker-page) .attendance-visual {
         margin-right: 20px;
     }
-
 
     .calendar-top {
         align-items: flex-start;
         flex-direction: column;
     }
 
-
     .attendance-legend {
-        width: 100%;
         justify-content: flex-start;
+    }
+
+    .attendance-tracker-page .tracker-header-card {
+        align-items: flex-start;
+    }
+
+    .attendance-tracker-page .attendance-stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
+
+/* =========================================================
+   32. RESPONSIVE - 760
+   ========================================================= */
 
 @media (max-width: 760px) {
 
@@ -1174,57 +1536,88 @@
         gap: 10px;
     }
 
-
     .attendance-page-status {
         display: none;
     }
 
 
-    .attendance-hero {
+    /* Dashboard */
+
+    .attendance-dashboard:not(.attendance-tracker-page) .attendance-hero {
         display: block;
     }
 
-
-    .hero-greeting {
+    .attendance-dashboard:not(.attendance-tracker-page) .hero-greeting {
         padding: 22px 20px;
     }
 
-
-    .attendance-visual {
+    .attendance-dashboard:not(.attendance-tracker-page) .attendance-visual {
         margin: 0 20px 18px;
         min-height: 160px;
     }
 
-
-    .hero-info {
+    .attendance-dashboard:not(.attendance-tracker-page) .hero-info {
         display: grid;
         grid-template-columns: 1fr;
         padding: 0 20px 20px;
     }
 
 
+    /* Calendar */
+
     .attendance-calendar-card {
         padding: 18px 14px 20px;
     }
-
 
     .calendar-heading h2 {
         font-size: 22px;
     }
 
-
     .table-calendar {
         min-width: 650px;
+    }
+
+
+    /* Tracker */
+
+    .attendance-tracker-page .tracker-header-card {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+
+    .attendance-tracker-page .tracker-month-control {
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .attendance-tracker-page .attendance-stats-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .attendance-tracker-page .attendance-stat-card {
+        padding: 14px;
     }
 }
 
 
+/* =========================================================
+   33. RESPONSIVE - 520
+   ========================================================= */
+
 @media (max-width: 520px) {
+
+    .attendance-dashboard {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+
+    /* Action tabs */
 
     .attendance-action-left {
         width: 100%;
     }
-
 
     .attendance-tab {
         flex: 1;
@@ -1233,15 +1626,15 @@
     }
 
 
-    .hero-greeting h2 {
+    /* Dashboard greeting */
+
+    .attendance-dashboard:not(.attendance-tracker-page) .hero-greeting h2 {
         font-size: 23px;
     }
-
 
     .attendance-buttons {
         display: block;
     }
-
 
     .attendance-checkin-btn,
     .attendance-checkout-btn {
@@ -1249,36 +1642,32 @@
     }
 
 
-    .attendance-visual {
+    /* Dashboard visual */
+
+    .attendance-dashboard:not(.attendance-tracker-page) .attendance-visual {
         min-height: 150px;
     }
-
 
     .visual-clock {
         left: 18px;
         transform: translateY(-50%) scale(.72);
     }
 
-
     .visual-copy {
         left: 100px;
     }
-
 
         .visual-copy strong {
             font-size: 21px;
         }
 
-
         .visual-copy .visual-ease-text {
             font-size: 19px;
         }
 
-
     .visual-small-text {
         font-size: 9px;
     }
-
 
     .visual-plant {
         right: -2px;
@@ -1287,10 +1676,15 @@
     }
 
 
+    /* Calendar */
+
+    .attendance-calendar-card {
+        padding: 16px 10px 18px;
+    }
+
     .calendar-heading {
         gap: 8px;
     }
-
 
     .calendar-heading-icon {
         width: 40px;
@@ -1298,13 +1692,47 @@
         min-width: 40px;
     }
 
-
     .calendar-title {
         min-width: 0;
     }
 
+    .calendar-heading h2 {
+        font-size: 19px;
+    }
 
     .month-navigation {
         margin-left: 0;
+    }
+
+
+    /* Tracker */
+
+    .attendance-tracker-page .tracker-header-card {
+        padding: 17px;
+    }
+
+    .attendance-tracker-page .tracker-header-content h1 {
+        font-size: 20px;
+    }
+
+    .attendance-tracker-page .tracker-header-content p {
+        font-size: 10px;
+    }
+
+    .attendance-tracker-page .attendance-stats-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .attendance-tracker-page .attendance-stat-card {
+        min-height: 65px;
+    }
+
+    .attendance-tracker-page .tracker-month-display {
+        min-width: 100px;
+    }
+
+    .attendance-tracker-page .tracker-legend {
+        justify-content: flex-start;
     }
 }
