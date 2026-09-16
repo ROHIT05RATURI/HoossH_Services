@@ -23,7 +23,7 @@
     --soft-grey: #9ca3af;
     --teal-count: #0d9488;
     --glass-bg: rgba(255, 255, 255, 0.95);
-    --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  
 }
 
 body {
@@ -947,15 +947,7 @@ body {
 /* ==========================================
    7. BUTTONS & ACTIONS
    ========================================== */
-.action-section {
-    background: #ffffff;
-    padding: 25px 20px;
-    border-radius: 20px;
-    margin-bottom: 20px;
-    text-align: center;
-    box-shadow: var(--card-shadow);
-    border: 1px solid var(--border-color);
-}
+
 
 .button-group {
     display: flex !important;
