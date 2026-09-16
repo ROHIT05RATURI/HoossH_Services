@@ -5,27 +5,19 @@
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<link rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 
 <link rel="stylesheet" href="/css/HRMS.css">
 
 <link rel="stylesheet" href="/Attendance/Attendance.css">
 
-
-
-<div class="attendance-dashboard">
-
-    <!-- =====================================================
-         ATTENDANCE HERO
-         ===================================================== -->
+@await Html.PartialAsync("_suspect", new List<SuspectNavItem>
+{
+    new SuspectNavItem { Text = "Attendence", Url = "/Team/Attendence", Icon = "fas fa-user-plus" },
+    new SuspectNavItem { Text = "View Attendence", Url = "/Team/ViewAttendence", Icon = "fas fa-users" }
+})
 
     <section class="attendance-hero">
-
-        <!-- =================================================
-             LEFT : GREETING + CHECK IN
-             ================================================= -->
-
         <div class="hero-greeting">
 
             <div class="greeting-top">
@@ -61,10 +53,6 @@
 
             </div>
 
-
-
-            <!-- CHECK IN / CHECK OUT -->
-
             <form id="attendanceForm">
 
                 <input type="hidden"
@@ -75,9 +63,6 @@
                 <div id="buttonContainer"
                      class="attendance-buttons">
 
-
-                    <!-- CHECK IN -->
-                    <!-- CHECK IN -->
                     <button type="button"
                             class="attendance-checkin-btn"
                             id="submitPresent"
@@ -96,8 +81,6 @@
 
                     </button>
 
-
-                    <!-- CHECK OUT -->
                     <button type="button"
                             class="attendance-checkout-btn"
                             id="submitAbsent"
@@ -123,65 +106,33 @@
 
         </div>
 
-
-
-        <!-- =================================================
-             CENTER : VISUAL BANNER
-             ================================================= -->
-
         <div class="attendance-visual">
-
-
-            <!-- Decorative circles -->
-
             <div class="visual-circle visual-circle-one"></div>
-
             <div class="visual-circle visual-circle-two"></div>
-
-
-
-            <!-- Clock -->
-
             <div class="visual-clock">
 
                 <div class="clock-face">
-
                     <span class="clock-mark clock-mark-12"></span>
                     <span class="clock-mark clock-mark-3"></span>
                     <span class="clock-mark clock-mark-6"></span>
                     <span class="clock-mark clock-mark-9"></span>
-
                     <span class="clock-hand hour-hand"></span>
-
                     <span class="clock-hand minute-hand"></span>
-
                     <span class="clock-center"></span>
-
                 </div>
-
             </div>
-
-
-
-            <!-- Banner text -->
 
             <div class="visual-copy">
 
                 <span class="visual-small-text">
                     TRACK YOUR
                 </span>
-
-
                 <strong>
                     Workday
                 </strong>
-
-
                 <strong class="visual-ease-text">
                     with Ease.
                 </strong>
-
-
                 <div class="visual-dots">
 
                     <span></span>
@@ -218,16 +169,7 @@
 
         </div>
 
-
-
-        <!-- =================================================
-             RIGHT : TODAY + LIVE SHIFT
-             ================================================= -->
-
         <div class="hero-info">
-
-
-            <!-- TODAY -->
 
             <div class="today-card">
 
@@ -940,40 +882,25 @@
 
         });
 
-
-
-    /* =====================================================
-       PAST ATTENDANCE
-       ===================================================== */
-
     function openPastDatePopup(dateStr) {
-
         document.getElementById(
             "pastDateDisplay"
         ).innerHTML =
             `Date: <b>${dateStr}</b>`;
-
-
         document.getElementById(
             "pastDateHiddenValue"
         ).value =
             dateStr;
-
-
         document.getElementById(
             "pastCheckInTime"
         ).value =
             "09:30";
-
-
         document.getElementById(
             "pastDatePopupModal"
         ).style.display =
             "flex";
 
     }
-
-
 
     function closePastDatePopup() {
 

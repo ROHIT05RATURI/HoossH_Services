@@ -25,7 +25,6 @@ namespace HoossH_Services.Controllers
 
         public IActionResult LeaveManagement()
         {
-            // 1. Create your model
             var model = new HoossH_Services.Models.Leaves();
             return View(model);
         }

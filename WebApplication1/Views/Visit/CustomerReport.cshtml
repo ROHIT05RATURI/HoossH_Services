@@ -1,0 +1,1617 @@
+@using HoossH_Service_DAL.Models
+@using System.Security.Claims
+@using System.Text.Json
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    ViewBag.Title = "Customer Report";
+    Layout = "~/Views/Shared/_LayoutINV.cshtml";
+    var user = HttpContextAccessor.HttpContext?.User;
+    var role = user?.FindFirst(ClaimTypes.Role)?.Value;
+    var customerid = Model.CustomerId;
+    var ismeetingactive = ViewBag.FromCheckIn;
+    var funnelEnqPct = Model.FunnelVisits > 0 ? (int)((Model.FunnelEnquiries * 100.0) / Model.FunnelVisits) : 0;
+    var funnelQualPct = Model.FunnelEnquiries > 0 ? (int)((Model.FunnelQualified * 100.0) / Model.FunnelEnquiries) : 0;
+    var funnelOrdPct = Model.FunnelQualified > 0 ? (int)((Model.FunnelOrders * 100.0) / Model.FunnelQualified) : 0;
+    var funnelRepPct = Model.FunnelOrders > 0 ? (int)((Model.FunnelRepeat * 100.0) / Model.FunnelOrders) : 0;
+
+    var projection = Model.customerDetails.UserProjection > 0 ? Model.customerDetails.UserProjection : 1;
+    var Achievementpercentage = Convert.ToInt32((Model.TotalOrderValue / projection) / 100);
+}
+@model HoossH_Services.Models.CustomerKundli
+
+<link asp-append-version="true" href="/css/StyleSheet3.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link asp-append-version="true" rel="stylesheet" href="~/css/UserReports.css" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        /* Minimalist Soft Theme */
+        --bg-body: #f7f9fc;
+        --bg-card: #ffffff;
+        --text-dark: #1e293b;
+        --text-light: #64748b;
+        --text-xs: #94a3b8;
+        /* Pastel Icon Backgrounds & Colors */
+        --green-bg: #ecfdf5;
+        --green-txt: #10b981;
+        --cyan-txt: #67d4b8;
+        --blue-bg: #eff6ff;
+        --blue-txt: #3b82f6;
+        --orange-bg: #fff7ed;
+        --orange-txt: #f97316;
+        --red-bg: #fef2f2;
+        --red-txt: #ef4444;
+        --purple-bg: #faf5ff;
+        --purple-txt: #a855f7;
+        --border-light: #f1f5f9;
+        --shadow-soft: 0 8px 24px rgba(149, 157, 165, 0.08);
+        font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+        background-color: var(--bg-body);
+        color: var(--text-dark);
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+        scroll-behavior: smooth;
+    }
+
+    .Content-Wrapper {
+        padding: 20px;
+        padding-bottom: 100px !important;
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+
+    /* SCROLLBAR STYLING */
+    ::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+    }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+    /* EMPTY STATE UI - NEWLY ADDED */
+    .empty-state {
+        text-align: center;
+        padding: 20px;
+        color: var(--text-xs);
+        font-size: 0.85rem;
+        font-style: italic;
+        background: var(--bg-body);
+        border-radius: 12px;
+        border: 1px dashed var(--border-light);
+        margin-top: 5px;
+    }
+
+    /* 1. MAIN PROFILE CARD */
+    .profile-card {
+        background: var(--bg-card);
+        border-radius: 24px;
+        padding: 24px 20px;
+        box-shadow: var(--shadow-soft);
+        text-align: center;
+        margin-bottom: 25px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .profile-main {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .avatar-box {
+        width: 90px;
+        height: 90px;
+        border-radius: 20px;
+        margin: 0 auto 15px auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        background: var(--blue-bg);
+    }
+
+    .profile-name {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-dark);
+    }
+
+    .address-text {
+        font-size: 0.8rem;
+        color: var(--text-light);
+        margin: 5px 0 15px 0;
+        max-width: 80%;
+        display: inline-block;
+        line-height: 1.4;
+    }
+
+    .profile-stats-split {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px solid var(--border-light);
+        padding-top: 15px;
+        margin-top: 10px;
+        width: 100%;
+    }
+
+    .split-item {
+        flex: 1;
+        text-align: center;
+    }
+
+    .split-divider {
+        width: 1px;
+        height: 35px;
+        background: var(--border-light);
+    }
+
+    .split-label {
+        font-size: 0.7rem;
+        color: var(--text-xs);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin: 0 0 5px 0;
+    }
+
+    .split-val {
+        font-size: 1.1rem;
+        color: var(--text-dark);
+        font-weight: 700;
+        margin: 0;
+    }
+
+    /* 2. GRID STATS */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+
+    .stat-card {
+        background: var(--bg-card);
+        border-radius: 20px;
+        padding: 18px 12px;
+        box-shadow: var(--shadow-soft);
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .stat-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        margin-bottom: 10px;
+    }
+
+    .stat-val {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin: 0 0 2px 0;
+    }
+
+    .stat-sub {
+        font-size: 0.75rem;
+        color: var(--text-light);
+        font-weight: 500;
+        margin: 0 0 4px 0;
+    }
+
+    .stat-label {
+        font-size: 0.65rem;
+        color: var(--text-xs);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin: 0;
+    }
+
+    /* 3. CLEAN ACCORDION SECTIONS */
+    .collapsible-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        padding: 18px 24px;
+        background: var(--bg-card);
+        border-radius: 16px;
+        margin-bottom: 15px;
+        box-shadow: var(--shadow-soft);
+        -webkit-tap-highlight-color: transparent;
+        transition: background 0.2s;
+        position: relative;
+        z-index: 10;
+    }
+
+        .collapsible-header.active {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+            margin-bottom: 0;
+            border-bottom: 1px solid var(--border-light);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        }
+
+    .header-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 1rem;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .header-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+    }
+
+    .chevron-icon {
+        transition: transform 0.3s ease;
+        color: var(--text-xs);
+        font-size: 1rem;
+    }
+
+    .collapsible-content {
+        display: none;
+        padding: 20px 20px 40px 20px;
+        background: var(--bg-card);
+        border-radius: 0 0 16px 16px;
+        margin-bottom: 15px;
+        box-shadow: 0 8px 15px rgba(0,0,0,0.03);
+        height: calc(100vh - 330px);
+        overflow-y: auto;
+    }
+
+        .collapsible-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-5px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    #secSwot.collapsible-content, #secVisits.collapsible-content, #secFeedback.collapsible-content,
+    #secComp.collapsible-content, #secNotes.collapsible-content, #secInfo.collapsible-content {
+        height: auto;
+    }
+
+    .section-split {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .section-divider {
+        display: block;
+        height: 1px;
+        background: var(--border-light);
+        width: 100%;
+        margin: 5px 0;
+    }
+
+    .scroll-area {
+        max-height: 190px;
+        overflow-y: auto;
+        padding-right: 5px;
+    }
+
+    /* CAPSULE FILTER TOGGLE */
+    .graph-filter-container {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: -15px;
+        position: relative;
+        z-index: 10;
+    }
+
+    .capsule-toggle {
+        display: inline-flex;
+        background: var(--bg-body);
+        border-radius: 20px;
+        padding: 3px;
+        border: 1px solid var(--border-light);
+    }
+
+    .capsule-btn {
+        background: transparent;
+        border: none;
+        border-radius: 18px;
+        padding: 4px 14px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        font-family: inherit;
+        color: var(--text-light);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        outline: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+        .capsule-btn.active {
+            background: var(--bg-card);
+            color: var(--blue-txt);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+        }
+
+    .chart-container {
+        position: relative;
+        height: 220px;
+        width: 100%;
+        margin-top: 15px;
+        flex-shrink: 0;
+    }
+
+    /* Clean List Rows */
+    .clean-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--border-light);
+    }
+
+        .clean-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+    .row-label {
+        font-size: 0.85rem;
+        color: var(--text-light);
+        font-weight: 500;
+        line-height: 1.4;
+    }
+
+    .row-value {
+        font-size: 0.9rem;
+        color: var(--text-dark);
+        font-weight: 600;
+        text-align: right;
+        line-height: 1.4;
+    }
+
+    /* CENTERED TIMELINE WITH GAP BADGE */
+    .center-timeline {
+        position: relative;
+        width: 100%;
+        margin: 10px 0;
+        padding: 10px 0;
+    }
+
+        .center-timeline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 2px;
+            background: var(--border-light);
+            transform: translateX(-50%);
+        }
+
+    .c-timeline-item {
+        position: relative;
+        width: 50%;
+        box-sizing: border-box;
+        padding: 10px 20px;
+    }
+
+        .c-timeline-item.left {
+            left: 0;
+            text-align: right;
+        }
+
+        .c-timeline-item.right {
+            left: 50%;
+            text-align: left;
+        }
+
+        .c-timeline-item::after {
+            content: '';
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            background-color: var(--bg-card);
+            border: 3px solid var(--blue-txt);
+            border-radius: 50%;
+            top: 18px;
+            z-index: 1;
+        }
+
+        .c-timeline-item.left::after {
+            right: -10px;
+            border-color: var(--green-txt);
+        }
+
+        .c-timeline-item.right::after {
+            left: -10px;
+            border-color: var(--orange-txt);
+        }
+
+    .c-timeline-content {
+        padding: 12px 15px;
+        background: var(--bg-body);
+        border-radius: 12px;
+        display: inline-block;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+        .c-timeline-content h5 {
+            margin: 0 0 4px 0;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .c-timeline-content p {
+            margin: 0;
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+
+    .time-gap {
+        text-align: center;
+        margin: 0;
+        position: relative;
+        z-index: 2;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .time-gap span {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.65rem;
+            color: var(--text-light);
+            font-weight: 600;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+
+    /* CARD LISTS */
+    .card-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .list-card {
+        background: var(--bg-body);
+        border: 1px solid var(--border-light);
+        border-radius: 12px;
+        padding: 15px;
+    }
+
+    /* Contact Box */
+    .contact-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .contact-box {
+        background: var(--bg-body);
+        border: 1px solid var(--border-light);
+        border-radius: 12px;
+        padding: 15px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .contact-av {
+        width: 40px;
+        height: 40px;
+        background: var(--blue-bg);
+        color: var(--blue-txt);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+    }
+
+    .contact-info h4 {
+        margin: 0 0 2px 0;
+        font-size: 0.9rem;
+        color: var(--text-dark);
+    }
+
+    .contact-info p {
+        margin: 0;
+        font-size: 0.75rem;
+        color: var(--text-light);
+    }
+
+    .contact-info .phone {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--blue-txt);
+        margin-top: 4px;
+        display: block;
+    }
+
+    /* FIXED BOTTOM ACTIONS */
+    .fixed-bottom-actions {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: var(--bg-card);
+        padding: 10px 15px;
+        box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        z-index: 1055;
+        height: 70px;
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+        border-top: 1px solid var(--border-light);
+    }
+
+    .action-btn {
+        flex: 1;
+        max-width: 100px;
+        padding: 8px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.75rem;
+        border: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        background: #eef2f7;
+        color: #3f6791;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+        .action-btn i {
+            font-size: 1.2rem;
+        }
+
+        .action-btn:active, .action-btn:hover {
+            background: #3f6791;
+            color: white;
+        }
+
+    /* SWOT ANALYSIS */
+    .swot-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        align-items: stretch;
+    }
+
+    .swot-card {
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid var(--border-light);
+        background: var(--bg-card);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .swot-header {
+        padding: 8px 10px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #fff;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .swot-body {
+        padding: 12px 10px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+        flex: 1;
+    }
+
+    .swot-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #fff;
+        flex-shrink: 0;
+    }
+
+    .swot-text {
+        font-size: 0.75rem;
+        color: var(--text-dark);
+        line-height: 1.3;
+        text-align: left;
+        flex: 1;
+    }
+
+        .swot-text strong {
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .swot-text span {
+            display: block;
+            font-size: 0.65rem;
+            color: var(--text-light);
+            margin-top: 4px;
+            line-height: 1.3;
+        }
+
+    .swot-s .swot-header, .swot-s .swot-icon {
+        background-color: #5cb85c;
+    }
+
+    .swot-s .swot-body {
+        background-color: #f6fbf6;
+    }
+
+    .swot-w .swot-header, .swot-w .swot-icon {
+        background-color: #ef4444;
+    }
+
+    .swot-w .swot-body {
+        background-color: #fef5f5;
+    }
+
+    .swot-o .swot-header, .swot-o .swot-icon {
+        background-color: #f97316;
+    }
+
+    .swot-o .swot-body {
+        background-color: #fffaf5;
+    }
+
+    .swot-t .swot-header, .swot-t .swot-icon {
+        background-color: #9b59b6;
+    }
+
+    .swot-t .swot-body {
+        background-color: #faf5fc;
+    }
+
+    @@media (max-width: 768px) {
+        .profile-card {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .profile-main {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .avatar-box {
+            margin: 0 auto 15px auto;
+        }
+
+        .profile-stats-split {
+            margin-top: 20px;
+        }
+
+        .swot-grid {
+            gap: 8px;
+        }
+
+        .swot-header {
+            font-size: 0.65rem;
+            padding: 6px 8px;
+        }
+
+        .swot-body {
+            padding: 10px 8px;
+            gap: 8px;
+            align-items: center;
+            flex-direction: row;
+            text-align: left;
+        }
+
+        .swot-icon {
+            width: 30px;
+            height: 30px;
+            font-size: 1rem;
+        }
+
+        .swot-text {
+            font-size: 0.65rem;
+        }
+
+            .swot-text span {
+                font-size: 0.6rem;
+            }
+    }
+
+    @@media (min-width: 769px) {
+        .profile-card {
+            flex-direction: row;
+            text-align: left;
+            justify-content: space-between;
+            align-items: center;
+            padding: 30px 40px;
+        }
+
+        .profile-main {
+            flex-direction: row;
+            gap: 25px;
+        }
+
+        .avatar-box {
+            margin: 0;
+            width: 80px;
+            height: 80px;
+        }
+
+        .address-text {
+            max-width: 100%;
+            margin-bottom: 0;
+        }
+
+        .profile-stats-split {
+            border-top: none;
+            border-left: 1px solid var(--border-light);
+            padding-top: 0;
+            padding-left: 40px;
+            margin-top: 0;
+            gap: 40px;
+            width: auto;
+        }
+
+        .split-item {
+            text-align: left;
+        }
+
+        .stats-grid {
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .section-split {
+            flex-direction: row;
+            align-items: flex-start;
+            gap: 40px;
+        }
+
+            .section-split > div:first-child {
+                flex: 1.5;
+            }
+
+            .section-split > div:last-child {
+                flex: 1;
+                width: 100%;
+            }
+
+        .section-divider {
+            display: none;
+        }
+
+        .chart-container {
+            height: 300px;
+            margin-top: 0;
+        }
+
+        .scroll-area {
+            max-height: 300px;
+        }
+
+        .contact-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .collapsible-content {
+            height: auto;
+            max-height: 600px;
+        }
+    }
+
+    .bottom-app-bar {
+        display: none;
+    }
+</style>
+
+<div class="Content-Wrapper">
+
+    <div class="profile-card">
+        <div class="profile-main">
+            <div class="avatar-box"><i class="far fa-building" style="font-size: 2.5rem; color: var(--blue-txt);"></i></div>
+            <div>
+                @{
+                    var rawOrg = Model?.customerDetails?.OrganizationName ?? "Unknown Customer";
+                    var indVal = Model?.customerDetails?.Industry ?? Model?.customerDetails?.Industry;
+                }
+                <h2 class="profile-name"> @rawOrg </h2>
+                <div class="address-text">
+                    <i class="fas fa-map-marker-alt" style="color: #ef4444; font-size: 1.5rem; vertical-align: middle;"></i> @(Model?.customerDetails?.CustomerAddress ?? "Address not provided") <br>
+                    <span style="display:inline-block; margin-top:5px; font-weight: 500;"><i class="fas fa-warehouse"></i> Industry: @indVal</span><br />
+                    <span style="display:inline-block; margin-top:5px; font-weight: 500;"><i class="fas fa-file-invoice"></i> GST: @(Model?.customerDetails?.CustomerGst ?? "N/A")</span>
+
+                    </div>
+            </div>
+        </div>
+        <div class="profile-stats-split">
+            <div class="split-item"><p class="split-label">TOTAL SALES</p><p class="split-val" style="color:var(--green-txt);">₹ @(Model?.TotalOrderValue ?? 0)</p> </div>
+            <div class="split-divider"></div>
+            <div class="split-item"><p class="split-label">PROJECTED VALUE</p><p class="split-val" style="color:var(--blue-txt);">₹ @(Model?.customerDetails?.UserProjection ?? 0)</p></div>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card"><div class="stat-icon" style="background: var(--blue-bg); color: var(--blue-txt);"><i class="fas fa-users"></i></div><h3 class="stat-val">@Model.visitInfo.CurrentYearVisit</h3><p class="stat-label">Total Visits</p></div>
+        <div class="stat-card"><div class="stat-icon" style="background: var(--green-bg); color: var(--green-txt);"><i class="fas fa-shopping-bag"></i></div><h3 class="stat-val">@Model.visitInfo.FinancialYearOrdersCount</h3><p class="stat-label">Total Orders</p></div>
+        <div class="stat-card"><div class="stat-icon" style="background: var(--orange-bg); color: var(--orange-txt);"><i class="fas fa-comment-dots"></i></div><h3 class="stat-val">₹ @Model.visitInfo.FinancialYearEnquiriesValue.ToString("N0", new System.Globalization.CultureInfo("en-IN"))</h3><p class="stat-sub">(@Model.visitInfo.FinancialYearEnquiriesCount )</p><p class="stat-label">Enquiries</p></div>
+        <div class="stat-card"><div class="stat-icon" style="background: var(--purple-bg); color: var(--purple-txt);"><i class="fas fa-bullseye"></i></div><h3 class="stat-val">₹ @Model.visitInfo.FinancialYearLeadValue.ToString("N0", new System.Globalization.CultureInfo("en-IN"))</h3><p class="stat-sub">(@Model.visitInfo.FinancialYearLeadCount )</p><p class="stat-label">Q. Leads</p></div>
+    </div>
+
+    <div class="collapsible-header" onclick="toggleSection('secVisits', this)">
+        <h3 class="header-title"><span class="header-icon" style="background: var(--red-bg); color: var(--red-txt);"><i class="fas fa-route"></i></span> 1. Visits Timeline</h3>
+        <i class="fas fa-chevron-down chevron-icon"></i>
+    </div>
+    <div id="secVisits" class="collapsible-content">
+        @if (Model?.timeline != null && Model.timeline.Any())
+        {
+            <div class="center-timeline">
+                @foreach (var item in Model.timeline)
+                {
+                    <div class="c-timeline-item @item.Alignment" style="border-color: var(--@(item.ThemeColor)-txt);">
+                        <div class="c-timeline-content">
+                            <h5 style="color: var(--@(item.ThemeColor)-txt);">@item.Title</h5>
+                            <p>@item.DateAndLocation</p>
+                        </div>
+                    </div>
+                    @if (item.DaysGapToNext.HasValue)
+                    {
+                        <div class="time-gap"><span>@item.DaysGapToNext Days</span></div>
+                    }
+                }
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">No visit timeline data available.</div>
+        }
+    </div>
+
+    <div class="collapsible-header" onclick="toggleSection('secAnalytics', this, 'funnelChart')">
+        <h3 class="header-title"><span class="header-icon" style="background: var(--orange-bg); color: var(--orange-txt);"><i class="fas fa-filter"></i></span> 2. Funnel Conversion</h3>
+        <i class="fas fa-chevron-down chevron-icon"></i>
+    </div>
+    <div id="secAnalytics" class="collapsible-content">
+        <div class="section-split">
+            <div style="width:100%;">
+                <div class="graph-filter-container">
+                    <div class="capsule-toggle">
+                        @* <button class="capsule-btn" onclick="updateChartFilter(this, 'funnelChart', 'all')">1Y</button>
+                        <button class="capsule-btn active" onclick="updateChartFilter(this, 'funnelChart', '6m')">6M</button> *@
+                    </div>
+                </div>
+                <div class="chart-container"><canvas id="funnelChart"></canvas></div>
+            </div>
+            <div class="section-divider"></div>
+            <div class="scroll-area">
+                @if (Model?.FunnelMetrics != null)
+                {
+                    <div class="clean-row"><span class="row-label">Total Visits</span><span class="row-value">@Model.FunnelMetrics.TotalVisits</span></div>
+                    <div class="clean-row"><span class="row-label">Total Enquiries</span><span class="row-value">@Model.FunnelMetrics.Enquiries</span></div>
+                    <div class="clean-row"><span class="row-label">Total Qualified Leads</span><span class="row-value" style="color:var(--orange-txt);">@Model.FunnelMetrics.QualifiedLeads</span></div>
+                    <div class="clean-row"><span class="row-label">Total Orders Won</span><span class="row-value" style="color:var(--green-txt);">@Model.FunnelMetrics.OrdersWon</span></div>
+                    <div class="clean-row"><span class="row-label">Total Repeat Orders</span><span class="row-value" style="color:var(--purple-txt);">@Model.FunnelMetrics.RepeatOrders</span></div>
+                }
+                else
+                {
+                    <div class="empty-state">No funnel metrics available.</div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="collapsible-header" onclick="toggleSection('secOrders', this, 'monthlySalesGridChart')">
+        <h3 class="header-title"><span class="header-icon" style="background: var(--green-bg); color: var(--green-txt);"><i class="fas fa-chart-bar"></i></span> 3. Orders</h3>
+        <i class="fas fa-chevron-down chevron-icon"></i>
+    </div>
+    <div id="secOrders" class="collapsible-content">
+        <div class="section-split">
+            <div style="width:100%;">
+                <div class="graph-filter-container">
+                    <div class="capsule-toggle">
+                        <button class="capsule-btn" onclick="updateChartFilter(this, 'monthlySalesGridChart', 'all')">1Y</button>
+                        <button class="capsule-btn active" onclick="updateChartFilter(this, 'monthlySalesGridChart', '6m')">6M</button>
+                    </div>
+                </div>
+                <div class="chart-container"><canvas id="monthlySalesGridChart"></canvas></div>
+            </div>
+            <div class="section-divider"></div>
+            <div class="scroll-area">
+                @if (Model?.CustomerOrderData != null && Model.CustomerOrderData.Any())
+                {
+                    foreach (var order in Model.CustomerOrderData)
+                    {
+                        <div class="clean-row">
+                            <span class="row-label">Quotation- @order.QuotationSeries -> Bill-@order.BillNumber <br><small>@order.Date</small></span>
+                            <div style="text-align: right;">
+                                <span class="row-value" style="color:var(--green-txt);">₹ @order.Amount</span><br>
+                                <span style="font-size:0.7rem; color:var(--text-xs);">@order.Status</span>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="empty-state">No orders found.</div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="collapsible-header" onclick="toggleSection('secLeads', this, 'leadsChart')">
+        <h3 class="header-title"><span class="header-icon" style="background: var(--orange-bg); color: var(--orange-txt);"><i class="fas fa-bullseye"></i></span> 4. Qualified Leads</h3>
+        <i class="fas fa-chevron-down chevron-icon"></i>
+    </div>
+    <div id="secLeads" class="collapsible-content">
+        <div class="section-split">
+            <div style="width:100%;">
+                <div class="graph-filter-container">
+                    <div class="capsule-toggle">
+                        <button class="capsule-btn" onclick="updateChartFilter(this, 'leadsChart', 'all')">1Y</button>
+                        <button class="capsule-btn active" onclick="updateChartFilter(this, 'leadsChart', '6m')">6M</button>
+                    </div>
+                </div>
+                <div class="chart-container"><canvas id="leadsChart"></canvas></div>
+            </div>
+            <div class="section-divider"></div>
+            <div class="scroll-area">
+                @if (Model?.Leads != null && Model.Leads.Any())
+                {
+                    foreach (var lead in Model.Leads)
+                    {
+                        <div class="clean-row">
+                            <span class="row-label">Lead: @lead.Series-@lead.Id <br><small>@lead.ModuleName</small></span>
+                            <span class="row-value">₹ @lead.Amount</span>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="empty-state">No qualified leads available.</div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="collapsible-header" onclick="toggleSection('secEnq', this, 'enquiriesChart')">
+        <h3 class="header-title"><span class="header-icon" style="background: var(--purple-bg); color: var(--purple-txt);"><i class="fas fa-comment-dots"></i></span> 5. Enquiries</h3>
+        <i class="fas fa-chevron-down chevron-icon"></i>
+    </div>
+    <div id="secEnq" class="collapsible-content">
+        <div class="section-split">
+            <div style="width:100%;">
+                <div class="graph-filter-container">
+                    <div class="capsule-toggle">
+                        <button class="capsule-btn" onclick="updateChartFilter(this, 'enquiriesChart', 'all')">1Y</button>
+                        <button class="capsule-btn active" onclick="updateChartFilter(this, 'enquiriesChart', '6m')">6M</button>
+                    </div>
+                </div>
+                <div class="chart-container"><canvas id="enquiriesChart"></canvas></div>
+            </div>
+            <div class="section-divider"></div>
+            <div class="scroll-area">
+                @if (Model?.Enquiries != null && Model.Enquiries.Any())
+                {
+                    foreach (var enq in Model.Enquiries)
+                    {
+                        <div class="clean-row">
+                            <span class="row-label">@enq.QuotationSeries <br><small>@enq.Date</small></span>
+                            <span class="row-value" style="color:var(--orange-txt);">₹ @enq.Amount</span>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="empty-state">No enquiries available.</div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="collapsible-header" onclick="toggleSection('secPayment', this, 'paymentChart')">
+        <h3 class="header-title"><span class="header-icon" style="background: #e0f2fe; color: #0284c7;"><i class="fas fa-file-invoice-dollar"></i></span> 6. Payments Status</h3>
+        <i class="fas fa-chevron-down chevron-icon"></i>
+    </div>
+    <div id="secPayment" class="collapsible-content">
+        <div class="section-split">
+            <div style="width:100%;">
+                <div class="graph-filter-container">
+                    <div class="capsule-toggle">
+                        <button class="capsule-btn" onclick="updateChartFilter(this, 'paymentChart', 'all')">1Y</button>
+                        <button class="capsule-btn active" onclick="updateChartFilter(this, 'paymentChart', '6m')">6M</button>
+                    </div>
+                </div>
+                <div class="chart-container"><canvas id="paymentChart"></canvas></div>
+            </div>
+            <div class="section-divider"></div>
+            <div class="scroll-area">
+                @if (Model?.Payments != null && Model.Payments.Any())
+                {
+                    foreach (var pay in Model.Payments)
+                    {
+                        <div class="clean-row">
+                            <span class="row-label">@pay.Series-@pay.InvoiceNumber <br><small>@pay.Date</small></span>
+                            <div style="text-align:right;">
+                                <span class="row-value">Total: ₹ @pay.TotalAmount</span><br>
+                                @if (pay.Status?.ToUpper() != "FULL PAID")
+                                {
+                                    <span style="font-size:0.75rem; color:var(--green-txt); font-weight:700;">@pay.Status</span>
+                                }
+                                else
+                                {
+                                    <span style="font-size:0.75rem; color:var(--red-txt); font-weight:700;">@pay.Status: ₹ @pay.PendingAmount</span>
+                                }
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="empty-state">No payment records found.</div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="collapsible-header" onclick="toggleSection('secFeedback', this)">
+        <h3 class="header-title"><span class="header-icon" style="background: #fefce8; color: #eab308;"><i class="fas fa-star"></i></span> 7. Feedback</h3>
+        <i class="fas fa-chevron-down chevron-icon"></i>
+    </div>
+    <div id="secFeedback" class="collapsible-content">
+        <div class="scroll-area card-list">
+            @if (Model?.Feedbacks != null && Model.Feedbacks.Any())
+            {
+                foreach (var fb in Model.Feedbacks)
+                {
+                    <div class="list-card">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span style="font-size:0.75rem; font-weight:600; color:var(--blue-txt);">Ref: @fb.ReferenceId</span>
+                            <span style="font-size:0.75rem; color:var(--text-xs);">@fb.Date</span>
+                        </div>
+                        <div style="color: #fbbf24; font-size: 0.9rem; margin-bottom: 8px;">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                if (i <= fb.Rating)
+                                {
+                                    <i class="fas fa-star"></i>
+                                }
+                                else if (i - 0.5 <= fb.Rating)
+                                {
+
+                                    <i class="fas fa-star-half-alt"></i>
+                                }
+                                else
+                                {
+
+                                    <i class="far fa-star"></i>
+                                }
+                            }
+                        </div>
+                        <p style="font-size: 0.85rem; color: var(--text-dark); margin:0; line-height: 1.5;">"@fb.Comment"</p>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="empty-state">No feedbacks logged yet.</div>
+            }
+        </div>
+    </div>
+
+    <div class="collapsible-header" onclick="toggleSection('secComp', this)">
+        <h3 class="header-title"><span class="header-icon" style="background: var(--red-bg); color: var(--red-txt);"><i class="fas fa-user-ninja"></i></span> 8. Competitor</h3>
+        <i class="fas fa-chevron-down chevron-icon"></i>
+    </div>
+    <div id="secComp" class="collapsible-content">
+        <div>
+            @if (Model?.Competitor != null)
+            {
+                <div class="clean-row"><span class="row-label">Key Competitor</span><span class="row-value">@Model.Competitor.KeyCompetitor</span></div>
+                <div class="clean-row"><span class="row-label">Our Advantage</span><span class="row-value">@Model.Competitor.OurAdvantage</span></div>
+                <div class="clean-row"><span class="row-label">Last Deal Status</span><span class="row-value" style="color:var(--green-txt);">@Model.Competitor.LastDealStatus</span></div>
+            }
+            else
+            {
+                <div class="empty-state">No competitor information added.</div>
+            }
+        </div>
+    </div>
+
+    <div class="collapsible-header" onclick="toggleSection('secSwot', this)">
+        <h3 class="header-title"><span class="header-icon" style="background: var(--purple-bg); color: var(--purple-txt);"><i class="fas fa-chess-board"></i></span> 9. SWOT Analysis</h3>
+        <i class="fas fa-chevron-down chevron-icon"></i>
+    </div>
+    <div id="secSwot" class="collapsible-content">
+        @if (Model?.Swot != null)
+        {
+            <div class="swot-grid">
+                <div class="swot-card swot-s">
+                    <div class="swot-header">Strengths</div>
+                    <div class="swot-body">
+                        <div class="swot-icon">S</div>
+                        <div class="swot-text">@Html.Raw(Model.Swot.StrengthText)<br><strong>@Model.Swot.StrengthSubText</strong></div>
+                    </div>
+                </div>
+                <div class="swot-card swot-w">
+                    <div class="swot-header">Weaknesses</div>
+                    <div class="swot-body">
+                        <div class="swot-icon">W</div>
+                        <div class="swot-text"><strong>@Html.Raw(Model.Swot.WeaknessText)</strong><span>@Model.Swot.WeaknessSubText</span></div>
+                    </div>
+                </div>
+                <div class="swot-card swot-o">
+                    <div class="swot-header">Opportunities</div>
+                    <div class="swot-body">
+                        <div class="swot-icon">O</div>
+                        <div class="swot-text">@Html.Raw(Model.Swot.OpportunityText)<span>@Html.Raw(Model.Swot.OpportunitySubText)</span></div>
+                    </div>
+                </div>
+                <div class="swot-card swot-t">
+                    <div class="swot-header">Threats</div>
+                    <div class="swot-body">
+                        <div class="swot-icon">T</div>
+                        <div class="swot-text">@Html.Raw(Model.Swot.ThreatText)<br><strong>@Model.Swot.ThreatSubText</strong></div>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">SWOT analysis not generated.</div>
+        }
+    </div>
+
+    <div class="collapsible-header" onclick="toggleSection('secNotes', this)">
+        <h3 class="header-title"><span class="header-icon" style="background: #f1f5f9; color: #475569;"><i class="fas fa-pen"></i></span> 10. Special Notes</h3>
+        <i class="fas fa-chevron-down chevron-icon"></i>
+    </div>
+    <div id="secNotes" class="collapsible-content">
+        <div class="scroll-area card-list">
+            @if (Model?.Notes != null && Model.Notes.Any())
+            {
+                foreach (var note in Model.Notes)
+                {
+                    <div class="list-card" style="border-left: 3px solid var(--blue-txt);">
+                        <div style="font-size:0.7rem; color:var(--text-xs); margin-bottom:5px;">Added On : @note.AddedBy  @note.Date</div>
+                        <p style="font-size: 0.85rem; color: var(--text-dark); margin:0;">@note.NoteText</p>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="empty-state">No special notes available.</div>
+            }
+        </div>
+    </div>
+
+    <div class="collapsible-header" onclick="toggleSection('secInfo', this)">
+        <h3 class="header-title"><span class="header-icon" style="background: var(--blue-bg); color: var(--blue-txt);"><i class="far fa-address-card"></i></span> 11. Contact Directory</h3>
+        <i class="fas fa-chevron-down chevron-icon"></i>
+    </div>
+    <div id="secInfo" class="collapsible-content">
+        <div class="contact-grid">
+            @if (Model?.Contacts != null && Model.Contacts.Any())
+            {
+                foreach (var contact in Model.Contacts)
+                {
+                    <div class="contact-box">
+                        <div class="contact-av" style="background:var(--@(contact.ThemeColor)-bg); color:var(--@(contact.ThemeColor)-txt);"><i class="@contact.IconClass"></i></div>
+                        <div class="contact-info">
+                            <h4>@contact.contactPersonName</h4>
+                            <p>@contact.designations</p>
+                            <span class="phone" style="color:var(--@(contact.ThemeColor)-txt);">@contact.contactNumber</span>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="empty-state">No contact directory found.</div>
+            }
+        </div>
+    </div>
+
+</div>
+
+
+<div id="checked" class="fixed-bottom-actions">
+
+    @if (role == "SalesPerson")
+    {
+        <button type="button" class="action-btn" onclick="GotoMeetingPage({ value: 'General' })"><i class="fas fa-handshake"></i>General</button>
+        <button type="button" class="action-btn" onclick="GotoMeetingPage({ value: 'Qualify' })"><i class="fas fa-medal"></i>Qualify</button>
+        <button type="button" class="action-btn" onclick="GotoMeetingPage({ value: 'FollowUp' })"><i class="fas fa-headset"></i>FollowUp</button>
+        <button type="button" class="action-btn" onclick="GotoMeetingPage({ value: 'Payment' })"><i class="fas fa-money-bill-wave"></i>Payment</button>
+        <button type="button" class="action-btn" onclick="GotoMeetingPage({ value: 'Feedback' })"><i class="fas fa-star"></i>Feedback</button>
+    }
+    else if (role == "SalesManager")
+    {
+        <button type="button" class="action-btn" onclick="GotoMeetingPage({ value: 'ManagerFeedback' })"><i class="fas fa-star"></i>Feedback</button>
+    }
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+
+<script>
+    // Checking visibility flag
+    document.addEventListener("DOMContentLoaded", function () {
+    let el = document.getElementById("checked");
+    if (!el) return;
+
+    let valueforhiddingdiv = "@(Model?.value ?? "False")";
+    el.style.display = valueforhiddingdiv === "True" ? "none" : "flex";
+    });
+
+    const colorMainTheme = '#3f6791'; const colorAmber = '#f59e0b'; const colorBlue = '#3b82f6'; const colorOceanBlue = '#0284c7'; const colorLightBlue = '#38bdf8'; const colorEmerald = '#10b981'; const colorRose = '#e11d48';
+
+    const rawLabels = @Html.Raw(JsonSerializer.Serialize(Model.MonthLabels ?? new List<string>()));
+    const rawSales = @Html.Raw(JsonSerializer.Serialize(Model.MonthlySales ?? new List<long>()));
+    const rawSalesValue = @Html.Raw(JsonSerializer.Serialize(Model.MonthlySalesValues ?? new List<long>()));
+
+    const rawEnq = @Html.Raw(JsonSerializer.Serialize(Model.MonthlyEnquiries ?? new List<int>()));
+    const rawEnqValue = @Html.Raw(JsonSerializer.Serialize(Model.MonthlyEnquiriesVlaues ?? new List<long>()));
+
+    const rawQual = @Html.Raw(JsonSerializer.Serialize(Model.MonthlyQualifiedLeads ?? new List<int>()));
+    const rawleadvalue = @Html.Raw(JsonSerializer.Serialize(Model.MonthlyQualifiedLeadsValues ?? new List<long>()));
+
+    const rawPros = @Html.Raw(JsonSerializer.Serialize(Model.MonthlyProspects ?? new List<int>()));
+    const rawClient = @Html.Raw(JsonSerializer.Serialize(Model.MonthlyClients ?? new List<int>()));
+    const rawInc = @Html.Raw(JsonSerializer.Serialize(Model.MonthlyIncentives ?? new List<long>()));
+    const rawPayRec = @Html.Raw(JsonSerializer.Serialize(Model.PaymentsReceived ?? new List<long>()));
+    const rawPayPend = @Html.Raw(JsonSerializer.Serialize(Model.PaymentsPending ?? new List<long>()));
+    const funnelData = @Html.Raw(JsonSerializer.Serialize(Model.FunnelMetrics));
+
+    const allLabels = rawLabels.length > 0 ? rawLabels : ['M1', 'M2', 'M3', 'M4', 'M5', 'M6'];
+
+    const get6m = (arr) => arr ? arr.slice(-6) : [];
+
+    const currentMonth = new Date().getMonth() + 1; // 1–12
+    const currentIndex = (currentMonth - 4 + 12) % 12;
+
+    // 🔥 FIXED: Safer Last 6 Months Logic
+    const getLast6Months = (arr, currentIndex) => {
+    if (!arr || arr.length === 0) return [];
+    // Agar array choti hai (jaise abhi start hui hai), to normal slice karlo
+    if(arr.length < 12) return arr.slice(-6);
+
+    const result = [];
+    for (let i = 5; i >= 0; i--) {
+    const index = (currentIndex - i + 12) % 12;
+    result.push(arr[index] !== undefined ? arr[index] : 0);
+    }
+    return result;
+    };
+
+    // 🔥 FIXED: Leads aur Enquiries ke Data Mappings yahan Swap the. Ab theek kar diya hai.
+    const chartDataRepo = {
+    labels: { all: allLabels, '6m': getLast6Months(allLabels, currentIndex) },
+    monthlySalesGridChart: {
+    count: { all: rawSales, '6m': getLast6Months(rawSales, currentIndex) },
+    value: { all: rawSalesValue, '6m': getLast6Months(rawSalesValue, currentIndex) }
+    },
+    leadsChart : {
+    count: { all: rawQual, '6m': getLast6Months(rawQual, currentIndex) },
+    value: { all: rawleadvalue, '6m': getLast6Months(rawleadvalue, currentIndex) }
+    },
+    enquiriesChart :{
+    count: { all: rawEnq, '6m': getLast6Months(rawEnq, currentIndex) },
+    value: { all: rawEnqValue, '6m': getLast6Months(rawEnqValue, currentIndex) }
+    },
+    chart3: { all: rawInc, '6m': get6m(rawInc) },
+    paymentChart: {
+    received: { all: rawPayRec, '6m': getLast6Months(rawPayRec, currentIndex) },
+    pending: { all: rawPayPend, '6m': getLast6Months(rawPayPend, currentIndex) }
+    },
+    };
+
+    const basePolarColors = ['#f43f5e', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899'];
+    const polarColors = { all: [...basePolarColors, ...basePolarColors], '6m': basePolarColors };
+
+    let myCharts = {};
+    let funnelTanks = [];
+
+    const customTooltip = {
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    titleColor: '#64748b',
+    bodyColor: '#1e293b',
+    padding: 12,
+    cornerRadius: 8,
+    borderColor: '#e2e8f0',
+    borderWidth: 1,
+    callbacks: {
+    label: function (context) {
+    const dataset = context.dataset;
+    const index = context.dataIndex;
+
+    if (dataset.extraData && dataset.extraData.prospect) {
+    let client = dataset.extraData.client[index] || 0;
+    let prospect = dataset.extraData.prospect[index] || 0;
+    let conversion = prospect ? ((client / prospect) * 100).toFixed(1) : 0;
+    return [`Clients: ${client}`, `Prospects: ${prospect}`, `Conversion: ${conversion}%`];
+    }
+
+    if (dataset.extraData) {
+    let count = context.raw || 0;
+    let value = dataset.extraData[index] || 0;
+    return `${dataset.label}: ${count} | ₹ ${value.toLocaleString('en-IN')}`;
+    }
+
+    return `${dataset.label}: ${context.raw}`;
+    }
+    }
+    };
+
+    const yAxisConfigWithValues = {
+    beginAtZero: true,
+    suggestedMax: 10,
+    border: { display: false },
+    grid: { color: '#f3f4f6' },
+    ticks: { display: true, color: '#9ca3af', font: { size: 10, family: "'Poppins', sans-serif" }, callback: function(value) { if (value >= 100000) return (value / 100000) + 'L'; if (value >= 1000) return (value / 1000) + 'k'; return value; } }
+    };
+
+    const cOptions = { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, plugins: { legend: { display: false }, tooltip: customTooltip }, scales: { x: { grid: { display: false } }, y: yAxisConfigWithValues } };
+
+
+    // --- ON-DEMAND CHART INITIALIZATION ---
+    function initChart(chartId) {
+    const canvas = document.getElementById(chartId);
+    if(!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let filter = '6m';
+    try {
+    if (chartId === 'funnelChart') {
+    myCharts[chartId] = new Chart(ctx, {
+    type: 'bar',
+    data: { labels: ['Visits', 'Enquiries', 'Q. Leads', 'Orders', 'Repeat'], datasets: [{ data: [ funnelData?.TotalVisits ?? 0, funnelData?.Enquiries ?? 0, funnelData?.QualifiedLeads ?? 0, funnelData?.OrdersWon ?? 0, funnelData?.RepeatOrders ?? 0 ], backgroundColor: ['#3b82f6', '#0ea5e9', '#f59e0b', '#10b981', '#a855f7'], borderRadius: 6 }] },
+    options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { grid: { display: false }, border: {display: false} } } }
+    });
+    }
+    else if (chartId === 'monthlySalesGridChart') {
+    myCharts[chartId] = new Chart(ctx, { type: 'bar', data: { labels: chartDataRepo.labels[filter], datasets: [{ label: 'Sales', data: chartDataRepo.monthlySalesGridChart.value[filter] , backgroundColor: colorEmerald, borderRadius: 4,  extraData: chartDataRepo.monthlySalesGridChart.count[filter] }] }, options: cOptions });
+    }
+    else if (chartId === 'leadsChart') {
+    myCharts[chartId] = new Chart(ctx, { type: 'bar', data: { labels: chartDataRepo.labels[filter], datasets: [{ label: 'Leads', data: chartDataRepo.leadsChart.value[filter], backgroundColor: colorEmerald, borderRadius: 4,  extraData: chartDataRepo.leadsChart.count[filter]  }] }, options: cOptions });
+    }
+    else if (chartId === 'enquiriesChart') {
+    myCharts[chartId] = new Chart(ctx, { type: 'bar', data: { labels: chartDataRepo.labels[filter], datasets: [{ label: 'Enquiries', data:chartDataRepo.enquiriesChart.value[filter]  , backgroundColor: colorEmerald, borderRadius: 4,  extraData: chartDataRepo.enquiriesChart.count[filter] }] }, options: cOptions });
+    }
+    else if (chartId === 'paymentChart') {
+    myCharts[chartId] = new Chart(ctx, { type: 'bar', data: { labels: chartDataRepo.labels[filter], datasets: [ { label: 'Received', data: chartDataRepo.paymentChart.received[filter], backgroundColor: colorEmerald, borderRadius: { topLeft: 6, topRight: 6 } }, { label: 'Pending', data: chartDataRepo.paymentChart.pending[filter], backgroundColor: colorRose, borderRadius: { bottomLeft: 6, bottomRight: 6 } } ]}, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: customTooltip }, scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, ...yAxisConfigWithValues } } } });
+    }
+    } catch(e) { console.error("Chart Init Error:", e); }
+    }
+
+   
+    // 🔥 FIXED: graph update properly handle filterValue
+    window.updateChartFilter = function(btnElement, chartId, filterValue) {
+    var parent = btnElement.parentElement;
+    parent.querySelectorAll('.capsule-btn').forEach(b => b.classList.remove('active'));
+    btnElement.classList.add('active');
+
+    var chart = myCharts[chartId];
+    if(!chart) return;
+
+    if (chartId === 'monthlySalesGridChart') {
+    chart.data.labels = chartDataRepo.labels[filterValue];
+    chart.data.datasets[0].data = chartDataRepo.monthlySalesGridChart.value[filterValue];
+    chart.data.datasets[0].extraData =  chartDataRepo.monthlySalesGridChart.count[filterValue];
+    }
+    else if (chartId === 'leadsChart') {
+    chart.data.labels = chartDataRepo.labels[filterValue];
+    chart.data.datasets[0].data =  chartDataRepo.leadsChart.value[filterValue];
+    chart.data.datasets[0].extraData = chartDataRepo.leadsChart.count[filterValue];
+    }
+    else if (chartId === 'enquiriesChart') {
+    chart.data.labels = chartDataRepo.labels[filterValue];
+    chart.data.datasets[0].data =  chartDataRepo.enquiriesChart.value[filterValue];
+    chart.data.datasets[0].extraData = chartDataRepo.enquiriesChart.count[filterValue];
+    }
+    else if (chartId === 'paymentChart') {
+    chart.data.labels = chartDataRepo.labels[filterValue];
+    chart.data.datasets[0].data = chartDataRepo.paymentChart.received[filterValue];
+    chart.data.datasets[1].data = chartDataRepo.paymentChart.pending[filterValue];
+    }
+
+    chart.update();
+    }
+
+    window.toggleSection = function(contentId, headerElement, chartId, isFunnel = false) {
+    var content = document.getElementById(contentId);
+    var isActive = content.classList.contains('active');
+
+    document.querySelectorAll('.collapsible-content').forEach(function(el) { el.classList.remove('active'); });
+    document.querySelectorAll('.collapsible-header').forEach(function(el) {
+    el.classList.remove('active');
+    el.querySelector('.chevron-icon').style.transform = 'rotate(0deg)';
+    });
+
+    if (!isActive) {
+    content.classList.add('active');
+    headerElement.classList.add('active');
+    headerElement.querySelector('.chevron-icon').style.transform = 'rotate(180deg)';
+
+    setTimeout(() => {
+    const navOffset = -80;
+    const y = headerElement.getBoundingClientRect().top + window.scrollY + navOffset;
+    window.scrollTo({top: y, behavior: 'smooth'});
+    }, 150);
+
+    if(chartId) {
+    setTimeout(() => {
+    if(!myCharts[chartId]) {
+    initChart(chartId);
+    } else {
+    myCharts[chartId].resize();
+    myCharts[chartId].update();
+    }
+    }, 200);
+    }
+
+    if(isFunnel && funnelTanks.length > 0) { setTimeout(() => { funnelTanks.forEach(tank => tank.resize()); }, 300); }
+    }
+    }
+
+    // --- LIQUID PHYSICS ---
+    class WaterTank {
+    constructor(canvasId, fillPercent, colorConfig, isHorizontal = false) {
+    this.canvas = document.getElementById(canvasId); if(!this.canvas) return;
+    this.ctx = this.canvas.getContext('2d'); this.fillPercent = fillPercent; this.color = colorConfig; this.isHorizontal = isHorizontal;
+    this.totalPoints = 30; this.points = []; this.baseHeight = 0; this.currentHeight = 0; this.tilt = 0; this.phase = Math.random() * Math.PI * 2; this.waveSpeed = 0.05; this.waveFrequency = 0.015; this.waveAmplitude = 3;
+    window.addEventListener('resize', () => this.resize()); this.resize(); this.animate();
+    }
+    resize() {
+    this.canvas.width = this.canvas.parentElement.offsetWidth; this.canvas.height = this.canvas.parentElement.offsetHeight;
+    this.baseHeight = this.canvas.height * (1 - this.fillPercent / 100);
+    if(this.points.length === 0 || this.currentHeight === 0) {
+    this.currentHeight = this.canvas.height; this.points = [];
+    for (let i = 0; i <= this.totalPoints; i++) this.points.push({ x: (this.canvas.width / this.totalPoints) * i, y: this.baseHeight, vy: 0 });
+    } else { for (let i = 0; i <= this.totalPoints; i++) this.points[i].x = (this.canvas.width / this.totalPoints) * i; }
+    }
+    splash(force, clickX) {
+    let closestIndex = Math.floor((clickX / this.canvas.width) * this.totalPoints);
+    for (let i = 0; i <= this.totalPoints; i++) { let dist = Math.abs(i - closestIndex); if (dist < 6) this.points[i].vy += force * (1 - (dist * 0.15)); }
+    }
+    update() {
+    this.currentHeight += (this.baseHeight - this.currentHeight) * 0.05; this.phase += this.waveSpeed; const spring = 0.03, damping = 0.95, spread = 0.15;
+    for (let i = 0; i <= this.totalPoints; i++) { let p = this.points[i]; let targetY = this.currentHeight + ((i - this.totalPoints/2) * this.tilt) + Math.sin(p.x * this.waveFrequency + this.phase) * this.waveAmplitude; p.vy += (targetY - p.y) * spring; p.y += p.vy; p.vy *= damping; }
+    let leftDeltas = new Array(this.totalPoints + 1).fill(0), rightDeltas = new Array(this.totalPoints + 1).fill(0);
+    for (let j = 0; j < 3; j++) {
+    for (let i = 0; i <= this.totalPoints; i++) { if (i > 0) { leftDeltas[i] = spread * (this.points[i].y - this.points[i-1].y); this.points[i-1].vy += leftDeltas[i] * 0.05; } if (i < this.totalPoints) { rightDeltas[i] = spread * (this.points[i].y - this.points[i+1].y); this.points[i+1].vy += rightDeltas[i] * 0.05; } }
+    for (let i = 0; i <= this.totalPoints; i++) { if (i > 0) this.points[i-1].y += leftDeltas[i]; if (i < this.totalPoints) this.points[i+1].y += rightDeltas[i]; }
+    }
+    }
+    drawPath(phaseShift, alpha) {
+    this.ctx.globalAlpha = alpha; this.ctx.beginPath(); this.ctx.moveTo(0, this.canvas.height); this.ctx.lineTo(this.points[0].x, this.points[0].y + Math.sin(this.points[0].x * this.waveFrequency + this.phase + phaseShift) * (phaseShift ? 4 : 0));
+    for (let i = 1; i <= this.totalPoints; i++) { let p0 = this.points[i-1], p1 = this.points[i]; let y0 = p0.y + Math.sin(p0.x * this.waveFrequency + this.phase + phaseShift) * (phaseShift ? 4 : 0); let y1 = p1.y + Math.sin(p1.x * this.waveFrequency + this.phase + phaseShift) * (phaseShift ? 4 : 0); this.ctx.quadraticCurveTo(p0.x, y0, (p0.x + p1.x) / 2, (y0 + y1) / 2); }
+    this.ctx.lineTo(this.canvas.width, this.canvas.height); this.ctx.closePath(); this.ctx.fill(); this.ctx.globalAlpha = 1.0;
+    }
+    draw() {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); let gradient;
+    if (this.isHorizontal) { gradient = this.ctx.createLinearGradient(0, 0, this.canvas.width, 0); } else { gradient = this.ctx.createLinearGradient(0, 0, 0, this.canvas.height); }
+    gradient.addColorStop(0, this.color.start); gradient.addColorStop(1, this.color.end); this.ctx.fillStyle = gradient;
+    this.drawPath(Math.PI, 0.4); this.drawPath(0, 1.0);
+    }
+    animate() { this.update(); this.draw(); requestAnimationFrame(() => this.animate()); }
+    }
+
+    function getTankColor(percent) {
+    if (percent >= 80) { return { start: 'rgb(16 185 129)', end: 'rgb(16 185 129)' }; }
+    else if (percent >= 60) { return { start: 'rgba(163, 230, 53, 0.6)', end: 'rgba(101, 163, 13, 0.4)' }; }
+    else if (percent >= 40) { return { start: 'rgba(250, 204, 21, 0.6)', end: 'rgba(202, 138, 4, 0.4)' }; }
+    else if (percent >= 20) { return { start: 'rgba(249, 115, 22, 0.6)', end: 'rgba(194, 65, 12, 0.4)' }; }
+    else { return { start: 'rgba(239, 68, 68, 0.6)', end: 'rgba(185, 28, 28, 0.4)' }; }
+    }
+
+
+
+    document.addEventListener("DOMContentLoaded", function() {
+    Chart.defaults.font.family = "'Poppins', sans-serif";
+    Chart.defaults.color = "#94a3b8";
+    const funnelColors = { Visits: { start: 'rgba(56, 189, 248, 0.8)', end: 'rgba(2, 132, 199, 0.8)' }, Enquiries: { start: 'rgba(167, 139, 250, 0.8)', end: 'rgba(109, 40, 217, 0.8)' }, Qualified: { start: 'rgba(251, 146, 60, 0.8)', end: 'rgba(234, 88, 12, 0.8)' }, Orders: { start: 'rgba(52, 211, 153, 0.8)', end: 'rgba(5, 150, 105, 0.8)' }, Repeat: { start: 'rgba(251, 113, 133, 0.8)', end: 'rgba(225, 29, 72, 0.8)' } };
+    setTimeout(() => {
+    funnelTanks.push(new WaterTank('canvasVisits', 100, funnelColors.Visits));
+    funnelTanks.push(new WaterTank('canvasEnquiries', @(funnelEnqPct), funnelColors.Enquiries));
+    funnelTanks.push(new WaterTank('canvasQualified', @(funnelQualPct), funnelColors.Qualified));
+    funnelTanks.push(new WaterTank('canvasOrders', @(funnelOrdPct), funnelColors.Orders));
+    funnelTanks.push(new WaterTank('canvasRepeat', @(funnelRepPct), funnelColors.Repeat));
+    }, 100);
+    });
+
+    const routeConfig = {
+    SalesPerson: {
+    General: '@Url.Action("General", "FollowUp")',
+    Qualify: '@Url.Action("LeadModification", "Customer")',
+    FollowUp: '@Url.Action("FollowUp", "Enquiry")',
+    Payment: '@Url.Action("Payment", "FollowUp")',
+    Feedback: '@Url.Action("Feedback", "FollowUp")'
+    },
+    SalesManager: {
+    ManagerFeedback: '@Url.Action("ManagerFeedback", "FollowUp")',
+    General: '@Url.Action("ManagerFeedback", "FollowUp")'
+    }
+    };
+
+    function GotoMeetingPage(elementValue) {
+    const selectedValue = elementValue.value;
+    const role = '@role';
+    const customerId = '@customerid';
+
+    if (!selectedValue || selectedValue === "Back") return;
+
+    const roleRoutes = routeConfig[role];
+
+    if (!roleRoutes) {
+    console.warn("Unknown role:", role);
+    return;
+    }
+
+    const baseUrl = roleRoutes[selectedValue];
+
+    if (!baseUrl) {
+    console.warn("No route mapped for:", selectedValue);
+    return;
+    }
+
+    window.location.href = `${baseUrl}?CustomerId=${customerId}`;
+    }
+
+</script>

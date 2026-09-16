@@ -1,15 +1,14 @@
-﻿@using HoossH_Services.Models
+@using HoossH_Services.Models
 @{
     ViewBag.Title = "Plan Visit";
     Layout = "~/Views/Shared/_LayoutINV.cshtml";
-
-    // DUMMY DATA: Mocking the role for testing purposes
     string role = "SalesPerson";
 }
 
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+<link rel="stylesheet" href="/css/HRMS.css">
 
 <style>
     :root {
@@ -730,7 +729,6 @@
         }
     }
 
-    /* --- Custom Popup Layout (Matching Attendance) --- */
     .popup-modal-overlay {
         position: fixed;
         top: 0;
@@ -1184,8 +1182,6 @@
     <div class="v-drawer-header">
         <h3 class="v-drawer-title" id="v-drawerTitle">Loading...</h3>
         <div style="display: flex; align-items: center; gap: 10px;">
-
-            <!-- NEW DRAWER DATE PICKER -->
             <div class="v-drawer-date-picker" id="v-drawerDateWrapper" style="display: none;">
                 <i class="fas fa-calendar-alt"></i>
                 <input type="date" id="v-futureDateFilter" />
@@ -1219,7 +1215,6 @@
                             <input type="text" id="v-clientSearch" placeholder="Search..." onkeyup="vFilterClients()">
                         </div>
                         <div id="v-clientOptionsContainer">
-                            <!-- DUMMY DATA FOR CLIENT OPTIONS -->
                             <div class="v-select-option" data-id="CUST001" onclick="vSelectClient('CUST001', 'Tech Innovations Inc. (IT)')">
                                 Tech Innovations Inc. (IT) - Downtown Area
                             </div>
@@ -1232,7 +1227,6 @@
                             <div class="v-select-option" data-id="CUST004" onclick="vSelectClient('CUST004', 'Acme Manufacturing')">
                                 Acme Manufacturing - East Wing
                             </div>
-                            <!-- END DUMMY DATA -->
                         </div>
                     </div>
                 </div>
@@ -1282,7 +1276,6 @@
     <div style="margin-top: 15px; font-weight: 700; color: var(--txt-dark);">Processing...</div>
 </div>
 
-<!-- Custom Premium Popups -->
 <div id="customPopupModal" class="popup-modal-overlay">
     <div class="popup-content-card animate__animated">
         <button type="button" class="popup-close-btn" onclick="closeCustomPopup()">
@@ -1322,10 +1315,7 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<!-- <script src="/js/geolocation.js"></script> -->
-
 <script>
-    // DUMMY DATA FOR TIMELINE
     const vBackendData = [
         {
             customerName: "Tech Innovations Inc.",
@@ -1349,7 +1339,7 @@
             Latitude: "28.5355",
             Longitude: "77.3910",
             Priority: "MODERATE",
-            status: "ONGOING",
+            status: "Check in",
             AppointmentTime: "11:00 AM",
             ContactPerson: "Anita Sharma",
             TotalVisit: 2,
@@ -1364,7 +1354,7 @@
             Latitude: "28.4595",
             Longitude: "77.0266",
             Priority: "COLD",
-            status: "PENDING",
+            status: "Check In",
             AppointmentTime: "02:15 PM",
             ContactPerson: "Vikram Singh",
             TotalVisit: 0,
@@ -1487,7 +1477,7 @@
             const card = `
                                 <div class="v-location-step animate__animated animate__fadeInUp" style="animation-delay: ${i * 0.1}s">
                                     <div class="v-card-route ${isVisited ? 'v-card-visited' : ''}" style="${cardCursorStyle}" ${cardOnClickAttr}>
-                                        <div class="v-card-floating-pin" style="color: ${pColor}; cursor: pointer;" onclick="event.stopPropagation(); vOpenDirections('${safeName}', '${safeArea}', '${safeLat}', '${safeLng}')">
+                                        <div class="v-card-floating-pin" style="color: ${pColor}; cursor: pointer;" onclick="vOpenDirections(event, '${safeName}', '${safeArea}', '${safeLat}', '${safeLng}')">
                                             <i class="fa-solid fa-location-dot"></i>
                                         </div>
                                         <div class="v-priority-badge ${badgeClass}"><i class="fa-solid ${pIcon}"></i> ${badgeText}</div>
@@ -1537,42 +1527,22 @@
                             </div>`);
     }
     let activeCheckIn = { custName: '', id: '', cid: '', prio: '', routeid: '' };
-
     function openCustomPopup(action, custName) {
         const now = new Date();
         const currentTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-        const popup = document.getElementById("customPopupModal");
-        const card = popup.querySelector(".popup-content-card");
-        const dynamicIcon = document.getElementById("dynamicIcon");
-        const badge = document.getElementById("popupBadge");
-        const title = document.getElementById("popupTitle");
-        const timeText = document.getElementById("popupTime");
-        const subText = document.getElementById("popupSubText");
-        const actionBtnText = popup.querySelector(".btn-3d-text");
+        document.getElementById("popupTime").innerHTML = `Time: <b>${currentTime}</b>`;
 
-        card.classList.remove("animate__bounceIn", "animate__bounceOut");
-        timeText.innerHTML = `Time: <b>${currentTime}</b>`;
-        popup.classList.add("active");
-        card.classList.add("animate__bounceIn");
-
-        title.innerText = 'Confirm Check-In';
-        subText.innerText = `Start your visit at ${custName}`;
-        dynamicIcon.innerHTML = `<i class="fas fa-location-dot" style="font-size: 65px; color: #3f6791; filter: drop-shadow(0 8px 10px rgba(63, 103, 145, 0.3));"></i>`;
-        actionBtnText.innerText = 'Yes, Check-In';
-        badge.style.display = "none";
+        if (action === "CheckIn") {
+            document.getElementById("popupTitle").innerText = `Check-In to ${custName}?`;
+            document.getElementById("popupSubText").innerText = "Confirm your visit start.";
+            document.getElementById("dynamicIcon").innerHTML = '<i class="fas fa-location-arrow fa-3x" style="color: var(--primary);"></i>';
+        }
+        document.getElementById("customPopupModal").style.display = "flex";
     }
 
     function closeCustomPopup() {
-        const popup = document.getElementById("customPopupModal");
-        const card = popup.querySelector(".popup-content-card");
-
-        card.classList.remove("animate__bounceIn");
-        card.classList.add("animate__bounceOut");
-
-        setTimeout(() => {
-            popup.classList.remove("active");
-        }, 400);
+        document.getElementById("customPopupModal").style.display = "none";
     }
 
     async function confirmPopupAction() {
@@ -1586,11 +1556,6 @@
         btn.html('<i class="fa-solid fa-spinner fa-spin"></i>').prop('disabled', true);
 
         try {
-            // MOCKED GeoService call
-            // await vGetLocation();
-            const loc = "28.7041,77.1025";
-
-            // MOCKING AJAX CALL WITH SETTIMEOUT
             setTimeout(() => {
                 const successModal = document.getElementById("customSuccessModal");
                 const successCard = document.getElementById("successCard");
@@ -1610,15 +1575,19 @@
                 successCard.classList.add("animate__zoomIn");
 
                 btn.html('<i class="fa-solid fa-check"></i> Checked-In').css('background', '#94a3b8');
-
                 setTimeout(() => {
                     successCard.classList.remove("animate__zoomIn");
                     successCard.classList.add("animate__zoomOut");
+
                     setTimeout(() => {
                         successModal.classList.remove("active");
-                    }, 400);
-                }, 2000);
-            }, 1000); // 1 sec delay to mock processing
+                        let customerId = activeCheckIn.cid;
+                        let routeId = activeCheckIn.routeid;
+                        window.location.href = `/Visit/CustomerReport?customerId=${customerId}`;
+
+                    }, 400); 
+                }, 1500);
+            }, 1000);
 
         } catch (e) {
             btn.html('<i class="fa-solid fa-location-arrow"></i> Check-In').prop('disabled', false);
@@ -1635,7 +1604,10 @@
         openCustomPopup('CheckIn', custName);
     }
 
-    function vOpenDirections(name, addr, lat, lng) {
+    function vOpenDirections(e, name, addr, lat, lng) {
+        if (e && e.stopPropagation) {
+            e.stopPropagation();
+        }
         let dest = addr || name;
         if (lat && lng && lat.trim() !== '' && lng.trim() !== '') {
             dest = lat + "," + lng;
@@ -1782,7 +1754,7 @@
                                         </div>
                                     `);
             });
-        }, 800); // 800ms dummy delay
+        }, 800); 
     }
 
     function vTransferFromDrawer(id, name) {
