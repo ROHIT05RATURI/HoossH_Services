@@ -1,168 +1,1229 @@
-﻿@{
+@using System.Text.Json
+@using HoossH_Services.Models
+@using System.Security.Claims
+@inject IHttpContextAccessor HttpContextAccessor
+
+@model Kundali
+
+@{
     ViewBag.Title = "Dashboard";
     Layout = "~/Views/Shared/_LayoutINV.cshtml";
+
+    var user = HttpContextAccessor.HttpContext?.User;
+    var role = user?.FindFirst(ClaimTypes.Role)?.Value;
+
+    var funnelEnqPct = Model?.FunnelVisits > 0 ? (int)((Model.FunnelEnquiries * 100.0) / Model.FunnelVisits) : 0;
+    var funnelQualPct = Model?.FunnelEnquiries > 0 ? (int)((Model.FunnelQualified * 100.0) / Model.FunnelEnquiries) : 0;
+    var funnelOrdPct = Model?.FunnelQualified > 0 ? (int)((Model.FunnelOrders * 100.0) / Model.FunnelQualified) : 0;
+    var funnelRepPct = Model?.FunnelOrders > 0 ? (int)((Model.FunnelRepeat * 100.0) / Model.FunnelOrders) : 0;
+    var salesJson = Html.Raw(JsonSerializer.Serialize(Model?.MonthlySalesSummary ?? new List<MonthlySalesSummaryData>()));
+    var paymentJson = Html.Raw(JsonSerializer.Serialize(Model?.MonthlyPaymentSummary ?? new List<MonthlyPaymentSummaryData>()));
+    var incentiveJson = Html.Raw(JsonSerializer.Serialize(Model?.MonthlyIncentiveSummary ?? new List<MonthlyIncentiveSummaryData>()));
+    var clientConvJson = Html.Raw(JsonSerializer.Serialize(Model?.ProspectToClientMonthly ?? new List<MonthlyConversionData>()));
+    var funnelJson = Html.Raw(JsonSerializer.Serialize(Model?.MonthlyFunnelSummary ?? new List<MonthlyFunnelSummaryData>()));
+
+    var rawLabelsJson = Html.Raw(JsonSerializer.Serialize(Model?.MonthLabels ?? new List<string>()));
+    var rawSalesJson = Html.Raw(JsonSerializer.Serialize(Model?.MonthlySales ?? new List<long>()));
+    var rawSalesValueJson = Html.Raw(JsonSerializer.Serialize(Model?.MonthlySalesValues ?? new List<decimal>()));
+    var rawEnqJson = Html.Raw(JsonSerializer.Serialize(Model?.MonthlyEnquiries ?? new List<long>()));
+    var rawEnqValueJson = Html.Raw(JsonSerializer.Serialize(Model?.MonthlyEnquiriesVlaues ?? new List<decimal>()));
+    var rawQualJson = Html.Raw(JsonSerializer.Serialize(Model?.MonthlyQualifiedLeads ?? new List<long>()));
+    var rawQualValueJson = Html.Raw(JsonSerializer.Serialize(Model?.MonthlyQualifiedLeadsValues ?? new List<decimal>()));
+    var incRawDbListJson = Html.Raw(JsonSerializer.Serialize(Model?.IncentiveMonthly ?? new List<IncentiveDataModel>()));
+
+    var rawPayRecJson = Html.Raw(JsonSerializer.Serialize(Model?.PaymentsReceived ?? new List<long>()));
+    var rawPayPendJson = Html.Raw(JsonSerializer.Serialize(Model?.PaymentsPending ?? new List<long>()));
 }
 
-<link rel="stylesheet" href="~/css/Dashboard/Dashboard.css" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<partial name="_BottomNavigation" />
+<link rel="stylesheet" href="/css/Kundali.css" />
 
-<div class="hooshh-dashboard">
-    <section class="hd-profile-card">
+@{
+    var imgBytes = Model?.Avatar;
+    var base64 = imgBytes != null && imgBytes.Length > 0 ? Convert.ToBase64String(imgBytes) : null;
+    string mime = "image/jpeg";
 
-        <div class="hd-profile-photo-wrap">
-            <img src="~/images/service-man.jpg" alt="Rahul Kumar" class="hd-profile-photo" />
-        </div>
+    if (imgBytes != null && imgBytes.Length > 4)
+    {
+        if (imgBytes[0] == 137 && imgBytes[1] == 80) mime = "image/png";
+        else if (imgBytes[0] == 255 && imgBytes[1] == 216) mime = "image/jpeg";
+        else if (imgBytes[0] == 71 && imgBytes[1] == 73) mime = "image/gif";
+    }
+}
 
-        <div class="hd-profile-info">
-            <h1 class="hd-profile-name">Rahul Kumar</h1>
-            <div class="hd-profile-badges">
-                <span class="hd-badge"><i class="fa-regular fa-calendar-check"></i> Since 1-Jan-2022</span>
-                <span class="hd-badge">AC Service Technician</span>
+@if (role == "SalesManager" || role == "Owner")
+{
+    <div class="action-top-bar mt-2">
+        <a href="/Flow/TeamKundali" class="btn-classic-modern">
+            <i class="fas fa-users"></i> View Team
+        </a>
+    </div>
+}
+
+<div class="Content-Wrapper p-0 p-md-3">
+    <div class="profile-card-container">
+        <div class="profile-left">
+            <div class="profile-avatar-wrap">
+                <img id="editProfileImg" class="agent-avatar" src="@(base64 != null ? $"data:{mime};base64,{base64}" : "/Images/Sadie_Sink.jpg")">
             </div>
-        </div>
-
-        <div class="hd-profile-stats">
-
-            <div class="hd-pstat hd-pstat-blue">
-                <div class="hd-pstat-icon"><i class="fa-solid fa-screwdriver-wrench"></i></div>
-                <div class="hd-pstat-value">128</div>
-                <div class="hd-pstat-label">Total Services</div>
-            </div>
-
-            <div class="hd-pstat hd-pstat-amber">
-                <div class="hd-pstat-icon"><i class="fa-regular fa-clock"></i></div>
-                <div class="hd-pstat-value">18</div>
-                <div class="hd-pstat-label">Pending</div>
-            </div>
-
-            <div class="hd-pstat hd-pstat-green">
-                <div class="hd-pstat-icon"><i class="fa-solid fa-circle-check"></i></div>
-                <div class="hd-pstat-value">94</div>
-                <div class="hd-pstat-label">Completed</div>
-            </div>
-
-            <div class="hd-pstat hd-pstat-purple">
-                <div class="hd-pstat-icon"><i class="fa-solid fa-users-gear"></i></div>
-                <div class="hd-pstat-value">2</div>
-                <div class="hd-pstat-label">Today's Jobs</div>
-            </div>
-
-        </div>
-
-    </section>
-
-    <div class="hd-middle-row">
-
-        <section class="hd-card">
-            <div class="hd-card-header">
-                <div>
-                    <h2>Service Activity</h2>
-                    <p>Overview of service requests over the last 7 days</p>
-                </div>
-                <div class="hd-tabs"><span class="active">7D</span><span>30D</span><span>90D</span></div>
-            </div>
-            <div class="hd-chart-legend">
-                <span><span class="dot" style="background:#16a34a"></span>Completed</span>
-                <span><span class="dot" style="background:#d97706"></span>Pending</span>
-                <span><span class="dot" style="background:#7c3aed"></span>New Requests</span>
-            </div>
-            <div class="hd-chart-wrap">
-                <svg viewBox="0 0 720 220" width="100%" height="220" preserveAspectRatio="none">
-                    <defs>
-                        <linearGradient id="hdFillBlue" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stop-color="#2563eb" stop-opacity="0.18" />
-                            <stop offset="100%" stop-color="#2563eb" stop-opacity="0" />
-                        </linearGradient>
-                    </defs>
-                    <line x1="0" y1="10" x2="720" y2="10" stroke="#edf0f3" stroke-width="1" />
-                    <line x1="0" y1="60" x2="720" y2="60" stroke="#edf0f3" stroke-width="1" />
-                    <line x1="0" y1="110" x2="720" y2="110" stroke="#edf0f3" stroke-width="1" />
-                    <line x1="0" y1="160" x2="720" y2="160" stroke="#edf0f3" stroke-width="1" />
-                    <line x1="0" y1="205" x2="720" y2="205" stroke="#edf0f3" stroke-width="1" />
-
-                    <path d="M0,150 L720,150 L720,220 L0,220 Z" fill="url(#hdFillBlue)" />
-                    <path d="M0,150 C90,120 130,95 210,105 C290,115 320,80 400,75 C480,70 520,95 600,60 C650,40 690,55 720,25"
-                          fill="none" stroke="#2563eb" stroke-width="2.5" />
-                    <path d="M0,180 C100,175 160,150 240,160 C320,170 360,150 440,155 C520,160 560,140 620,150 C660,157 690,150 720,135"
-                          fill="none" stroke="#7c3aed" stroke-width="2.5" />
-                    <path d="M0,195 C110,193 180,185 250,190 C330,196 380,185 450,188 C530,192 580,182 640,187 C670,190 700,186 720,183"
-                          fill="none" stroke="#d97706" stroke-width="2.5" />
-                </svg>
-                <div class="hd-chart-xaxis">
-                    <span>3 Jun</span><span>4 Jun</span><span>5 Jun</span><span>6 Jun</span><span>7 Jun</span><span>8 Jun</span><span>9 Jun</span>
+            <div class="profile-info">
+                <h2 class="agent-name">@(Model != null && !string.IsNullOrEmpty(Model.AgentName) ? Model.AgentName : "Agent Name")</h2>
+                <div class="profile-badges">
+                    <div class="badge-pill"><i class="fas fa-calendar-check"></i> Since @(Model != null ? Model.JoinDate : "")</div>
+                    <div class="badge-pill"><text>@(Model != null ? Model.DaysTogether : 0) days</text></div>
                 </div>
             </div>
-        </section>
+        </div>
 
+        <div class="agent-kpis">
+            <a asp-controller="Flow" asp-action="VisitReports" asp-route-loginId="@(Model != null ? Model.KundliLoginID : "")" style="text-decoration:none; color:inherit;">
+                <div class="kpi-box"><div class="kpi-icon-circle icon-visits"><i class="fas fa-walking"></i></div><strong>@(Model != null ? Model.TotalVisits : 0)</strong><span>Total Visits</span></div>
+            </a>
 
+            <a asp-controller="Customer" asp-action="ViewClient" asp-route-loginId="@(Model != null ? Model.KundliLoginID : "")" style="text-decoration:none; color:inherit;">
+                <div class="kpi-box"><div class="kpi-icon-circle" style="background:var(--blue-bg); color:var(--blue-txt);"><i class="fas fa-users"></i></div><strong>@(Model != null ? Model.uniqueCustomers : 0)</strong><span>Total Clients</span></div>
+            </a>
+
+            <a asp-controller="Flow" asp-action="EnquiryReport" asp-route-loginId="@(Model != null ? Model.KundliLoginID : "")" style="text-decoration:none; color:inherit;">
+                <div class="kpi-box"><div class="kpi-icon-circle icon-prospects"><i class="fas fa-comment-dots"></i></div><strong>₹ @(Model != null ? Model.LiveEnquiriesValue.ToString("N0", new System.Globalization.CultureInfo("en-IN")) : "0")</strong><span>Total Service (@(Model != null ? Model.LiveInquiry : 0))</span></div>
+            </a>
+
+            <a asp-controller="Flow" asp-action="LeadReports" asp-route-loginId="@(Model != null ? Model.KundliLoginID : "")" style="text-decoration:none; color:inherit;">
+                <div class="kpi-box"><div class="kpi-icon-circle icon-clients"><i class="fas fa-bullseye"></i></div><strong>₹ @(Model != null ? Model.LiveQualifiedValue.ToString("N0", new System.Globalization.CultureInfo("en-IN")) : "0")</strong><span>Compliant Service (@(Model != null ? Model.LiveQualifiedLead : 0))</span></div>
+            </a>
+
+            <a asp-controller="Flow" asp-action="OrderReports" asp-route-loginId="@(Model != null ? Model.KundliLoginID : "")" style="text-decoration:none; color:inherit;">
+                <div class="kpi-box"><div class="kpi-icon-circle icon-orders"><i class="fas fa-shopping-bag"></i></div><strong>₹ @(Model != null ? Model.LiveOrdersValue.ToString("N0", new System.Globalization.CultureInfo("en-IN")) : "0")</strong><span>Pending Service (@(Model != null ? Model.LiveOrdersCount : 0))</span></div>
+            </a>
+        </div>
     </div>
 
-    <div class="hd-bottom-row">
+    <div class="collapsible-header" onclick="toggleSection('secFunnel', this, null, true)">
+        <h3 class="header-title"><span class="header-icon" style="background: var(--orange-bg); color: var(--orange-txt);"><i class="fas fa-filter"></i></span> 1. Interactive Service Funnel</h3>
+        <i class="fas fa-chevron-down chevron-icon"></i>
+    </div>
+    <div id="secFunnel" class="collapsible-content">
+        <div class="section-split">
+            <div style="width:100%; border-bottom: 1px solid var(--border-light); padding-bottom: 20px;">
+                <div class="tubes-scroll-wrapper">
+                    <div class="tubes-container">
+                        <div class="tube-wrapper"><div class="tube-physics-holder" style="height: 280px;"><canvas class="liquid-canvas" id="canvasVisits"></canvas></div><div class="tube-label"><h5>Visits</h5><p>@(Model != null ? Model.FunnelVisits : 0)</p><span class="pct-badge">100%</span></div></div>
+                        <div class="tube-wrapper"><div class="tube-physics-holder" style="height: 240px;"><canvas class="liquid-canvas" id="canvasEnquiries"></canvas></div><div class="tube-label"><h5>Total Service</h5><p>@(Model != null ? Model.FunnelEnquiries : 0)</p><span class="pct-badge">100%</span></div></div>
+                        <div class="tube-wrapper"><div class="tube-physics-holder" style="height: 200px;"><canvas class="liquid-canvas" id="canvasQualified"></canvas></div><div class="tube-label"><h5>Compliant Service</h5><p>@(Model != null ? Model.FunnelQualified : 0)</p><span class="pct-badge">@(funnelQualPct)%</span></div></div>
+                        <div class="tube-wrapper"><div class="tube-physics-holder" style="height: 160px;"><canvas class="liquid-canvas" id="canvasOrders"></canvas></div><div class="tube-label"><h5>Pending Service</h5><p>@(Model != null ? Model.FunnelOrders : 0)</p><span class="pct-badge">@(funnelOrdPct)%</span></div></div>
+                        <div class="tube-wrapper"><div class="tube-physics-holder" style="height: 120px;"><canvas class="liquid-canvas" id="canvasRepeat"></canvas></div><div class="tube-label"><h5>Repeat</h5><p>@(Model != null ? Model.FunnelRepeat : 0)</p><span class="pct-badge">@(funnelRepPct)%</span></div></div>
+                    </div>
+                </div>
+            </div>
 
-        <section class="hd-card">
-            <div class="hd-card-header">
-                <div><h2>Recent Activity</h2></div>
-                <a href="#" class="hd-viewall">View all <i class="fa-solid fa-arrow-right"></i></a>
+            <div style="width: 100%;">
+                <div class="clean-header"><h4 style="margin-bottom:0px; font-size: 0.9rem; color: var(--dark-txt); font-weight:600;">Funnel Breakdown Details</h4></div>
+                <div class="clean-row"><span class="row-label">Total Field Visits <br><small>All Channels</small></span><div style="text-align: right;"><span class="row-value">@(Model != null ? Model.FunnelVisits : 0)</span><br><span style="font-size:0.7rem; color:var(--text-xs);">Leads Reached</span></div></div>
+                <div class="clean-row"><span class="row-label">Total Service <br><small>Conversion from Visits</small></span><div style="text-align: right;"><span class="row-value" style="color:var(--blue-txt);">@(Model != null ? Model.FunnelEnquiries : 0)</span><br><span style="font-size:0.7rem; color:var(--text-xs);">@(funnelEnqPct)% Conv.</span></div></div>
+                <div class="clean-row"><span class="row-label">Total Compliant Service <br><small>Conversion from Total Service</small></span><div style="text-align: right;"><span class="row-value" style="color:var(--orange-txt);">@(Model != null ? Model.FunnelQualified : 0)</span><br><span style="font-size:0.7rem; color:var(--text-xs);">@(funnelQualPct)% Conv.</span></div></div>
+                <div class="clean-row"><span class="row-label">Total Pending Service <br><small>Conversion from Compliant Service</small></span><div style="text-align: right;"><span class="row-value" style="color:var(--green-txt);">@(Model != null ? Model.FunnelOrders : 0)</span><br><span style="font-size:0.7rem; color:var(--text-xs);">@(funnelOrdPct)% Conv.</span></div></div>
+                <div class="clean-row"><span class="row-label">Repeat Client <br><small></small></span><div style="text-align: right;"><span class="row-value" style="color:var(--green-txt);">@(Model != null ? Model.FunnelRepeat : 0)</span><br><span style="font-size:0.7rem; color:var(--text-xs);">@(funnelRepPct)% Conv.</span></div></div>
             </div>
-            <div class="hd-activity-list">
-                <div class="hd-activity-item">
-                    <div class="hd-activity-icon act-purple"><i class="fa-solid fa-wrench"></i></div>
-                    <div class="hd-activity-body"><strong>AC Repair - Customer B</strong><span>Status updated to In Progress</span></div>
-                    <span class="hd-pill progress">In Progress</span>
-                    <span class="hd-activity-time">11:45 AM</span>
-                </div>
-                <div class="hd-activity-item">
-                    <div class="hd-activity-icon act-green"><i class="fa-solid fa-plus"></i></div>
-                    <div class="hd-activity-body"><strong>New request - SR-1024</strong><span>AC Installation – Customer A</span></div>
-                    <span class="hd-pill new">New</span>
-                    <span class="hd-activity-time">10:32 AM</span>
-                </div>
-                <div class="hd-activity-item">
-                    <div class="hd-activity-icon act-check"><i class="fa-solid fa-check"></i></div>
-                    <div class="hd-activity-body"><strong>Service completed - SR-1018</strong><span>AC Maintenance – Customer C</span></div>
-                    <span class="hd-pill completed">Completed</span>
-                    <span class="hd-activity-time">09:12 AM</span>
-                </div>
-                <div class="hd-activity-item">
-                    <div class="hd-activity-icon act-blue"><i class="fa-solid fa-screwdriver-wrench"></i></div>
-                    <div class="hd-activity-body"><strong>New request - SR-1023</strong><span>AC Repair – Customer B</span></div>
-                    <span class="hd-pill new">New</span>
-                    <span class="hd-activity-time">08:45 AM</span>
-                </div>
-            </div>
-        </section>
-
-        <section class="hd-card">
-            <div class="hd-card-header">
-                <div><h2>Upcoming Services</h2></div>
-                <a href="#" class="hd-viewall">View all <i class="fa-solid fa-arrow-right"></i></a>
-            </div>
-            <div class="hd-upcoming-list">
-                <div class="hd-upcoming-item">
-                    <span class="time-col">10:00 AM</span>
-                    <div class="hd-upcoming-icon" style="background:var(--blue-light);color:var(--blue)"><i class="fa-solid fa-snowflake"></i></div>
-                    <div class="hd-upcoming-body"><strong>AC Installation</strong><span>Customer A</span><span><i class="fa-solid fa-location-dot"></i> Dehradun</span></div>
-                    <span class="hd-pill scheduled">Scheduled</span>
-                </div>
-                <div class="hd-upcoming-item">
-                    <span class="time-col">11:30 AM</span>
-                    <div class="hd-upcoming-icon" style="background:var(--purple-light);color:var(--purple)"><i class="fa-solid fa-screwdriver-wrench"></i></div>
-                    <div class="hd-upcoming-body"><strong>AC Repair</strong><span>Customer B</span><span><i class="fa-solid fa-location-dot"></i> Dehradun</span></div>
-                    <span class="hd-pill progress">In Progress</span>
-                </div>
-                <div class="hd-upcoming-item">
-                    <span class="time-col">01:00 PM</span>
-                    <div class="hd-upcoming-icon" style="background:var(--amber-light);color:var(--amber)"><i class="fa-solid fa-gears"></i></div>
-                    <div class="hd-upcoming-body"><strong>AC Maintenance</strong><span>Customer C</span><span><i class="fa-solid fa-location-dot"></i> Dehradun</span></div>
-                    <span class="hd-pill scheduled">Scheduled</span>
-                </div>
-                <div class="hd-upcoming-item">
-                    <span class="time-col">03:30 PM</span>
-                    <div class="hd-upcoming-icon" style="background:var(--green-light);color:var(--green)"><i class="fa-solid fa-magnifying-glass"></i></div>
-                    <div class="hd-upcoming-body"><strong>AC Inspection</strong><span>Customer D</span><span><i class="fa-solid fa-location-dot"></i> Dehradun</span></div>
-                    <span class="hd-pill pending">Pending</span>
-                </div>
-            </div>
-        </section>
+        </div>
     </div>
 
+    <!-- 2. Monthly Order Book -->
+    <div class="collapsible-header" onclick="toggleSection('secSales', this, 'monthlySalesGridChart')">
+        <h3 class="header-title">
+            <span class="header-icon" style="background: var(--green-bg); color: var(--green-txt);">
+                <i class="fas fa-file-invoice"></i>
+            </span>
+            2. Monthly Order Book
+        </h3>
+        <i class="fas fa-chevron-down chevron-icon"></i>
+    </div>
+    <div id="secSales" class="collapsible-content">
+        <div class="dashboard-grid-layout">
+            <div class="chart-main-panel">
+                <div class="chart-panel-header">
+                    <h4 class="chart-panel-title">Pending Service Value Over Time</h4>
+                    <div class="capsule-toggle">
+                        <button class="capsule-btn" onclick="updateChartFilter(this, 'monthlySalesGridChart', 'all')">1Y</button>
+                        <button class="capsule-btn active" onclick="updateChartFilter(this, 'monthlySalesGridChart', '6m')">6M</button>
+                    </div>
+                </div>
+                <div style="font-size: 11px; color: #64748b; font-weight: 600; margin-bottom: 10px;">Amount (₹)</div>
+                <div class="chart-container" style="height: 320px;">
+                    <canvas id="monthlySalesGridChart"></canvas>
+                </div>
+            </div>
+            <div class="side-metrics-panel">
+                @if (Model?.MonthlySalesSummary != null && Model.MonthlySalesSummary.Any())
+                {
+                    <div class="data-card">
+                        <div class="data-card-title" style="display: flex; justify-content: space-between; align-items: center;">
+                            <span>Month-on-Month</span>
+                            <select class="month-selector" onchange="updateSalesCard(this.value)" style="padding: 2px 8px; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; font-weight: 600;">
+                                @foreach (var m in Model.MonthlySalesSummary)
+                                {
+                                    <option value="@m.MonthLabel">@m.MonthLabel</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Current Month Value</span>
+                            <span class="data-value val-green" id="salesCurrentVal">₹ 0</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Previous Month Value</span>
+                            <span class="data-value" id="salesPrevVal">₹ 0</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Variance (₹)</span>
+                            <span class="data-value" id="salesVarAmt">₹ 0</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Variance (%)</span>
+                            <span class="data-value" id="salesVarPct">0.00%</span>
+                        </div>
+                    </div>
+                }
+                @if (Model?.yearlydata != null)
+                {
+                    <div class="data-card">
+                        <div class="data-card-title">Current FY Snapshot </div>
+                        <div class="data-row">
+                            <span class="data-label">Total Pending Service Value</span>
+                            <span class="data-value val-green">₹ @Model.yearlydata.TotalOrderValue.ToString("N0", new System.Globalization.CultureInfo("en-IN"))</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Total Pending Service</span>
+                            <span class="data-value val-green">@Model.yearlydata.TotalOrders </span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Average Value</span>
+                            <span class="data-value val-green">₹ @Model.yearlydata.AverageOrderValue.ToString("N0", new System.Globalization.CultureInfo("en-IN"))</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Best Month</span>
+                            <span class="data-value val-green">@Model.yearlydata.BestMonth ( ₹ @Model.yearlydata.BestMonthValue.ToString("N0", new System.Globalization.CultureInfo("en-IN")) )</span>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Service Funnel -->
+    <div class="collapsible-header" onclick="toggleSection('secLeadConv', this, 'chart1')">
+        <h3 class="header-title"><span class="header-icon" style="background: var(--blue-bg); color: var(--blue-txt);"><i class="fas fa-exchange-alt"></i></span> 3. Service Funnel</h3>
+        <i class="fas fa-chevron-down chevron-icon"></i>
+    </div>
+    <div id="secLeadConv" class="collapsible-content">
+        <div class="section-split">
+            <div style="width:100%;">
+                <div class="graph-filter-container">
+                    <div class="capsule-toggle">
+                        <button class="capsule-btn" onclick="updateChartFilter(this, 'chart1', 'all')">1Y</button>
+                        <button class="capsule-btn active" onclick="updateChartFilter(this, 'chart1', '6m')">6M</button>
+                    </div>
+                </div>
+                <div class="chart-container"><canvas id="chart1"></canvas></div>
+            </div>
+            <div class="section-divider"></div>
+            <div style="width:100%" class="scroll-area">
+                <div class="funnel-topbar">
+                    
+                    <div class="mini-kpi-card">
+                    <span>Month On Month</span>
+                        <div class="kpi-header d-none">
+                            <span class="kpi-title"><i class="fas fa-filter"></i> Pipeline Health</span>
+                            <span class="kpi-percent" id="pipelineHealthText">0%</span>
+                        </div>
+
+                        <div class="pipeline-trackd-none">
+                            <div class="pipeline-fill" id="pipelineHealthFill"></div>
+                        </div>
+
+                    </div>
+                    <div class="month-selector-wrap">
+                        <select id="monthSelector" class="month-selector">
+                            @if (Model?.MonthlyFunnelSummary != null)
+                            {
+                                foreach (var item in Model.MonthlyFunnelSummary)
+                                {
+                                    <option value="@item.MonthLabel.Trim()">@item.MonthLabel</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="funnel-dashboard-grid">
+                    <div class="funnel-insight-panel">
+                        <div class="executive-card">
+                            <div class="exec-header">
+                                <span style="font-size: 12px;font-weight: 600; font-family: 'Poppins';">Month-on-Month Comparison ( <span id="monthName"></span> )</span>
+                            </div>
+                            <div class="comparison-grid">
+                                <div class="comparison-row">
+                                    <div class="col-4 LabelDiv"><span class="metric-label" style="font-weight:700"> Total Service( <span id="EnquiryCount" style="font-weight:700"></span>) </span></div>
+                                    <div class="col-4 ValueDiv"><span id="enqValue" style="padding-left:10px;font-size:12px;  font-weight:700"></span></div>
+                                    <div class="col-4 ChangeDiv" id="enqVariance" style="padding-left:10px; font-size:12px; font-weight:700"></div>
+                                </div>
+                                <div class="comparison-row">
+                                    <div class="col-4 LabelDiv"><span class="metric-label" style="font-weight:700"> Compliant Service ( <span id="qualifiedCount" style="font-weight:700"></span>  ) </span></div>
+                                    <div class="col-4 ValueDiv"><span id="qualifiedValue" style="padding-left:10px; font-size:12px; font-weight:700"></span></div>
+                                    <div class="col-4 ChangeDiv" id="qualifiedVariance" style="padding-left:10px; font-size:12px; font-weight:700"></div>
+                                </div>
+                                <div class="comparison-row">
+                                    <div class="col-4 LabelDiv"><span class="metric-label" style="font-weight:700">Pending Service ( <span id="OrdersCount" style="font-weight:700"></span>  ) </span></div>
+                                    <div class="col-4 ValueDiv"><span id="ordersValue" style="padding-left:10px; font-size:12px; font-weight:700"></span></div>
+                                    <div class="col-4 ChangeDiv" id="ordersVariance" style="padding-left:10px; font-size:12px; font-weight:700"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Current FY Snapshot Card -->
+                        <div class="executive-card">
+                            <div class="exec-header">
+                                <span style="font-size: 12px;font-weight: 600; font-family: 'Poppins';">Current FY Snapshot</span>
+                            </div>
+                            <div class="comparison-grid">
+                                <!-- 1. Enquiries -->
+                                <div class="comparison-row">
+                                    <div class="col-4 LabelDiv"><span class="metric-label" style="font-weight:700"> Total Service( <span id="TotalEnquiryCount" style="font-weight:700"></span>) </span></div>
+                                    <div class="col-4 ValueDiv"><span id="fyEnquiries" style="padding-left:10px; font-size:12px; font-weight:700"></span></div>
+                                    <div class="col-4 ChangeDiv" id="fyEnquiryConv" style="padding-left:10px; font-size:12px; font-weight:700"></div>
+                                </div>
+
+                                <!-- 2. Cancelled Enquiries (New) -->
+                                <div class="comparison-row">
+                                    <div class="col-4 LabelDiv"><span class="metric-label" style="font-weight:700"> Cancelled Service( <span id="TotalCancelEnquiryCount" style="font-weight:700"></span>) </span></div>
+                                    <div class="col-4 ValueDiv"><span id="fyCancelEnquiries" style="padding-left:10px; font-size:12px; font-weight:700; color: #ef4444;"></span></div>
+                                    <div class="col-4 ChangeDiv" id="fyCancelEnquiryConv" style="padding-left:10px; font-size:12px; font-weight:700"></div>
+                                </div>
+
+                                <!-- 3. Qualified -->
+                                <div class="comparison-row">
+                                    <div class="col-4 LabelDiv"><span class="metric-label" style="font-weight:700"> Compliant Service( <span id="TotalqualifiedCount" style="font-weight:700"></span> ) </span></div>
+                                    <div class="col-4 ValueDiv"><span id="fyQualified" style="padding-left:10px; font-size:12px; font-weight:700"></span></div>
+                                    <div class="col-4 ChangeDiv" id="fyQualifiedConv" style="padding-left:10px; font-size:12px; font-weight:700"></div>
+                                </div>
+
+                                <!-- 4. Cancelled Qualified (New) -->
+                                <div class="comparison-row">
+                                    <div class="col-4 LabelDiv"><span class="metric-label" style="font-weight:700"> Cancelled Compliant Service( <span id="TotalCancelQualifiedCount" style="font-weight:700"></span>) </span></div>
+                                    <div class="col-4 ValueDiv"><span id="fyCancelQualified" style="padding-left:10px; font-size:12px; font-weight:700; color: #ef4444;"></span></div>
+                                    <div class="col-4 ChangeDiv" id="fyCancelQualifiedConv" style="padding-left:10px; font-size:12px; font-weight:700"></div>
+                                </div>
+
+                                <!-- 5. Orders -->
+                                <div class="comparison-row">
+                                    <div class="col-4 LabelDiv"><span class="metric-label" style="font-weight:700">Pending Service( <span id="TotalOrdersCount" style="font-weight:700"></span> ) </span></div>
+                                    <div class="col-4 ValueDiv"><span id="fyOrders" style="padding-left:10px; font-size:12px; font-weight:700"></span></div>
+                                    <div class="col-4 ChangeDiv" id="fyOrderConv" style="padding-left:10px; font-size:12px; font-weight:700"></div>
+                                </div>
+
+                                <!-- 6. Cancelled Orders (New) -->
+                                <div class="comparison-row">
+                                    <div class="col-4 LabelDiv"><span class="metric-label" style="font-weight:700"> Cancelled Pending Service( <span id="TotalCancelOrdersCount" style="font-weight:700"></span>) </span></div>
+                                    <div class="col-4 ValueDiv"><span id="fyCancelOrders" style="padding-left:10px; font-size:12px; font-weight:700; color: #ef4444;"></span></div>
+                                    <div class="col-4 ChangeDiv" id="fyCancelOrderConv" style="padding-left:10px; font-size:12px; font-weight:700"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Client -->
+    <div class="collapsible-header" onclick="toggleSection('secClientConv', this, 'chart2')">
+        <h3 class="header-title"><span class="header-icon" style="background: var(--purple-bg); color: var(--purple-txt);"><i class="fas fa-users"></i></span> 4. Client</h3>
+        <i class="fas fa-chevron-down chevron-icon"></i>
+    </div>
+    <div id="secClientConv" class="collapsible-content">
+        <div class="dashboard-grid-layout">
+            <div class="chart-main-panel">
+                <div class="chart-panel-header">
+                    <h4 class="chart-panel-title">Total Clients Converted</h4>
+                    <div class="capsule-toggle">
+                        <button class="capsule-btn" onclick="updateChartFilter(this, 'chart2', 'all')">1Y</button>
+                        <button class="capsule-btn active" onclick="updateChartFilter(this, 'chart2', '6m')">6M</button>
+                    </div>
+                </div>
+                <div style="font-size: 11px; color: #64748b; font-weight: 600; margin-bottom: 10px;">Prospects</div>
+                <div class="chart-container" style="height: 320px;">
+                    <canvas id="chart2"></canvas>
+                </div>
+                <p style="font-size: 11px; color: #94a3b8; margin-top: 15px;">Note: Total Prospect Pool is fixed for this period.</p>
+            </div>
+            <div class="side-metrics-panel">
+                <div class="data-card">
+                    <div class="data-card-title" style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>Month-on-Month</span>
+                        <select class="month-selector" onchange="updateClientCard(this.value)" style="padding: 2px 8px; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; font-weight: 600;">
+                            @if (Model?.ProspectToClientMonthly != null)
+                            {
+                                foreach (var m in Model.ProspectToClientMonthly)
+                                {
+                                    <option value="@m.MonthLabel">@m.MonthLabel</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">New Clients Added</span>
+                        <span class="data-value val-green" id="clientNewAdded">0</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">New Prospects Added</span>
+                        <span class="data-value" id="clientProsAdded">0</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Remaining Prospects</span>
+                        <span class="data-value val-red" id="clientProsRem">0</span>
+                    </div>
+                </div>
+                @if (Model?.yearlydata != null)
+                {
+                    <div class="data-card">
+                        <div class="data-card-title">Current Snapshot (up to Date)</div>
+                        <div class="data-row">
+                            <span class="data-label">Total Prospect Pool (Fixed)</span>
+                            <span class="data-value">@Model.yearlydata.TotalProspectPool</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Total Clients Converted (Cumulative)</span>
+                            <span class="data-value val-green">@Model.yearlydata.TotalClientsConverted</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Remaining Prospects</span>
+                            <span class="data-value val-red">@Model.yearlydata.RemainingProspects</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Current Conversion Rate</span>
+                            <span class="data-value" style="color: #9333ea;">@Model.yearlydata.CurrentConversionRate.ToString("0.00")%</span>
+                        </div>
+                    </div>
+                }
+                <div class="success-banner">
+                    <i class="fas fa-chart-line success-icon"></i>
+                    <div class="success-text">
+                        <h5>You are on track!</h5>
+                        <p>Keep converting to close the gap.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. Payment Status -->
+    <div class="collapsible-header" onclick="toggleSection('secPay', this, 'paymentChart')">
+        <h3 class="header-title"><span class="header-icon" style="background: var(--blue-bg); color: var(--blue-txt);"><i class="fas fa-credit-card"></i></span> 5. Payment</h3>
+        <i class="fas fa-chevron-down chevron-icon"></i>
+    </div>
+    <div id="secPay" class="collapsible-content">
+        <div class="dashboard-grid-layout">
+            <div class="chart-main-panel">
+                <div class="chart-panel-header">
+                    <h4 class="chart-panel-title">Invoices vs Receipts</h4>
+                    <div class="capsule-toggle">
+                        <button class="capsule-btn" onclick="updateChartFilter(this, 'paymentChart', 'all')">1Y</button>
+                        <button class="capsule-btn active" onclick="updateChartFilter(this, 'paymentChart', '6m')">6M</button>
+                    </div>
+                </div>
+                <div style="font-size: 11px; color: #64748b; font-weight: 600; margin-bottom: 10px;">Amount (₹ Lakhs)</div>
+                <div class="chart-container" style="height: 320px;">
+                    <canvas id="paymentChart"></canvas>
+                </div>
+            </div>
+            <div class="side-metrics-panel">
+                @if (Model?.MonthlyPaymentSummary != null && Model.MonthlyPaymentSummary.Any())
+                {
+                    <div class="data-card">
+                        <div class="data-card-title" style="display: flex; justify-content: space-between; align-items: center;">
+                            <span>Month-on-Month</span>
+                            <select class="month-selector" onchange="updatePaymentCard(this.value)" style="padding: 2px 8px; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; font-weight: 600;">
+                                @foreach (var m in Model.MonthlyPaymentSummary)
+                                {
+                                    <option value="@m.MonthLabel">@m.MonthLabel</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Current Month Payment Received</span>
+                            <span class="data-value val-green" id="payCurrentVal">₹ 0</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Previous Month Payment Received</span>
+                            <span class="data-value" id="payPrevVal">₹ 0</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Variance</span>
+                            <span class="data-value" id="payVarAmt">₹ 0 (0.00%)</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Pending Payments</span>
+                            <span class="data-value val-red" id="payPending">₹ 0</span>
+                        </div>
+                    </div>
+                }
+                @if (Model?.yearlydata != null)
+                {
+                    <div class="data-card">
+                        <div class="data-card-title">Current FY Snapshot </div>
+                        <div class="data-row">
+                            <span class="data-label">Total Payment Received</span>
+                            <span class="data-value val-green">₹ @Model.yearlydata.TotalPaymentReceived.ToString("N0", new System.Globalization.CultureInfo("en-IN"))</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Total Pending Receivable</span>
+                            <span class="data-value val-red">₹ @Model.yearlydata.TotalPendingReceivable.ToString("N0", new System.Globalization.CultureInfo("en-IN"))</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Total Unpaid Clients</span>
+                            <span class="data-value">@Model.yearlydata.TotalUnpaidClients</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Total Unpaid Invoices</span>
+                            <span class="data-value">@Model.yearlydata.TotalUnpaidInvoices</span>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. Incentive Earned -->
+    <div class="collapsible-header" onclick="toggleSection('secIncentive', this, 'chart3')">
+        <h3 class="header-title"><span class="header-icon" style="background: var(--purple-bg); color: var(--purple-txt);"><i class="fas fa-gift"></i></span> 6. Incentive</h3>
+        <i class="fas fa-chevron-down chevron-icon"></i>
+    </div>
+    <div id="secIncentive" class="collapsible-content">
+        <div class="dashboard-grid-layout">
+            <div class="chart-main-panel">
+                <div class="chart-panel-header">
+                    <h4 class="chart-panel-title">Incentive Earned Over Time</h4>
+                    <div class="capsule-toggle">
+                        <button class="capsule-btn" onclick="updateChartFilter(this, 'chart3', 'all')">1Y</button>
+                        <button class="capsule-btn active" onclick="updateChartFilter(this, 'chart3', '6m')">6M</button>
+                    </div>
+                </div>
+                <div style="font-size: 11px; color: #64748b; font-weight: 600; margin-bottom: 10px;">Amount (₹)</div>
+                <div class="chart-container" style="height: 320px;">
+                    <canvas id="chart3"></canvas>
+                </div>
+                <p style="font-size: 11px; color: #94a3b8; margin-top: 15px;">Note: Incentive Earned includes all applicable bonuses and performance-based incentives.</p>
+            </div>
+            <div class="side-metrics-panel">
+                @if (Model?.MonthlyIncentiveSummary != null && Model.MonthlyIncentiveSummary.Any())
+                {
+                    <div class="data-card">
+                        <div class="data-card-title" style="display: flex; justify-content: space-between; align-items: center;">
+                            <span>Month-on-Month</span>
+                            <select class="premium-dropdown" onchange="updateIncentiveCard(this.value)">
+                                @foreach (var m in Model.MonthlyIncentiveSummary)
+                                {
+                                    <option value="@m.MonthLabel">@m.MonthLabel</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Current Month Incentive</span>
+                            <span class="data-value val-green" id="incCurrentVal">₹ 0</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Previous Month Incentive</span>
+                            <span class="data-value" id="incPrevVal">₹ 0</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Variance</span>
+                            <span class="data-value" id="incVarAmt">₹ 0 (0.00%)</span>
+                        </div>
+                    </div>
+                }
+                @if (Model?.yearlydata != null)
+                {
+                    <div class="data-card">
+                        <div class="data-card-title">Current FY Snapshot </div>
+                        <div class="data-row">
+                            <span class="data-label">Total Incentive Earned</span>
+                            <span class="data-value val-green">₹ @Model.yearlydata.TotalIncentiveEarned.ToString("N0", new System.Globalization.CultureInfo("en-IN"))</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Total Pending Service</span>
+                            <span class="data-value val-blue">@Model.yearlydata.TotalOrders</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Average Incentive / Month</span>
+                            <span class="data-value" style="color: #9333ea;">₹ @Model.yearlydata.AverageIncentivePerMonth.ToString("N0", new System.Globalization.CultureInfo("en-IN"))</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Best Month</span>
+                            <span class="data-value val-green">@Model.yearlydata.BestIncentiveMonth (₹ @Model.yearlydata.BestIncentiveMonthValue.ToString("N0", new System.Globalization.CultureInfo("en-IN")))</span>
+                        </div>
+                    </div>
+                    <div class="success-banner">
+                        <i class="fas fa-star success-icon"></i>
+                        <div class="success-text">
+                            <h5>Great Work!</h5>
+                            <p>You have earned ₹ @Model.yearlydata.TotalIncentiveEarned.ToString("N0", new System.Globalization.CultureInfo("en-IN")) during this period. Keep it up!</p>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- 7. Retention Split -->
+    <div class="collapsible-header" onclick="toggleSection('secRetention', this, 'chart4')">
+        <h3 class="header-title"><span class="header-icon" style="background: #e0f2fe; color: #0284c7;"><i class="fas fa-chart-pie"></i></span> 7. Retention Split</h3>
+        <i class="fas fa-chevron-down chevron-icon"></i>
+    </div>
+    <div id="secRetention" class="collapsible-content">
+        <div class="dashboard-grid-layout">
+            <div class="chart-main-panel" style="display: flex; flex-direction: column;">
+                <div class="chart-panel-header">
+                    <h4 class="chart-panel-title">Client Chart</h4>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-around; flex: 1; flex-wrap: wrap; gap: 20px;">
+                    <div class="chart-container" style="height: 250px; width: 250px; flex-shrink: 0;">
+                        <canvas id="chart4"></canvas>
+                    </div>
+                </div>
+                <p style="font-size: 11px; color: #94a3b8; margin-top: 20px; text-align: center;">Note: Repeat Clients are those who placed more than one order in any given month.</p>
+            </div>
+            <div class="side-metrics-panel">
+                <div class="data-card">
+                    <div class="data-card-title">Comparison (Previous vs Current)</div>
+                    <div class="data-row">
+                        <span class="data-label">New Clients</span>
+                        <span class="data-value val-green">@(Model != null ? Model.uniqueCustomers - Model.repeatCustomers : 0)</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Repeat Clients</span>
+                        <span class="data-value val-green">@(Model != null ? Model.repeatCustomers : 0)</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Total Clients</span>
+                        <span class="data-value val-green">@(Model != null ? Model.uniqueCustomers : 0)</span>
+                    </div>
+                </div>
+                <div class="data-card" style="text-align: center;">
+                    <div class="data-card-title" style="text-align: left;">Current Snapshot</div>
+                    <div style="display: flex; justify-content: space-around; padding: 15px 0; border-bottom: 1px dashed #e2e8f0;">
+                        <div>
+                            <h4 style="font-size: 12px; color: #0f172a; font-weight: 700; margin: 0 0 10px 0;">New Clients</h4>
+                            <strong style="font-size: 24px; color: #3b82f6;">@(Model != null ? Model.uniqueCustomers - Model.repeatCustomers : 0)</strong>
+                            <div style="font-size: 11px; color: #3b82f6; font-weight: 600;">@(Model != null ? 100 - Model.RepeatCustomerPercentage : 0)%</div>
+                        </div>
+                        <div style="width: 1px; background: #e2e8f0;"></div>
+                        <div>
+                            <h4 style="font-size: 12px; color: #0f172a; font-weight: 700; margin: 0 0 10px 0;">Repeat Clients</h4>
+                            <strong style="font-size: 24px; color: #10b981;">@(Model != null ? Model.repeatCustomers : 0)</strong>
+                            <div style="font-size: 11px; color: #10b981; font-weight: 600;">@(Model != null ? Model.RepeatCustomerPercentage : 0)%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (role == "SalesManager" || role == "SalesPerson")
+    {
+    <div class="collapsible-header" onclick="toggleSection('secAttendance', this, 'attendanceSplitChart')">
+        <h3 class="header-title"><span class="header-icon" style="background: var(--bg-body); color: var(--text-dark);"><i class="fas fa-calendar-alt"></i></span> 8. Attendance</h3>
+        <i class="fas fa-chevron-down chevron-icon"></i>
+    </div>
+    }
+    <div id="secAttendance" class="collapsible-content">
+        @if (Model?.AttendanceData != null)
+        {
+            int limitDay = DateTime.Now.Day;
+            <div class="attendance-summary" style="margin-top: 0; padding-top: 0; border-top: none; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px dashed var(--border-light);">
+                <div><p>@Model.AttendanceData.PresentDays</p><small>Present</small></div>
+                <div><p style="color:var(--red-txt);">@Model.AttendanceData.AbsentDays</p><small>Absent</small></div>
+                <div><p style="color:var(--text-xs);">@Model.AttendanceData.leavesDays</p><small>Leaves</small></div>
+                <div><p style="color:var(--blue-txt);">@Model.AttendanceData.WeekendDays</p><small>Weekend</small></div>
+                <div><p style="color:var(--green-txt);">@Model.AttendanceData.ScorePercentage %</p><small>Score</small></div>
+            </div>
+            <div style="width:100%;">
+                <div class="chart-container" style="height: 220px; position: relative;">
+                    <canvas id="attendanceSplitChart"></canvas>
+                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; pointer-events: none;">
+                        <h4 id="innerChartText" style="margin: 0; font-size: 1.5rem; color: var(--text-dark); font-weight: 800;">@Model.AttendanceData.PresentDays</h4>
+                        <span style="font-size: 0.7rem; color: var(--text-light); font-weight: 600; text-transform: uppercase;">Days Present</span>
+                    </div>
+                </div>
+                <p style="text-align: center; font-size: 0.8rem; color: var(--text-xs); margin-top: 15px;">
+                    <i class="fas fa-info-circle"></i> Attendance calculated till <strong> @limitDay</strong> of this month.
+                </p>
+            </div>
+            <script>
+                        window.filteredAttendance = {
+                            present: @Model.AttendanceData.PresentDays,
+                            absent: @Model.AttendanceData.AbsentDays,
+                            leaves: @Model.AttendanceData.leavesDays,
+                            weekend: @Model.AttendanceData.WeekendDays
+                                        };
+            </script>
+        }
+        else
+        {
+            <div class="empty-state-msg"><i class="fas fa-calendar-times"></i> Data is not available</div>
+        }
+    </div>
 </div>
+
+<div id="checked" class="fixed-bottom-actions">
+    <button type="button" class="action-btn" onclick="alert('General clicked')"><i class="fas fa-handshake"></i>General</button>
+    <button type="button" class="action-btn" onclick="alert('FollowUp clicked')"><i class="fas fa-headset"></i>FollowUp</button>
+    <button type="button" class="action-btn" onclick="alert('Payment clicked')"><i class="fas fa-money-bill-wave"></i>Payment</button>
+    <button type="button" class="action-btn" onclick="alert('Feedback clicked')"><i class="fas fa-star"></i>Feedback</button>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    // ==========================================
+    // 1. GLOBAL VARIABLES & DATA REPOSITORY
+    // ==========================================
+    const salesDataList = @salesJson;
+    const paymentDataList = @paymentJson;
+    const incentiveDataList = @incentiveJson;
+    const clientConvDataList = @clientConvJson;
+    const enquiryfunnelData = @funnelJson;
+    let activeMonth = enquiryfunnelData.length > 0 ? enquiryfunnelData[0] : null;
+
+    const rawLabels = @rawLabelsJson;
+    const rawSales = @rawSalesJson;
+    const rawSalesValue = @rawSalesValueJson;
+    const rawEnq = @rawEnqJson;
+    const rawEnqValue = @rawEnqValueJson;
+    const rawQual = @rawQualJson;
+    const rawQualValue = @rawQualValueJson;
+
+    // 🔥 Incentive Graph Mapping Logic
+    const incRawDbList = @incRawDbListJson;
+    const rawInc = rawLabels.map(month => {
+        let sum = 0;
+        if (month && incRawDbList) {
+            let mStr = month.substring(0, 3).toLowerCase();
+            let matches = incRawDbList.filter(x => x.MonthName && x.MonthName.substring(0, 3).toLowerCase() === mStr);
+            matches.forEach(m => sum += m.TotalAmount);
+        }
+        return sum;
+    });
+
+    const rawPayRec = @rawPayRecJson;
+    const rawPayPend = @rawPayPendJson;
+    const rawConversion = @clientConvJson;
+
+    // Helper for UI trends
+    function updateTrendUI(elementId, value, isPercentage = false, formatCombined = false, valPct = 0) {
+        const el = document.getElementById(elementId);
+        if (!el) return;
+        const isPositive = value >= 0;
+        const colorClass = isPositive ? '#10b981' : '#ef4444';
+        const iconClass = isPositive ? 'fa-arrow-up' : 'fa-arrow-down';
+        const sign = isPositive ? '+' : '';
+
+        let displayVal = Math.abs(value).toLocaleString('en-IN');
+
+        if (formatCombined) {
+            let pctDisplay = Math.abs(valPct).toFixed(2);
+            el.innerHTML = `<span style="color: ${colorClass}; font-weight: 700;">${sign} ₹ ${displayVal} (${sign}${pctDisplay}%) <i class="fas ${iconClass}"></i></span>`;
+        } else if (isPercentage) {
+            el.innerHTML = `<span style="color: ${colorClass}; font-weight: 700;">${sign}${Math.abs(value).toFixed(2)}% <i class="fas ${iconClass}"></i></span>`;
+        } else {
+            el.innerHTML = `<span style="color: ${colorClass}; font-weight: 700;">${sign} ₹ ${displayVal} <i class="fas ${iconClass}"></i></span>`;
+        }
+    }
+
+    window.updateSalesCard = function(month) {
+        const data = salesDataList.find(x => x.MonthLabel === month);
+        if (!data) return;
+        document.getElementById('salesCurrentVal').innerText = formatCurrency(data.TotalOrdersValue);
+        document.getElementById('salesPrevVal').innerText = formatCurrency(data.PreviousMonthOrderValue);
+        updateTrendUI('salesVarAmt', data.Vairance, false);
+        updateTrendUI('salesVarPct', data.ChangePercentage, true);
+    };
+
+    window.updateClientCard = function(month) {
+        const data = clientConvDataList.find(x => x.MonthLabel === month);
+        if (!data) return;
+        document.getElementById('clientNewAdded').innerHTML = `${data.Clientsthismonth} <span style="color:#10b981; font-size:12px;"><i class="fas fa-arrow-up"></i></span>`;
+        document.getElementById('clientProsAdded').innerText = data.NewProspectsAdded;
+        document.getElementById('clientProsRem').innerText = data.RemainingProspects;
+    };
+
+    window.updatePaymentCard = function(month) {
+        const data = paymentDataList.find(x => x.MonthLabel === month);
+        if (!data) return;
+        document.getElementById('payCurrentVal').innerText = formatCurrency(data.CurrentMonthPayment);
+        document.getElementById('payPrevVal').innerText = formatCurrency(data.PreviousMonthPayment);
+        updateTrendUI('payVarAmt', data.VarianceAmount, false, true, data.VariancePercentage);
+        document.getElementById('payPending').innerText = formatCurrency(data.PendingPayments);
+    };
+
+    window.updateIncentiveCard = function(month) {
+        const data = incentiveDataList.find(x => x.MonthLabel === month);
+        if (!data) return;
+        document.getElementById('incCurrentVal').innerText = formatCurrency(data.CurrentMonthIncentive);
+        document.getElementById('incPrevVal').innerText = formatCurrency(data.PreviousMonthIncentive);
+        updateTrendUI('incVarAmt', data.VarianceAmount, false, true, data.VariancePercentage);
+    };
+
+    document.addEventListener("DOMContentLoaded", function() {
+        if (salesDataList.length > 0) updateSalesCard(salesDataList[0].MonthLabel);
+        if (clientConvDataList.length > 0) updateClientCard(clientConvDataList[0].MonthLabel);
+        if (paymentDataList.length > 0) updatePaymentCard(paymentDataList[0].MonthLabel);
+        if (incentiveDataList.length > 0) updateIncentiveCard(incentiveDataList[0].MonthLabel);
+    });
+
+    const fyMonths = ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'];
+    const normalizedConversion = fyMonths.map(month => {
+        const found = rawConversion.find(x => x.MonthLabel.startsWith(month));
+        return found || { MonthLabel: month, TotalProspects: 0, RemainingProspects: 0, Clientsthismonth: 0, TotalClients: 0, ConversionRate: 0 };
+    });
+
+    const totalProspects = normalizedConversion.map(x => x.TotalProspects);
+    const remainingProspects = normalizedConversion.map(x => x.RemainingProspects);
+    const clientsThisMonth = normalizedConversion.map(x => x.Clientsthismonth);
+    const totalClients = normalizedConversion.map(x => x.TotalClients);
+    const conversionRate = normalizedConversion.map(x => x.ConversionRate);
+
+    const allLabels = rawLabels.length > 0 ? rawLabels : ['M1', 'M2', 'M3', 'M4', 'M5', 'M6'];
+    const currentMonth = new Date().getMonth() + 1;
+    const currentIndex = (currentMonth - 4 + 12) % 12;
+
+    const getLast6Months = (arr, cIndex) => {
+        if (!arr || arr.length === 0) return [];
+        const result = [];
+        for (let i = 5; i >= 0; i--) {
+            const index = (cIndex - i + 12) % 12;
+            result.push(arr[index] || 0);
+        }
+        return result;
+    };
+
+    const chartDataRepo = {
+        labels: { all: allLabels, '6m': getLast6Months(allLabels, currentIndex) },
+        conversionLabels: { all: normalizedConversion.map(x => x.MonthLabel), '6m': getLast6Months(normalizedConversion.map(x => x.MonthLabel), currentIndex) },
+        monthlySalesGridChart: {
+            count: { all: rawSales, '6m': getLast6Months(rawSales, currentIndex) },
+            value: { all: rawSalesValue, '6m': getLast6Months(rawSalesValue, currentIndex) }
+        },
+        chart1: {
+            enquiries: { count: { all: rawEnq, '6m': getLast6Months(rawEnq, currentIndex) }, value: { all: rawEnqValue, '6m': getLast6Months(rawEnqValue, currentIndex) } },
+            qualified: { count: { all: rawQual, '6m': getLast6Months(rawQual, currentIndex) }, value: { all: rawQualValue, '6m': getLast6Months(rawQualValue, currentIndex) } },
+            Orders: { count: { all: rawSales, '6m': getLast6Months(rawSales, currentIndex) }, value: { all: rawSalesValue, '6m': getLast6Months(rawSalesValue, currentIndex) } }
+        },
+        chart2: {
+            totalClients: { all: totalClients, '6m': getLast6Months(totalClients, currentIndex) },
+            remainingProspects: { all: remainingProspects, '6m': getLast6Months(remainingProspects, currentIndex) },
+            conversionRate: { all: conversionRate, '6m': getLast6Months(conversionRate, currentIndex) }
+        },
+        chart3: { all: rawInc, '6m': getLast6Months(rawInc, currentIndex) },
+        paymentChart: {
+            received: { all: rawPayRec, '6m': getLast6Months(rawPayRec, currentIndex) },
+            pending: { all: rawPayPend, '6m': getLast6Months(rawPayPend, currentIndex) }
+        },
+        chart4: {
+            repeat: @(Model != null ? Model.repeatCustomers : 0),
+            newCust: @(Model != null ? Model.uniqueCustomers - Model.repeatCustomers : 0),
+            repeatPercent: @(Model != null ? Model.RepeatCustomerPercentage : 0)
+            }
+    };
+
+    let myCharts = {};
+    let funnelTanks = [];
+    window.activeChartFilters = { chart2: '6m' };
+
+    function renderDashboard() {
+        if (!activeMonth) return;
+        renderMonthComparison();
+        renderFYBlock();
+        renderMiniKPIs();
+    }
+
+    function formatCurrency(value) { return '₹ ' + Number(value || 0).toLocaleString('en-IN'); }
+    function setCurrency(id, val) { const el = document.getElementById(id); if (el) el.innerText = formatCurrency(val); }
+
+    function setVariance(id, val) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (val == null) { el.innerHTML = '--'; return; }
+        const positive = val >= 0;
+        el.innerHTML = `<div style="color:${positive ? '#10b981' : '#ef4444'}; font-weight:700; font-size:13px;">
+                <i class="fas ${positive ? 'fa-arrow-up' : 'fa-arrow-down'}"></i> ${Math.abs(val)}%
+            </div>`;
+    }
+
+    function renderMonthComparison() {
+        const d = activeMonth;
+        document.getElementById('monthName').innerText = d.MonthLabel;
+        document.getElementById('EnquiryCount').innerText = d.EnquiriesCount;
+        document.getElementById('qualifiedCount').innerText = d.QualifiedCount;
+        document.getElementById('OrdersCount').innerText = d.OrdersCount;
+        setCurrency('enqValue', d.EnquiriesValue); setVariance('enqVariance', d.EnquiryVariancePercent);
+        setCurrency('qualifiedValue', d.QualifiedValue); setVariance('qualifiedVariance', d.QualifiedVariancePercent);
+        setCurrency('ordersValue', d.OrdersValue); setVariance('ordersVariance', d.OrdersVariancePercent);
+    }
+
+   function updatePipeline(percent) {
+        const fillBar = document.getElementById('pipelineHealthFill');
+        const percentText = document.getElementById('pipelineHealthText');
+
+        if(!fillBar || !percentText) return;
+
+        let safeValue = Math.max(0, Math.min(100, percent));
+
+        percentText.innerText = safeValue.toFixed(1) + '%';
+        fillBar.style.width = safeValue + '%';
+
+        if (safeValue < 30) {
+            fillBar.style.backgroundColor = '#ef4444';
+            fillBar.style.boxShadow = '0 0 10px rgba(239, 68, 68, 0.5)';
+        } else if (safeValue >= 40 && safeValue < 75) {
+            fillBar.style.backgroundColor = '#f59e0b';
+            fillBar.style.boxShadow = '0 0 10px rgba(245, 158, 11, 0.5)';
+        } else {
+            fillBar.style.backgroundColor = '#10b981';
+            fillBar.style.boxShadow = '0 0 10px rgba(16, 185, 129, 0.5)';
+        }
+    }
+
+    function renderMiniKPIs() {
+    if (!activeMonth) return;
+    const health = 100 - (activeMonth.UnqualifiedEnquiryPercent || 0);
+    updatePipeline(health);
+    }
+
+    function renderFYBlock() {
+        const d = activeMonth;
+        
+        // --- Existing Actual Data ---
+        document.getElementById('TotalEnquiryCount').innerText = d.TotalEnquiriesCount;
+        document.getElementById('TotalqualifiedCount').innerText = d.TotalQualifiedCount;
+        document.getElementById('TotalOrdersCount').innerText = d.TotalOrdersCount;
+        setCurrency('fyEnquiries', d.TotalEnquiriesValue);
+        setCurrency('fyQualified', d.TotalQualifiedValue);
+        setCurrency('fyOrders', d.TotalOrdersValue);
+        document.getElementById('fyEnquiryConv').innerHTML = `<span style="color:#f59e0b;">${100}%</span>`;
+        document.getElementById('fyQualifiedConv').innerHTML = `<span style="color:#10b981;">${d.enquirytoQualified}%</span>`;
+        document.getElementById('fyOrderConv').innerHTML = `<span style="color:#2563eb;">${d.enquirytoOrder}%</span>`;
+
+        // ==========================================
+        // 🔥 ACTUAL DATA FOR CANCELLED FIELDS
+        // ==========================================
+
+        // Cancelled Enquiries
+        document.getElementById('TotalCancelEnquiryCount').innerText = '@(Model != null ? Model.CancelledEnquiriesCount : 0)';
+        setCurrency('fyCancelEnquiries', @(Model != null ? Model.CancelledEnquiriesValue : 0));
+        const cancelEnqPct = @(Model != null && Model.TotalEnquiriesCount > 0 ? Math.Round((Model.CancelledEnquiriesCount * 100.0) / Model.TotalEnquiriesCount, 1) : 0);
+        document.getElementById('fyCancelEnquiryConv').innerHTML = `<span style="color:#ef4444;">${cancelEnqPct}%</span>`;
+
+        // Cancelled Qualified
+        document.getElementById('TotalCancelQualifiedCount').innerText = '@(Model != null ? Model.CancelledQualifiedCount : 0)';
+        setCurrency('fyCancelQualified', @(Model != null ? Model.CancelledQualifiedValue : 0));
+        const cancelQualPct = @(Model != null && Model.TotalQualifiedCount > 0 ? Math.Round((Model.CancelledQualifiedCount * 100.0) / Model.TotalQualifiedCount, 1) : 0);
+        document.getElementById('fyCancelQualifiedConv').innerHTML = `<span style="color:#ef4444;">${cancelQualPct}%</span>`;
+
+        // Cancelled Orders
+        document.getElementById('TotalCancelOrdersCount').innerText = '@(Model != null ? Model.CancelledOrdersCount : 0)';
+        setCurrency('fyCancelOrders', @(Model != null ? Model.CancelledOrdersValue : 0));
+        const cancelOrdPct = @(Model != null && Model.TotalOrders > 0 ? Math.Round((Model.CancelledOrdersCount * 100.0) / Model.TotalOrders, 1) : 0);
+        document.getElementById('fyCancelOrderConv').innerHTML = `<span style="color:#ef4444;">${cancelOrdPct}%</span>`;
+    }
+
+    const customTooltip = {
+        backgroundColor: '#ffffff', titleColor: '#64748b', bodyColor: '#1e293b',
+        padding: 12, cornerRadius: 8, borderColor: '#e2e8f0', borderWidth: 1,
+        callbacks: {
+            label: function(context) {
+                const dataset = context.dataset; const index = context.dataIndex;
+                if (context.chart.canvas.id === 'chart2') {
+                    if (context.datasetIndex !== 0) return null;
+                    const activeFilter = window.activeChartFilters?.chart2 || '6m';
+                    const clients = Number(chartDataRepo.chart2.totalClients[activeFilter][index] ?? 0);
+                    const remaining = Number(chartDataRepo.chart2.remainingProspects[activeFilter][index] ?? 0);
+                    const conversion = Number(chartDataRepo.chart2.conversionRate[activeFilter][index] ?? 0);
+                    return [`Clients Converted: ${clients}`, `Remaining Prospects: ${remaining}`, `Conversion Rate: ${conversion}%`, `Total Pool: ${clients + remaining}`];
+                }
+                if (dataset.extraData && ['Pending Service Value (₹)', 'Sales', 'Pending Service', 'Compliant Service', 'Total Service'].includes(dataset.label)) {
+                    return `${dataset.label}: ${dataset.extraData[index] || 0} | ₹ ${(context.raw || 0).toLocaleString('en-IN')}`;
+                }
+                return `${context.label}: ${context.raw}`;
+            }
+        }
+    };
+
+    const barValueLabelsPlugin = {
+        id: 'barValueLabelsPlugin',
+        afterDatasetsDraw(chart) {
+            if (chart.canvas.id !== 'monthlySalesGridChart') return;
+            const { ctx, data } = chart;
+            ctx.save(); ctx.font = 'bold 11px Poppins'; ctx.fillStyle = '#0f172a'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+            chart.getDatasetMeta(0).data.forEach((bar, index) => {
+                const value = data.datasets[0].data[index];
+                if (value) ctx.fillText('₹ ' + Number(value).toLocaleString('en-IN'), bar.x, bar.y - 6);
+            });
+            ctx.restore();
+        }
+    };
+    Chart.register(barValueLabelsPlugin);
+
+    function initChart(chartId) {
+        const canvas = document.getElementById(chartId); if (!canvas) return;
+        const ctx = canvas.getContext('2d'); let filter = '6m';
+        const yAxisGrid = { color: '#f1f5f9', borderDash: [5, 5], drawBorder: false };
+        const yAxisTicks = { color: '#64748b', font: { size: 11, weight: '500' }, callback: function(v) { if (v >= 100000) return (v / 100000) + 'L'; if (v >= 1000) return (v / 1000) + 'k'; return v; } };
+
+        if (chartId === 'monthlySalesGridChart') {
+            myCharts[chartId] = new Chart(ctx, {
+                type: 'bar',
+                data: { labels: chartDataRepo.labels[filter], datasets: [{ label: 'Pending Service Value (₹)', data: chartDataRepo.monthlySalesGridChart.value[filter], backgroundColor: '#10b981', borderRadius: 4, maxBarThickness: 150, barPercentage: 0.6, categoryPercentage: 0.8, extraData: chartDataRepo.monthlySalesGridChart.count[filter] }] },
+                options: { responsive: true, maintainAspectRatio: false, layout: { padding: { top: 20 } }, plugins: { legend: { display: false }, tooltip: customTooltip }, scales: { x: { grid: { display: false } }, y: { beginAtZero: true, border: { display: false }, grid: yAxisGrid, ticks: yAxisTicks } } }
+            });
+        }
+        else if (chartId === 'chart1') {
+            myCharts[chartId] = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: chartDataRepo.labels[filter],
+                    datasets: [
+                        { label: 'Total Service', data: chartDataRepo.chart1.enquiries.value[filter], borderColor: '#3b82f6', fill: false, tension: 0.4, extraData: chartDataRepo.chart1.enquiries.count[filter] },
+                        { label: 'Compliant Service', data: chartDataRepo.chart1.qualified.value[filter], borderColor: '#f59e0b', backgroundColor: 'rgba(249, 115, 22, 0.1)', fill: true, tension: 0.4, extraData: chartDataRepo.chart1.qualified.count[filter] },
+                        { label: 'Pending Service', data: chartDataRepo.chart1.Orders.value[filter], borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', fill: true, tension: 0.4, extraData: chartDataRepo.chart1.Orders.count[filter] }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { tooltip: customTooltip }, scales: { x: { grid: { display: false } }, y: { beginAtZero: true, grid: yAxisGrid, ticks: yAxisTicks } } }
+            });
+        }
+        else if (chartId === 'chart2') {
+            myCharts[chartId] = new Chart(ctx, {
+                data: {
+                    labels: chartDataRepo.conversionLabels[filter],
+                    datasets: [
+                        { type: 'bar', label: 'Clients Converted', data: chartDataRepo.chart2.totalClients[filter], backgroundColor: '#10b981', stack: 'pipeline' },
+                        { type: 'bar', label: 'Remaining Prospects', data: chartDataRepo.chart2.remainingProspects[filter], backgroundColor: '#e2e8f0', stack: 'pipeline' },
+                        { type: 'line', label: 'Conversion Rate (%)', data: chartDataRepo.chart2.conversionRate[filter], borderColor: '#9333ea', backgroundColor: '#9333ea', tension: 0.4 }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, plugins: { tooltip: customTooltip, legend: { display: false } }, scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, beginAtZero: true, border: { display: false }, grid: { color: '#f1f5f9', borderDash: [5, 5], drawBorder: false }, ticks: { color: '#64748b', font: { size: 11, weight: '500' } } } } }
+            });
+        }
+        else if (chartId === 'chart3') {
+            myCharts[chartId] = new Chart(ctx, {
+                type: 'bar',
+                data: { labels: chartDataRepo.labels[filter], datasets: [{ label: 'Incentives', data: chartDataRepo.chart3[filter], backgroundColor: '#3b82f6', borderRadius: 4 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { tooltip: customTooltip }, scales: { x: { grid: { display: false } }, y: { beginAtZero: true, grid: yAxisGrid, ticks: yAxisTicks } } }
+            });
+        }
+        else if (chartId === 'paymentChart') {
+            myCharts[chartId] = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: chartDataRepo.labels[filter],
+                    datasets: [
+                        { label: 'Received', data: chartDataRepo.paymentChart.received[filter], backgroundColor: '#10b981', borderRadius: { topLeft: 6, topRight: 6 } },
+                        { label: 'Pending', data: chartDataRepo.paymentChart.pending[filter], backgroundColor: '#ef4444', borderRadius: { bottomLeft: 6, bottomRight: 6 } }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { tooltip: customTooltip }, scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, beginAtZero: true, grid: yAxisGrid, ticks: yAxisTicks } } }
+            });
+        }
+        else if (chartId === 'chart4') {
+            myCharts[chartId] = new Chart(ctx, {
+                type: 'pie',
+                data: { labels: ['Repeat Clients', 'New Clients'], datasets: [{ data: [chartDataRepo.chart4.repeat, chartDataRepo.chart4.newCust], extraData: { repeatPercent: chartDataRepo.chart4.repeatPercent }, backgroundColor: ['#10b981', '#3b82f6'], borderWidth: 2, borderColor: '#ffffff', hoverOffset: 4 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: customTooltip } }
+            });
+        }
+        else if (chartId === 'attendanceSplitChart') {
+            let pDays = window.filteredAttendance ? window.filteredAttendance.present : 0;
+            let aDays = window.filteredAttendance ? window.filteredAttendance.absent : 0;
+            let lDays = window.filteredAttendance ? window.filteredAttendance.leaves : 0;
+            let wDays = window.filteredAttendance ? window.filteredAttendance.weekend : 0;
+            myCharts[chartId] = new Chart(ctx, {
+                type: 'doughnut',
+                data: { labels: ['Present', 'Absent', 'Leaves', 'Weekend'], datasets: [{ label: 'Attendance', data: [pDays, aDays, lDays, wDays], backgroundColor: ['#10b981', '#ef4444', '#f59e0b', '#bae6fd'], borderWidth: 0, hoverOffset: 4 }] },
+                options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 15, font: { size: 11 } } }, tooltip: customTooltip } }
+            });
+        }
+    }
+
+    window.updateChartFilter = function(btnElement, chartId, filterValue) {
+        var parent = btnElement.parentElement;
+        parent.querySelectorAll('.capsule-btn').forEach(b => b.classList.remove('active'));
+        btnElement.classList.add('active');
+        window.activeChartFilters[chartId] = filterValue;
+        var chart = myCharts[chartId];
+        if (!chart) return;
+
+        if (chartId === 'monthlySalesGridChart') {
+            chart.data.labels = chartDataRepo.labels[filterValue];
+            chart.data.datasets[0].data = chartDataRepo.monthlySalesGridChart.value[filterValue];
+            chart.data.datasets[0].extraData = chartDataRepo.monthlySalesGridChart.count[filterValue];
+        }
+        else if (chartId === 'chart1') {
+            chart.data.labels = chartDataRepo.labels[filterValue];
+            chart.data.datasets[0].data = chartDataRepo.chart1.enquiries.value[filterValue]; chart.data.datasets[0].extraData = chartDataRepo.chart1.enquiries.count[filterValue];
+            chart.data.datasets[1].data = chartDataRepo.chart1.qualified.value[filterValue]; chart.data.datasets[1].extraData = chartDataRepo.chart1.qualified.count[filterValue];
+            chart.data.datasets[2].data = chartDataRepo.chart1.Orders.value[filterValue]; chart.data.datasets[2].extraData = chartDataRepo.chart1.Orders.count[filterValue];
+        }
+        else if (chartId === 'chart2') {
+            chart.data.labels = chartDataRepo.conversionLabels[filterValue];
+            chart.data.datasets[0].data = chartDataRepo.chart2.totalClients[filterValue];
+            chart.data.datasets[1].data = chartDataRepo.chart2.remainingProspects[filterValue];
+            chart.data.datasets[2].data = chartDataRepo.chart2.conversionRate[filterValue];
+        }
+        else if (chartId === 'paymentChart') {
+            chart.data.labels = chartDataRepo.labels[filterValue];
+            chart.data.datasets[0].data = chartDataRepo.paymentChart.received[filterValue];
+            chart.data.datasets[1].data = chartDataRepo.paymentChart.pending[filterValue];
+        }
+        else if (chartId === 'chart3') {
+            chart.data.labels = chartDataRepo.labels[filterValue];
+            chart.data.datasets[0].data = chartDataRepo.chart3[filterValue];
+        }
+        chart.update();
+    }
+
+    window.toggleSection = function(contentId, headerElement, chartId, isFunnel = false) {
+        var content = document.getElementById(contentId);
+        var isActive = content.classList.contains('active');
+
+        document.querySelectorAll('.collapsible-content').forEach(function(el) { el.classList.remove('active'); });
+        document.querySelectorAll('.collapsible-header').forEach(function(el) {
+            el.classList.remove('active');
+            el.querySelector('.chevron-icon').style.transform = 'rotate(0deg)';
+        });
+
+        if (!isActive) {
+            content.classList.add('active');
+            headerElement.classList.add('active');
+            headerElement.querySelector('.chevron-icon').style.transform = 'rotate(180deg)';
+
+            setTimeout(() => {
+                const navBarHeight = 100;
+                const y = headerElement.getBoundingClientRect().top + window.scrollY - navBarHeight;
+                window.scrollTo({ top: y, behavior: 'smooth' });
+            }, 150);
+
+            if (chartId) {
+                setTimeout(() => {
+                    if (!myCharts[chartId]) initChart(chartId);
+                    else { myCharts[chartId].resize(); myCharts[chartId].update(); }
+                }, 200);
+            }
+            if (isFunnel && funnelTanks.length > 0) {
+                setTimeout(() => { funnelTanks.forEach(tank => tank.resize()); }, 300);
+            }
+        }
+    }
+
+    class WaterTank {
+        constructor(canvasId, fillPercent, colorConfig, isHorizontal = false) {
+            this.canvas = document.getElementById(canvasId); if (!this.canvas) return;
+            this.ctx = this.canvas.getContext('2d'); this.fillPercent = fillPercent; this.color = colorConfig; this.isHorizontal = isHorizontal;
+            this.totalPoints = 30; this.points = []; this.baseHeight = 0; this.currentHeight = 0; this.tilt = 0; this.phase = Math.random() * Math.PI * 2; this.waveSpeed = 0.05; this.waveFrequency = 0.015; this.waveAmplitude = 3;
+            window.addEventListener('resize', () => this.resize()); this.resize(); this.animate();
+        }
+        resize() {
+            this.canvas.width = this.canvas.parentElement.offsetWidth; this.canvas.height = this.canvas.parentElement.offsetHeight;
+            this.baseHeight = this.canvas.height * (1 - this.fillPercent / 100);
+            if (this.points.length === 0 || this.currentHeight === 0) {
+                this.currentHeight = this.canvas.height; this.points = [];
+                for (let i = 0; i <= this.totalPoints; i++) this.points.push({ x: (this.canvas.width / this.totalPoints) * i, y: this.baseHeight, vy: 0 });
+            } else { for (let i = 0; i <= this.totalPoints; i++) this.points[i].x = (this.canvas.width / this.totalPoints) * i; }
+        }
+        splash(force, clickX) {
+            let closestIndex = Math.floor((clickX / this.canvas.width) * this.totalPoints);
+            for (let i = 0; i <= this.totalPoints; i++) { let dist = Math.abs(i - closestIndex); if (dist < 6) this.points[i].vy += force * (1 - (dist * 0.15)); }
+        }
+        update() {
+            this.currentHeight += (this.baseHeight - this.currentHeight) * 0.05; this.phase += this.waveSpeed; const spring = 0.03, damping = 0.95, spread = 0.15;
+            for (let i = 0; i <= this.totalPoints; i++) { let p = this.points[i]; let targetY = this.currentHeight + ((i - this.totalPoints / 2) * this.tilt) + Math.sin(p.x * this.waveFrequency + this.phase) * this.waveAmplitude; p.vy += (targetY - p.y) * spring; p.y += p.vy; p.vy *= damping; }
+            let leftDeltas = new Array(this.totalPoints + 1).fill(0), rightDeltas = new Array(this.totalPoints + 1).fill(0);
+            for (let j = 0; j < 3; j++) {
+                for (let i = 0; i <= this.totalPoints; i++) { if (i > 0) { leftDeltas[i] = spread * (this.points[i].y - this.points[i - 1].y); this.points[i - 1].vy += leftDeltas[i] * 0.05; } if (i < this.totalPoints) { rightDeltas[i] = spread * (this.points[i].y - this.points[i + 1].y); this.points[i + 1].vy += rightDeltas[i] * 0.05; } }
+                for (let i = 0; i <= this.totalPoints; i++) { if (i > 0) this.points[i - 1].y += leftDeltas[i]; if (i < this.totalPoints) this.points[i + 1].y += rightDeltas[i]; }
+            }
+        }
+        drawPath(phaseShift, alpha) {
+            this.ctx.globalAlpha = alpha; this.ctx.beginPath(); this.ctx.moveTo(0, this.canvas.height); this.ctx.lineTo(this.points[0].x, this.points[0].y + Math.sin(this.points[0].x * this.waveFrequency + this.phase + phaseShift) * (phaseShift ? 4 : 0));
+            for (let i = 1; i <= this.totalPoints; i++) { let p0 = this.points[i - 1], p1 = this.points[i]; let y0 = p0.y + Math.sin(p0.x * this.waveFrequency + this.phase + phaseShift) * (phaseShift ? 4 : 0); let y1 = p1.y + Math.sin(p1.x * this.waveFrequency + this.phase + phaseShift) * (phaseShift ? 4 : 0); this.ctx.quadraticCurveTo(p0.x, y0, (p0.x + p1.x) / 2, (y0 + y1) / 2); }
+            this.ctx.lineTo(this.canvas.width, this.canvas.height); this.ctx.closePath(); this.ctx.fill(); this.ctx.globalAlpha = 1.0;
+        }
+        draw() {
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); let gradient;
+            if (this.isHorizontal) { gradient = this.ctx.createLinearGradient(0, 0, this.canvas.width, 0); } else { gradient = this.ctx.createLinearGradient(0, 0, 0, this.canvas.height); }
+            gradient.addColorStop(0, this.color.start); gradient.addColorStop(1, this.color.end); this.ctx.fillStyle = gradient;
+            this.drawPath(Math.PI, 0.4); this.drawPath(0, 1.0);
+        }
+        animate() { this.update(); this.draw(); requestAnimationFrame(() => this.animate()); }
+    }
+
+    function getTankColor(percent) {
+        if (percent >= 80) return { start: 'rgb(16 185 129)', end: 'rgb(16 185 129)' };
+        if (percent >= 60) return { start: 'rgba(163, 230, 53, 0.6)', end: 'rgba(101, 163, 13, 0.4)' };
+        if (percent >= 40) return { start: 'rgba(250, 204, 21, 0.6)', end: 'rgba(202, 138, 4, 0.4)' };
+        if (percent >= 20) return { start: 'rgba(249, 115, 22, 0.6)', end: 'rgba(194, 65, 12, 0.4)' };
+        return { start: 'rgba(239, 68, 68, 0.6)', end: 'rgba(185, 28, 28, 0.4)' };
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        Chart.defaults.font.family = "'Poppins', sans-serif";
+        renderDashboard();
+
+        const monthSel = document.getElementById('monthSelector');
+        if (monthSel) {
+            monthSel.addEventListener('change', function() {
+                activeMonth = enquiryfunnelData.find(x => x.MonthLabel === this.value);
+                renderDashboard();
+            });
+        }
+
+        if (salesDataList.length > 0) updateSalesCard(salesDataList[0].MonthLabel);
+        if (clientConvDataList.length > 0) updateClientCard(clientConvDataList[0].MonthLabel);
+        if (paymentDataList.length > 0) updatePaymentCard(paymentDataList[0].MonthLabel);
+        if (incentiveDataList.length > 0) updateIncentiveCard(incentiveDataList[0].MonthLabel);
+
+        const funnelColors = {
+            Visits: { start: 'rgba(56, 189, 248, 0.8)', end: 'rgba(2, 132, 199, 0.8)' },
+            Enquiries: { start: 'rgba(167, 139, 250, 0.8)', end: 'rgba(109, 40, 217, 0.8)' },
+            Qualified: { start: 'rgba(251, 146, 60, 0.8)', end: 'rgba(234, 88, 12, 0.8)' },
+            Orders: { start: 'rgba(52, 211, 153, 0.8)', end: 'rgba(5, 150, 105, 0.8)' },
+            Repeat: { start: 'rgba(251, 113, 133, 0.8)', end: 'rgba(225, 29, 72, 0.8)' }
+        };
+        setTimeout(() => {
+             if (document.getElementById('canvasVisits')) funnelTanks.push(new WaterTank('canvasVisits',@(Model != null && Model.FunnelVisits > 0 ? 100 : 0), funnelColors.Visits));
+             if (document.getElementById('canvasEnquiries')) funnelTanks.push(new WaterTank('canvasEnquiries', @(Model != null && Model.FunnelEnquiries > 0 ? 100 : 0), funnelColors.Enquiries));
+            if (document.getElementById('canvasQualified')) funnelTanks.push(new WaterTank('canvasQualified', @(Model != null && Model.FunnelEnquiries > 0 ? (int)((Model.FunnelQualified * 100.0) / Model.FunnelEnquiries) : 0), funnelColors.Qualified));
+            if (document.getElementById('canvasOrders')) funnelTanks.push(new WaterTank('canvasOrders', @(Model != null && Model.FunnelQualified > 0 ? (int)((Model.FunnelOrders * 100.0) / Model.FunnelQualified) : 0), funnelColors.Orders));
+            if (document.getElementById('canvasRepeat')) funnelTanks.push(new WaterTank('canvasRepeat', @(Model != null && Model.FunnelOrders > 0 ? (int)((Model.FunnelRepeat * 100.0) / Model.FunnelOrders) : 0), funnelColors.Repeat));
+        }, 100);
+    });
+
+    let vIsMenuOpen = false;
+
+    $(document).ready(function() {
+        $(document).click(function(e) {
+            if (!$(e.target).closest('#v-clientSelectWrapper').length) { $('#v-clientDropdown').hide(); }
+            if (!$(e.target).closest('.v-floating-action-menu').length && vIsMenuOpen) { vToggleFabMenu(); }
+        });
+    });
+
+    function vToggleFabMenu() {
+        vIsMenuOpen = !vIsMenuOpen;
+        if (vIsMenuOpen) {
+            $('#v-fabMenu').addClass('v-open');
+            $('#v-mainFabBtn').html('<i class="fas fa-times"></i>');
+        } else {
+            $('#v-fabMenu').removeClass('v-open');
+            $('#v-mainFabBtn').html('<i class="fas fa-layer-group"></i>');
+        }
+    }
+</script>

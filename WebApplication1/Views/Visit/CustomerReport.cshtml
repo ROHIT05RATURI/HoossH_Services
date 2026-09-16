@@ -611,6 +611,7 @@
         color: #3f6791;
         cursor: pointer;
         transition: all 0.2s;
+        text-decoration: none; /* A tag ke liye underline hatane ko */
     }
 
         .action-btn i {
@@ -878,8 +879,7 @@
                     <i class="fas fa-map-marker-alt" style="color: #ef4444; font-size: 1.5rem; vertical-align: middle;"></i> @(Model?.customerDetails?.CustomerAddress ?? "Address not provided") <br>
                     <span style="display:inline-block; margin-top:5px; font-weight: 500;"><i class="fas fa-warehouse"></i> Industry: @indVal</span><br />
                     <span style="display:inline-block; margin-top:5px; font-weight: 500;"><i class="fas fa-file-invoice"></i> GST: @(Model?.customerDetails?.CustomerGst ?? "N/A")</span>
-
-                    </div>
+                </div>
             </div>
         </div>
         <div class="profile-stats-split">
@@ -1135,12 +1135,10 @@
                                 }
                                 else if (i - 0.5 <= fb.Rating)
                                 {
-
                                     <i class="fas fa-star-half-alt"></i>
                                 }
                                 else
                                 {
-
                                     <i class="far fa-star"></i>
                                 }
                             }
@@ -1271,21 +1269,31 @@
 
 </div>
 
-
+<!-- YAHAN NAYE 4 BUTTONS (LINKS) ADD KIYE GAYE HAIN -->
 <div id="checked" class="fixed-bottom-actions">
+    <!-- 1. Home -->
+    <a href="/Dashboard/AllDashboard" class="action-btn text-decoration-none">
+        <i class="fas fa-home"></i>
+        <span>Home</span>
+    </a>
 
-    @if (role == "SalesPerson")
-    {
-        <button type="button" class="action-btn" onclick="GotoMeetingPage({ value: 'General' })"><i class="fas fa-handshake"></i>General</button>
-        <button type="button" class="action-btn" onclick="GotoMeetingPage({ value: 'Qualify' })"><i class="fas fa-medal"></i>Qualify</button>
-        <button type="button" class="action-btn" onclick="GotoMeetingPage({ value: 'FollowUp' })"><i class="fas fa-headset"></i>FollowUp</button>
-        <button type="button" class="action-btn" onclick="GotoMeetingPage({ value: 'Payment' })"><i class="fas fa-money-bill-wave"></i>Payment</button>
-        <button type="button" class="action-btn" onclick="GotoMeetingPage({ value: 'Feedback' })"><i class="fas fa-star"></i>Feedback</button>
-    }
-    else if (role == "SalesManager")
-    {
-        <button type="button" class="action-btn" onclick="GotoMeetingPage({ value: 'ManagerFeedback' })"><i class="fas fa-star"></i>Feedback</button>
-    }
+    <!-- 2. Add Product -->
+    <a href="/Visit/Addproduct" class="action-btn text-decoration-none">
+        <i class="fas fa-box-open"></i>
+        <span>Add Product</span>
+    </a>
+
+    <!-- 3. Pricing -->
+    <a href="/Visit/Pricing" class="action-btn text-decoration-none">
+        <i class="fas fa-tags"></i>
+        <span>Pricing</span>
+    </a>
+
+    <!-- 4. Complied -->
+    <a href="/Visit/Complied" class="action-btn text-decoration-none">
+        <i class="fas fa-check-circle"></i>
+        <span>Complied</span>
+    </a>
 </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -1294,11 +1302,11 @@
 <script>
     // Checking visibility flag
     document.addEventListener("DOMContentLoaded", function () {
-    let el = document.getElementById("checked");
-    if (!el) return;
+        let el = document.getElementById("checked");
+        if (!el) return;
 
-    let valueforhiddingdiv = "@(Model?.value ?? "False")";
-    el.style.display = valueforhiddingdiv === "True" ? "none" : "flex";
+        let valueforhiddingdiv = "@(Model?.value ?? "False")";
+        el.style.display = valueforhiddingdiv === "True" ? "none" : "flex";
     });
 
     const colorMainTheme = '#3f6791'; const colorAmber = '#f59e0b'; const colorBlue = '#3b82f6'; const colorOceanBlue = '#0284c7'; const colorLightBlue = '#38bdf8'; const colorEmerald = '#10b981'; const colorRose = '#e11d48';
@@ -1327,40 +1335,37 @@
     const currentMonth = new Date().getMonth() + 1; // 1–12
     const currentIndex = (currentMonth - 4 + 12) % 12;
 
-    // 🔥 FIXED: Safer Last 6 Months Logic
     const getLast6Months = (arr, currentIndex) => {
-    if (!arr || arr.length === 0) return [];
-    // Agar array choti hai (jaise abhi start hui hai), to normal slice karlo
-    if(arr.length < 12) return arr.slice(-6);
+        if (!arr || arr.length === 0) return [];
+        if(arr.length < 12) return arr.slice(-6);
 
-    const result = [];
-    for (let i = 5; i >= 0; i--) {
-    const index = (currentIndex - i + 12) % 12;
-    result.push(arr[index] !== undefined ? arr[index] : 0);
-    }
-    return result;
+        const result = [];
+        for (let i = 5; i >= 0; i--) {
+            const index = (currentIndex - i + 12) % 12;
+            result.push(arr[index] !== undefined ? arr[index] : 0);
+        }
+        return result;
     };
 
-    // 🔥 FIXED: Leads aur Enquiries ke Data Mappings yahan Swap the. Ab theek kar diya hai.
     const chartDataRepo = {
-    labels: { all: allLabels, '6m': getLast6Months(allLabels, currentIndex) },
-    monthlySalesGridChart: {
-    count: { all: rawSales, '6m': getLast6Months(rawSales, currentIndex) },
-    value: { all: rawSalesValue, '6m': getLast6Months(rawSalesValue, currentIndex) }
-    },
-    leadsChart : {
-    count: { all: rawQual, '6m': getLast6Months(rawQual, currentIndex) },
-    value: { all: rawleadvalue, '6m': getLast6Months(rawleadvalue, currentIndex) }
-    },
-    enquiriesChart :{
-    count: { all: rawEnq, '6m': getLast6Months(rawEnq, currentIndex) },
-    value: { all: rawEnqValue, '6m': getLast6Months(rawEnqValue, currentIndex) }
-    },
-    chart3: { all: rawInc, '6m': get6m(rawInc) },
-    paymentChart: {
-    received: { all: rawPayRec, '6m': getLast6Months(rawPayRec, currentIndex) },
-    pending: { all: rawPayPend, '6m': getLast6Months(rawPayPend, currentIndex) }
-    },
+        labels: { all: allLabels, '6m': getLast6Months(allLabels, currentIndex) },
+        monthlySalesGridChart: {
+            count: { all: rawSales, '6m': getLast6Months(rawSales, currentIndex) },
+            value: { all: rawSalesValue, '6m': getLast6Months(rawSalesValue, currentIndex) }
+        },
+        leadsChart : {
+            count: { all: rawQual, '6m': getLast6Months(rawQual, currentIndex) },
+            value: { all: rawleadvalue, '6m': getLast6Months(rawleadvalue, currentIndex) }
+        },
+        enquiriesChart :{
+            count: { all: rawEnq, '6m': getLast6Months(rawEnq, currentIndex) },
+            value: { all: rawEnqValue, '6m': getLast6Months(rawEnqValue, currentIndex) }
+        },
+        chart3: { all: rawInc, '6m': get6m(rawInc) },
+        paymentChart: {
+            received: { all: rawPayRec, '6m': getLast6Months(rawPayRec, currentIndex) },
+            pending: { all: rawPayPend, '6m': getLast6Months(rawPayPend, currentIndex) }
+        },
     };
 
     const basePolarColors = ['#f43f5e', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899'];
@@ -1370,248 +1375,205 @@
     let funnelTanks = [];
 
     const customTooltip = {
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    titleColor: '#64748b',
-    bodyColor: '#1e293b',
-    padding: 12,
-    cornerRadius: 8,
-    borderColor: '#e2e8f0',
-    borderWidth: 1,
-    callbacks: {
-    label: function (context) {
-    const dataset = context.dataset;
-    const index = context.dataIndex;
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        titleColor: '#64748b',
+        bodyColor: '#1e293b',
+        padding: 12,
+        cornerRadius: 8,
+        borderColor: '#e2e8f0',
+        borderWidth: 1,
+        callbacks: {
+            label: function (context) {
+                const dataset = context.dataset;
+                const index = context.dataIndex;
 
-    if (dataset.extraData && dataset.extraData.prospect) {
-    let client = dataset.extraData.client[index] || 0;
-    let prospect = dataset.extraData.prospect[index] || 0;
-    let conversion = prospect ? ((client / prospect) * 100).toFixed(1) : 0;
-    return [`Clients: ${client}`, `Prospects: ${prospect}`, `Conversion: ${conversion}%`];
-    }
+                if (dataset.extraData && dataset.extraData.prospect) {
+                    let client = dataset.extraData.client[index] || 0;
+                    let prospect = dataset.extraData.prospect[index] || 0;
+                    let conversion = prospect ? ((client / prospect) * 100).toFixed(1) : 0;
+                    return [`Clients: ${client}`, `Prospects: ${prospect}`, `Conversion: ${conversion}%`];
+                }
 
-    if (dataset.extraData) {
-    let count = context.raw || 0;
-    let value = dataset.extraData[index] || 0;
-    return `${dataset.label}: ${count} | ₹ ${value.toLocaleString('en-IN')}`;
-    }
+                if (dataset.extraData) {
+                    let count = context.raw || 0;
+                    let value = dataset.extraData[index] || 0;
+                    return `${dataset.label}: ${count} | ₹ ${value.toLocaleString('en-IN')}`;
+                }
 
-    return `${dataset.label}: ${context.raw}`;
-    }
-    }
+                return `${dataset.label}: ${context.raw}`;
+            }
+        }
     };
 
     const yAxisConfigWithValues = {
-    beginAtZero: true,
-    suggestedMax: 10,
-    border: { display: false },
-    grid: { color: '#f3f4f6' },
-    ticks: { display: true, color: '#9ca3af', font: { size: 10, family: "'Poppins', sans-serif" }, callback: function(value) { if (value >= 100000) return (value / 100000) + 'L'; if (value >= 1000) return (value / 1000) + 'k'; return value; } }
+        beginAtZero: true,
+        suggestedMax: 10,
+        border: { display: false },
+        grid: { color: '#f3f4f6' },
+        ticks: { display: true, color: '#9ca3af', font: { size: 10, family: "'Poppins', sans-serif" }, callback: function(value) { if (value >= 100000) return (value / 100000) + 'L'; if (value >= 1000) return (value / 1000) + 'k'; return value; } }
     };
 
     const cOptions = { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, plugins: { legend: { display: false }, tooltip: customTooltip }, scales: { x: { grid: { display: false } }, y: yAxisConfigWithValues } };
 
 
-    // --- ON-DEMAND CHART INITIALIZATION ---
     function initChart(chartId) {
-    const canvas = document.getElementById(chartId);
-    if(!canvas) return;
-    const ctx = canvas.getContext('2d');
-    let filter = '6m';
-    try {
-    if (chartId === 'funnelChart') {
-    myCharts[chartId] = new Chart(ctx, {
-    type: 'bar',
-    data: { labels: ['Visits', 'Enquiries', 'Q. Leads', 'Orders', 'Repeat'], datasets: [{ data: [ funnelData?.TotalVisits ?? 0, funnelData?.Enquiries ?? 0, funnelData?.QualifiedLeads ?? 0, funnelData?.OrdersWon ?? 0, funnelData?.RepeatOrders ?? 0 ], backgroundColor: ['#3b82f6', '#0ea5e9', '#f59e0b', '#10b981', '#a855f7'], borderRadius: 6 }] },
-    options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { grid: { display: false }, border: {display: false} } } }
-    });
-    }
-    else if (chartId === 'monthlySalesGridChart') {
-    myCharts[chartId] = new Chart(ctx, { type: 'bar', data: { labels: chartDataRepo.labels[filter], datasets: [{ label: 'Sales', data: chartDataRepo.monthlySalesGridChart.value[filter] , backgroundColor: colorEmerald, borderRadius: 4,  extraData: chartDataRepo.monthlySalesGridChart.count[filter] }] }, options: cOptions });
-    }
-    else if (chartId === 'leadsChart') {
-    myCharts[chartId] = new Chart(ctx, { type: 'bar', data: { labels: chartDataRepo.labels[filter], datasets: [{ label: 'Leads', data: chartDataRepo.leadsChart.value[filter], backgroundColor: colorEmerald, borderRadius: 4,  extraData: chartDataRepo.leadsChart.count[filter]  }] }, options: cOptions });
-    }
-    else if (chartId === 'enquiriesChart') {
-    myCharts[chartId] = new Chart(ctx, { type: 'bar', data: { labels: chartDataRepo.labels[filter], datasets: [{ label: 'Enquiries', data:chartDataRepo.enquiriesChart.value[filter]  , backgroundColor: colorEmerald, borderRadius: 4,  extraData: chartDataRepo.enquiriesChart.count[filter] }] }, options: cOptions });
-    }
-    else if (chartId === 'paymentChart') {
-    myCharts[chartId] = new Chart(ctx, { type: 'bar', data: { labels: chartDataRepo.labels[filter], datasets: [ { label: 'Received', data: chartDataRepo.paymentChart.received[filter], backgroundColor: colorEmerald, borderRadius: { topLeft: 6, topRight: 6 } }, { label: 'Pending', data: chartDataRepo.paymentChart.pending[filter], backgroundColor: colorRose, borderRadius: { bottomLeft: 6, bottomRight: 6 } } ]}, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: customTooltip }, scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, ...yAxisConfigWithValues } } } });
-    }
-    } catch(e) { console.error("Chart Init Error:", e); }
+        const canvas = document.getElementById(chartId);
+        if(!canvas) return;
+        const ctx = canvas.getContext('2d');
+        let filter = '6m';
+        try {
+            if (chartId === 'funnelChart') {
+                myCharts[chartId] = new Chart(ctx, {
+                    type: 'bar',
+                    data: { labels: ['Visits', 'Enquiries', 'Q. Leads', 'Orders', 'Repeat'], datasets: [{ data: [ funnelData?.TotalVisits ?? 0, funnelData?.Enquiries ?? 0, funnelData?.QualifiedLeads ?? 0, funnelData?.OrdersWon ?? 0, funnelData?.RepeatOrders ?? 0 ], backgroundColor: ['#3b82f6', '#0ea5e9', '#f59e0b', '#10b981', '#a855f7'], borderRadius: 6 }] },
+                    options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { grid: { display: false }, border: {display: false} } } }
+                });
+            }
+            else if (chartId === 'monthlySalesGridChart') {
+                myCharts[chartId] = new Chart(ctx, { type: 'bar', data: { labels: chartDataRepo.labels[filter], datasets: [{ label: 'Sales', data: chartDataRepo.monthlySalesGridChart.value[filter] , backgroundColor: colorEmerald, borderRadius: 4,  extraData: chartDataRepo.monthlySalesGridChart.count[filter] }] }, options: cOptions });
+            }
+            else if (chartId === 'leadsChart') {
+                myCharts[chartId] = new Chart(ctx, { type: 'bar', data: { labels: chartDataRepo.labels[filter], datasets: [{ label: 'Leads', data: chartDataRepo.leadsChart.value[filter], backgroundColor: colorEmerald, borderRadius: 4,  extraData: chartDataRepo.leadsChart.count[filter]  }] }, options: cOptions });
+            }
+            else if (chartId === 'enquiriesChart') {
+                myCharts[chartId] = new Chart(ctx, { type: 'bar', data: { labels: chartDataRepo.labels[filter], datasets: [{ label: 'Enquiries', data:chartDataRepo.enquiriesChart.value[filter]  , backgroundColor: colorEmerald, borderRadius: 4,  extraData: chartDataRepo.enquiriesChart.count[filter] }] }, options: cOptions });
+            }
+            else if (chartId === 'paymentChart') {
+                myCharts[chartId] = new Chart(ctx, { type: 'bar', data: { labels: chartDataRepo.labels[filter], datasets: [ { label: 'Received', data: chartDataRepo.paymentChart.received[filter], backgroundColor: colorEmerald, borderRadius: { topLeft: 6, topRight: 6 } }, { label: 'Pending', data: chartDataRepo.paymentChart.pending[filter], backgroundColor: colorRose, borderRadius: { bottomLeft: 6, bottomRight: 6 } } ]}, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: customTooltip }, scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, ...yAxisConfigWithValues } } } });
+            }
+        } catch(e) { console.error("Chart Init Error:", e); }
     }
 
    
-    // 🔥 FIXED: graph update properly handle filterValue
     window.updateChartFilter = function(btnElement, chartId, filterValue) {
-    var parent = btnElement.parentElement;
-    parent.querySelectorAll('.capsule-btn').forEach(b => b.classList.remove('active'));
-    btnElement.classList.add('active');
+        var parent = btnElement.parentElement;
+        parent.querySelectorAll('.capsule-btn').forEach(b => b.classList.remove('active'));
+        btnElement.classList.add('active');
 
-    var chart = myCharts[chartId];
-    if(!chart) return;
+        var chart = myCharts[chartId];
+        if(!chart) return;
 
-    if (chartId === 'monthlySalesGridChart') {
-    chart.data.labels = chartDataRepo.labels[filterValue];
-    chart.data.datasets[0].data = chartDataRepo.monthlySalesGridChart.value[filterValue];
-    chart.data.datasets[0].extraData =  chartDataRepo.monthlySalesGridChart.count[filterValue];
-    }
-    else if (chartId === 'leadsChart') {
-    chart.data.labels = chartDataRepo.labels[filterValue];
-    chart.data.datasets[0].data =  chartDataRepo.leadsChart.value[filterValue];
-    chart.data.datasets[0].extraData = chartDataRepo.leadsChart.count[filterValue];
-    }
-    else if (chartId === 'enquiriesChart') {
-    chart.data.labels = chartDataRepo.labels[filterValue];
-    chart.data.datasets[0].data =  chartDataRepo.enquiriesChart.value[filterValue];
-    chart.data.datasets[0].extraData = chartDataRepo.enquiriesChart.count[filterValue];
-    }
-    else if (chartId === 'paymentChart') {
-    chart.data.labels = chartDataRepo.labels[filterValue];
-    chart.data.datasets[0].data = chartDataRepo.paymentChart.received[filterValue];
-    chart.data.datasets[1].data = chartDataRepo.paymentChart.pending[filterValue];
-    }
+        if (chartId === 'monthlySalesGridChart') {
+            chart.data.labels = chartDataRepo.labels[filterValue];
+            chart.data.datasets[0].data = chartDataRepo.monthlySalesGridChart.value[filterValue];
+            chart.data.datasets[0].extraData =  chartDataRepo.monthlySalesGridChart.count[filterValue];
+        }
+        else if (chartId === 'leadsChart') {
+            chart.data.labels = chartDataRepo.labels[filterValue];
+            chart.data.datasets[0].data =  chartDataRepo.leadsChart.value[filterValue];
+            chart.data.datasets[0].extraData = chartDataRepo.leadsChart.count[filterValue];
+        }
+        else if (chartId === 'enquiriesChart') {
+            chart.data.labels = chartDataRepo.labels[filterValue];
+            chart.data.datasets[0].data =  chartDataRepo.enquiriesChart.value[filterValue];
+            chart.data.datasets[0].extraData = chartDataRepo.enquiriesChart.count[filterValue];
+        }
+        else if (chartId === 'paymentChart') {
+            chart.data.labels = chartDataRepo.labels[filterValue];
+            chart.data.datasets[0].data = chartDataRepo.paymentChart.received[filterValue];
+            chart.data.datasets[1].data = chartDataRepo.paymentChart.pending[filterValue];
+        }
 
-    chart.update();
+        chart.update();
     }
 
     window.toggleSection = function(contentId, headerElement, chartId, isFunnel = false) {
-    var content = document.getElementById(contentId);
-    var isActive = content.classList.contains('active');
+        var content = document.getElementById(contentId);
+        var isActive = content.classList.contains('active');
 
-    document.querySelectorAll('.collapsible-content').forEach(function(el) { el.classList.remove('active'); });
-    document.querySelectorAll('.collapsible-header').forEach(function(el) {
-    el.classList.remove('active');
-    el.querySelector('.chevron-icon').style.transform = 'rotate(0deg)';
-    });
+        document.querySelectorAll('.collapsible-content').forEach(function(el) { el.classList.remove('active'); });
+        document.querySelectorAll('.collapsible-header').forEach(function(el) {
+            el.classList.remove('active');
+            el.querySelector('.chevron-icon').style.transform = 'rotate(0deg)';
+        });
 
-    if (!isActive) {
-    content.classList.add('active');
-    headerElement.classList.add('active');
-    headerElement.querySelector('.chevron-icon').style.transform = 'rotate(180deg)';
+        if (!isActive) {
+            content.classList.add('active');
+            headerElement.classList.add('active');
+            headerElement.querySelector('.chevron-icon').style.transform = 'rotate(180deg)';
 
-    setTimeout(() => {
-    const navOffset = -80;
-    const y = headerElement.getBoundingClientRect().top + window.scrollY + navOffset;
-    window.scrollTo({top: y, behavior: 'smooth'});
-    }, 150);
+            setTimeout(() => {
+                const navOffset = -80;
+                const y = headerElement.getBoundingClientRect().top + window.scrollY + navOffset;
+                window.scrollTo({top: y, behavior: 'smooth'});
+            }, 150);
 
-    if(chartId) {
-    setTimeout(() => {
-    if(!myCharts[chartId]) {
-    initChart(chartId);
-    } else {
-    myCharts[chartId].resize();
-    myCharts[chartId].update();
-    }
-    }, 200);
-    }
+            if(chartId) {
+                setTimeout(() => {
+                    if(!myCharts[chartId]) {
+                        initChart(chartId);
+                    } else {
+                        myCharts[chartId].resize();
+                        myCharts[chartId].update();
+                    }
+                }, 200);
+            }
 
-    if(isFunnel && funnelTanks.length > 0) { setTimeout(() => { funnelTanks.forEach(tank => tank.resize()); }, 300); }
-    }
+            if(isFunnel && funnelTanks.length > 0) { setTimeout(() => { funnelTanks.forEach(tank => tank.resize()); }, 300); }
+        }
     }
 
     // --- LIQUID PHYSICS ---
     class WaterTank {
-    constructor(canvasId, fillPercent, colorConfig, isHorizontal = false) {
-    this.canvas = document.getElementById(canvasId); if(!this.canvas) return;
-    this.ctx = this.canvas.getContext('2d'); this.fillPercent = fillPercent; this.color = colorConfig; this.isHorizontal = isHorizontal;
-    this.totalPoints = 30; this.points = []; this.baseHeight = 0; this.currentHeight = 0; this.tilt = 0; this.phase = Math.random() * Math.PI * 2; this.waveSpeed = 0.05; this.waveFrequency = 0.015; this.waveAmplitude = 3;
-    window.addEventListener('resize', () => this.resize()); this.resize(); this.animate();
-    }
-    resize() {
-    this.canvas.width = this.canvas.parentElement.offsetWidth; this.canvas.height = this.canvas.parentElement.offsetHeight;
-    this.baseHeight = this.canvas.height * (1 - this.fillPercent / 100);
-    if(this.points.length === 0 || this.currentHeight === 0) {
-    this.currentHeight = this.canvas.height; this.points = [];
-    for (let i = 0; i <= this.totalPoints; i++) this.points.push({ x: (this.canvas.width / this.totalPoints) * i, y: this.baseHeight, vy: 0 });
-    } else { for (let i = 0; i <= this.totalPoints; i++) this.points[i].x = (this.canvas.width / this.totalPoints) * i; }
-    }
-    splash(force, clickX) {
-    let closestIndex = Math.floor((clickX / this.canvas.width) * this.totalPoints);
-    for (let i = 0; i <= this.totalPoints; i++) { let dist = Math.abs(i - closestIndex); if (dist < 6) this.points[i].vy += force * (1 - (dist * 0.15)); }
-    }
-    update() {
-    this.currentHeight += (this.baseHeight - this.currentHeight) * 0.05; this.phase += this.waveSpeed; const spring = 0.03, damping = 0.95, spread = 0.15;
-    for (let i = 0; i <= this.totalPoints; i++) { let p = this.points[i]; let targetY = this.currentHeight + ((i - this.totalPoints/2) * this.tilt) + Math.sin(p.x * this.waveFrequency + this.phase) * this.waveAmplitude; p.vy += (targetY - p.y) * spring; p.y += p.vy; p.vy *= damping; }
-    let leftDeltas = new Array(this.totalPoints + 1).fill(0), rightDeltas = new Array(this.totalPoints + 1).fill(0);
-    for (let j = 0; j < 3; j++) {
-    for (let i = 0; i <= this.totalPoints; i++) { if (i > 0) { leftDeltas[i] = spread * (this.points[i].y - this.points[i-1].y); this.points[i-1].vy += leftDeltas[i] * 0.05; } if (i < this.totalPoints) { rightDeltas[i] = spread * (this.points[i].y - this.points[i+1].y); this.points[i+1].vy += rightDeltas[i] * 0.05; } }
-    for (let i = 0; i <= this.totalPoints; i++) { if (i > 0) this.points[i-1].y += leftDeltas[i]; if (i < this.totalPoints) this.points[i+1].y += rightDeltas[i]; }
-    }
-    }
-    drawPath(phaseShift, alpha) {
-    this.ctx.globalAlpha = alpha; this.ctx.beginPath(); this.ctx.moveTo(0, this.canvas.height); this.ctx.lineTo(this.points[0].x, this.points[0].y + Math.sin(this.points[0].x * this.waveFrequency + this.phase + phaseShift) * (phaseShift ? 4 : 0));
-    for (let i = 1; i <= this.totalPoints; i++) { let p0 = this.points[i-1], p1 = this.points[i]; let y0 = p0.y + Math.sin(p0.x * this.waveFrequency + this.phase + phaseShift) * (phaseShift ? 4 : 0); let y1 = p1.y + Math.sin(p1.x * this.waveFrequency + this.phase + phaseShift) * (phaseShift ? 4 : 0); this.ctx.quadraticCurveTo(p0.x, y0, (p0.x + p1.x) / 2, (y0 + y1) / 2); }
-    this.ctx.lineTo(this.canvas.width, this.canvas.height); this.ctx.closePath(); this.ctx.fill(); this.ctx.globalAlpha = 1.0;
-    }
-    draw() {
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); let gradient;
-    if (this.isHorizontal) { gradient = this.ctx.createLinearGradient(0, 0, this.canvas.width, 0); } else { gradient = this.ctx.createLinearGradient(0, 0, 0, this.canvas.height); }
-    gradient.addColorStop(0, this.color.start); gradient.addColorStop(1, this.color.end); this.ctx.fillStyle = gradient;
-    this.drawPath(Math.PI, 0.4); this.drawPath(0, 1.0);
-    }
-    animate() { this.update(); this.draw(); requestAnimationFrame(() => this.animate()); }
+        constructor(canvasId, fillPercent, colorConfig, isHorizontal = false) {
+            this.canvas = document.getElementById(canvasId); if(!this.canvas) return;
+            this.ctx = this.canvas.getContext('2d'); this.fillPercent = fillPercent; this.color = colorConfig; this.isHorizontal = isHorizontal;
+            this.totalPoints = 30; this.points = []; this.baseHeight = 0; this.currentHeight = 0; this.tilt = 0; this.phase = Math.random() * Math.PI * 2; this.waveSpeed = 0.05; this.waveFrequency = 0.015; this.waveAmplitude = 3;
+            window.addEventListener('resize', () => this.resize()); this.resize(); this.animate();
+        }
+        resize() {
+            this.canvas.width = this.canvas.parentElement.offsetWidth; this.canvas.height = this.canvas.parentElement.offsetHeight;
+            this.baseHeight = this.canvas.height * (1 - this.fillPercent / 100);
+            if(this.points.length === 0 || this.currentHeight === 0) {
+                this.currentHeight = this.canvas.height; this.points = [];
+                for (let i = 0; i <= this.totalPoints; i++) this.points.push({ x: (this.canvas.width / this.totalPoints) * i, y: this.baseHeight, vy: 0 });
+            } else { for (let i = 0; i <= this.totalPoints; i++) this.points[i].x = (this.canvas.width / this.totalPoints) * i; }
+        }
+        splash(force, clickX) {
+            let closestIndex = Math.floor((clickX / this.canvas.width) * this.totalPoints);
+            for (let i = 0; i <= this.totalPoints; i++) { let dist = Math.abs(i - closestIndex); if (dist < 6) this.points[i].vy += force * (1 - (dist * 0.15)); }
+        }
+        update() {
+            this.currentHeight += (this.baseHeight - this.currentHeight) * 0.05; this.phase += this.waveSpeed; const spring = 0.03, damping = 0.95, spread = 0.15;
+            for (let i = 0; i <= this.totalPoints; i++) { let p = this.points[i]; let targetY = this.currentHeight + ((i - this.totalPoints/2) * this.tilt) + Math.sin(p.x * this.waveFrequency + this.phase) * this.waveAmplitude; p.vy += (targetY - p.y) * spring; p.y += p.vy; p.vy *= damping; }
+            let leftDeltas = new Array(this.totalPoints + 1).fill(0), rightDeltas = new Array(this.totalPoints + 1).fill(0);
+            for (let j = 0; j < 3; j++) {
+                for (let i = 0; i <= this.totalPoints; i++) { if (i > 0) { leftDeltas[i] = spread * (this.points[i].y - this.points[i-1].y); this.points[i-1].vy += leftDeltas[i] * 0.05; } if (i < this.totalPoints) { rightDeltas[i] = spread * (this.points[i].y - this.points[i+1].y); this.points[i+1].vy += rightDeltas[i] * 0.05; } }
+                for (let i = 0; i <= this.totalPoints; i++) { if (i > 0) this.points[i-1].y += leftDeltas[i]; if (i < this.totalPoints) this.points[i+1].y += rightDeltas[i]; }
+            }
+        }
+        drawPath(phaseShift, alpha) {
+            this.ctx.globalAlpha = alpha; this.ctx.beginPath(); this.ctx.moveTo(0, this.canvas.height); this.ctx.lineTo(this.points[0].x, this.points[0].y + Math.sin(this.points[0].x * this.waveFrequency + this.phase + phaseShift) * (phaseShift ? 4 : 0));
+            for (let i = 1; i <= this.totalPoints; i++) { let p0 = this.points[i-1], p1 = this.points[i]; let y0 = p0.y + Math.sin(p0.x * this.waveFrequency + this.phase + phaseShift) * (phaseShift ? 4 : 0); let y1 = p1.y + Math.sin(p1.x * this.waveFrequency + this.phase + phaseShift) * (phaseShift ? 4 : 0); this.ctx.quadraticCurveTo(p0.x, y0, (p0.x + p1.x) / 2, (y0 + y1) / 2); }
+            this.ctx.lineTo(this.canvas.width, this.canvas.height); this.ctx.closePath(); this.ctx.fill(); this.ctx.globalAlpha = 1.0;
+        }
+        draw() {
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); let gradient;
+            if (this.isHorizontal) { gradient = this.ctx.createLinearGradient(0, 0, this.canvas.width, 0); } else { gradient = this.ctx.createLinearGradient(0, 0, 0, this.canvas.height); }
+            gradient.addColorStop(0, this.color.start); gradient.addColorStop(1, this.color.end); this.ctx.fillStyle = gradient;
+            this.drawPath(Math.PI, 0.4); this.drawPath(0, 1.0);
+        }
+        animate() { this.update(); this.draw(); requestAnimationFrame(() => this.animate()); }
     }
 
     function getTankColor(percent) {
-    if (percent >= 80) { return { start: 'rgb(16 185 129)', end: 'rgb(16 185 129)' }; }
-    else if (percent >= 60) { return { start: 'rgba(163, 230, 53, 0.6)', end: 'rgba(101, 163, 13, 0.4)' }; }
-    else if (percent >= 40) { return { start: 'rgba(250, 204, 21, 0.6)', end: 'rgba(202, 138, 4, 0.4)' }; }
-    else if (percent >= 20) { return { start: 'rgba(249, 115, 22, 0.6)', end: 'rgba(194, 65, 12, 0.4)' }; }
-    else { return { start: 'rgba(239, 68, 68, 0.6)', end: 'rgba(185, 28, 28, 0.4)' }; }
+        if (percent >= 80) { return { start: 'rgb(16 185 129)', end: 'rgb(16 185 129)' }; }
+        else if (percent >= 60) { return { start: 'rgba(163, 230, 53, 0.6)', end: 'rgba(101, 163, 13, 0.4)' }; }
+        else if (percent >= 40) { return { start: 'rgba(250, 204, 21, 0.6)', end: 'rgba(202, 138, 4, 0.4)' }; }
+        else if (percent >= 20) { return { start: 'rgba(249, 115, 22, 0.6)', end: 'rgba(194, 65, 12, 0.4)' }; }
+        else { return { start: 'rgba(239, 68, 68, 0.6)', end: 'rgba(185, 28, 28, 0.4)' }; }
     }
-
-
 
     document.addEventListener("DOMContentLoaded", function() {
-    Chart.defaults.font.family = "'Poppins', sans-serif";
-    Chart.defaults.color = "#94a3b8";
-    const funnelColors = { Visits: { start: 'rgba(56, 189, 248, 0.8)', end: 'rgba(2, 132, 199, 0.8)' }, Enquiries: { start: 'rgba(167, 139, 250, 0.8)', end: 'rgba(109, 40, 217, 0.8)' }, Qualified: { start: 'rgba(251, 146, 60, 0.8)', end: 'rgba(234, 88, 12, 0.8)' }, Orders: { start: 'rgba(52, 211, 153, 0.8)', end: 'rgba(5, 150, 105, 0.8)' }, Repeat: { start: 'rgba(251, 113, 133, 0.8)', end: 'rgba(225, 29, 72, 0.8)' } };
-    setTimeout(() => {
-    funnelTanks.push(new WaterTank('canvasVisits', 100, funnelColors.Visits));
-    funnelTanks.push(new WaterTank('canvasEnquiries', @(funnelEnqPct), funnelColors.Enquiries));
-    funnelTanks.push(new WaterTank('canvasQualified', @(funnelQualPct), funnelColors.Qualified));
-    funnelTanks.push(new WaterTank('canvasOrders', @(funnelOrdPct), funnelColors.Orders));
-    funnelTanks.push(new WaterTank('canvasRepeat', @(funnelRepPct), funnelColors.Repeat));
-    }, 100);
+        Chart.defaults.font.family = "'Poppins', sans-serif";
+        Chart.defaults.color = "#94a3b8";
+        const funnelColors = { Visits: { start: 'rgba(56, 189, 248, 0.8)', end: 'rgba(2, 132, 199, 0.8)' }, Enquiries: { start: 'rgba(167, 139, 250, 0.8)', end: 'rgba(109, 40, 217, 0.8)' }, Qualified: { start: 'rgba(251, 146, 60, 0.8)', end: 'rgba(234, 88, 12, 0.8)' }, Orders: { start: 'rgba(52, 211, 153, 0.8)', end: 'rgba(5, 150, 105, 0.8)' }, Repeat: { start: 'rgba(251, 113, 133, 0.8)', end: 'rgba(225, 29, 72, 0.8)' } };
+        setTimeout(() => {
+            funnelTanks.push(new WaterTank('canvasVisits', 100, funnelColors.Visits));
+            funnelTanks.push(new WaterTank('canvasEnquiries', @(funnelEnqPct), funnelColors.Enquiries));
+            funnelTanks.push(new WaterTank('canvasQualified', @(funnelQualPct), funnelColors.Qualified));
+            funnelTanks.push(new WaterTank('canvasOrders', @(funnelOrdPct), funnelColors.Orders));
+            funnelTanks.push(new WaterTank('canvasRepeat', @(funnelRepPct), funnelColors.Repeat));
+        }, 100);
     });
-
-    const routeConfig = {
-    SalesPerson: {
-    General: '@Url.Action("General", "FollowUp")',
-    Qualify: '@Url.Action("LeadModification", "Customer")',
-    FollowUp: '@Url.Action("FollowUp", "Enquiry")',
-    Payment: '@Url.Action("Payment", "FollowUp")',
-    Feedback: '@Url.Action("Feedback", "FollowUp")'
-    },
-    SalesManager: {
-    ManagerFeedback: '@Url.Action("ManagerFeedback", "FollowUp")',
-    General: '@Url.Action("ManagerFeedback", "FollowUp")'
-    }
-    };
-
-    function GotoMeetingPage(elementValue) {
-    const selectedValue = elementValue.value;
-    const role = '@role';
-    const customerId = '@customerid';
-
-    if (!selectedValue || selectedValue === "Back") return;
-
-    const roleRoutes = routeConfig[role];
-
-    if (!roleRoutes) {
-    console.warn("Unknown role:", role);
-    return;
-    }
-
-    const baseUrl = roleRoutes[selectedValue];
-
-    if (!baseUrl) {
-    console.warn("No route mapped for:", selectedValue);
-    return;
-    }
-
-    window.location.href = `${baseUrl}?CustomerId=${customerId}`;
-    }
-
 </script>

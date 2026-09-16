@@ -2,209 +2,12 @@
     ViewBag.Title = "Pricing";
     Layout = "~/Views/Shared/_LayoutINV.cshtml";
 }
-
-<!-- Fonts and Icons -->
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<style>
-    /* Base Container */
-    .screen-container {
-        max-width: 650px;
-        margin: 30px auto;
-        font-family: 'Plus Jakarta Sans', sans-serif;
-    }
-
-    /* Top Header Card */
-    .top-header-card {
-        background: #ffffff;
-        border-radius: 16px;
-        padding: 35px 20px;
-        text-align: center;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.04);
-        margin-bottom: 25px;
-    }
-
-    .header-icon-box {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 60px;
-        height: 60px;
-        background-color: #f1f5f9;
-        color: #3b82f6;
-        font-size: 1.8rem;
-        border-radius: 14px;
-        margin-bottom: 15px;
-    }
-
-    .header-title {
-        font-size: 1.2rem;
-        font-weight: 800;
-        color: #1e293b;
-        margin: 0 0 8px 0;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    .header-subtitle {
-        font-size: 0.85rem;
-        color: #64748b;
-        margin: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-    }
-
-    /* Individual Form Cards */
-    .form-card {
-        background: #ffffff;
-        border-radius: 16px;
-        padding: 16px 22px;
-        display: flex;
-        align-items: center;
-        margin-bottom: 15px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-        position: relative;
-        border: 1px solid #f8fafc;
-    }
-
-        .form-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.06);
-        }
-
-    /* Icon styles inside the form cards */
-    .card-icon-box {
-        width: 45px;
-        height: 45px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.2rem;
-        margin-right: 18px;
-    }
-
-    .icon-blue {
-        background-color: #eff6ff;
-        color: #3b82f6;
-    }
-
-    .icon-purple {
-        background-color: #f5f3ff;
-        color: #8b5cf6;
-    }
-
-    .icon-green {
-        background-color: #f0fdf4;
-        color: #22c55e;
-    }
-
-    /* Input contents inside card */
-    .action-content {
-        flex-grow: 1;
-        display: flex;
-        flex-direction: column;
-    }
-
-        .action-content label {
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: #475569;
-            margin-bottom: 4px;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-    .stealth-input {
-        background: transparent;
-        border: none;
-        padding: 0;
-        font-size: 1rem;
-        color: #0f172a;
-        font-weight: 600;
-        outline: none;
-        width: 100%;
-        font-family: inherit;
-        appearance: none;
-        -webkit-appearance: none;
-    }
-
-        .stealth-input::placeholder {
-            color: #94a3b8;
-            font-weight: 400;
-        }
-
-    .action-chevron {
-        color: #cbd5e1;
-        font-size: 1rem;
-    }
-
-    /* =========================================
-           UPDATED BUTTON CSS (Horizontal & Clean)
-           ========================================= */
-    .button-group {
-        display: flex;
-        gap: 15px;
-        margin-top: 30px;
-    }
-
-    .btn-action {
-        flex: 1;
-        border: none;
-        border-radius: 12px;
-        padding: 14px 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px; /* Space between icon and text */
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        font-size: 1rem;
-        font-weight: 700;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    /* Save Button Style (Secondary Action) */
-    .btn-save {
-        background-color: #f8fafc;
-        color: #475569;
-        border: 1px solid #cbd5e1;
-    }
-
-        .btn-save:hover {
-            background-color: #e2e8f0;
-            color: #1e293b;
-        }
-
-    /* Complete Button Style (Primary Action) */
-    .btn-complete {
-        background-color: #10b981; /* Premium Emerald Green */
-        color: #ffffff;
-        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
-    }
-
-        .btn-complete:hover {
-            background-color: #059669; /* Darker Green on Hover */
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.35);
-        }
-
-    /* Mobile Responsive for buttons */
-    @@media (max-width: 480px) {
-        .button-group {
-            flex-direction: column; /* Stack buttons on very small screens */
-        }
-    }
-</style>
+<link rel="stylesheet" href="/css/Shared/Pricing.css">
 
 <div class="screen-container">
-
-    <!-- Top Main Header Card -->
     <div class="top-header-card">
         <div class="header-icon-box">
             <i class="fas fa-box-open"></i>
@@ -215,10 +18,7 @@
         </p>
     </div>
 
-    <!-- Form Area -->
     <form method="post" action="javascript:void(0);">
-
-        <!-- 1. Select Product Dropdown (Card Style) -->
         <div class="form-card" onclick="document.getElementById('ProductType').focus();">
             <div class="card-icon-box icon-blue">
                 <i class="fas fa-handshake"></i>
@@ -237,7 +37,6 @@
             <div class="action-chevron"><i class="fas fa-chevron-down"></i></div>
         </div>
 
-        <!-- 2. Parts Name Input (Card Style) -->
         <div class="form-card" onclick="document.getElementById('PartsName').focus();">
             <div class="card-icon-box icon-purple">
                 <i class="fas fa-cogs"></i>
@@ -249,7 +48,6 @@
             <div class="action-chevron"><i class="fas fa-pen"></i></div>
         </div>
 
-        <!-- 3. Service Charge Input (Card Style) -->
         <div class="form-card" onclick="document.getElementById('ServiceCharge').focus();">
             <div class="card-icon-box icon-green">
                 <i class="fas fa-file-invoice-dollar"></i>
@@ -261,14 +59,11 @@
             <div class="action-chevron"><i class="fas fa-pen"></i></div>
         </div>
 
-        <!-- UPDATED: Two Buttons Layout (Horizontal & Professional) -->
         <div class="button-group">
-            <!-- Save Button -->
             <button type="submit" name="SubmitType" value="Save" class="btn-action btn-save">
-                <i class="far fa-save"></i> Save Record
+                <i class="far fa-save"></i> Save Draft
             </button>
 
-            <!-- Complete Button -->
             <button type="submit" name="SubmitType" value="Complete" class="btn-action btn-complete">
                 <i class="fas fa-check"></i> Complete
             </button>
