@@ -1269,38 +1269,12 @@
 
 </div>
 
-<!-- YAHAN NAYE 4 BUTTONS (LINKS) ADD KIYE GAYE HAIN -->
-<div id="checked" class="fixed-bottom-actions">
-    <!-- 1. Home -->
-    <a href="/Dashboard/AllDashboard" class="action-btn text-decoration-none">
-        <i class="fas fa-home"></i>
-        <span>Home</span>
-    </a>
-
-    <!-- 2. Add Product -->
-    <a href="/Visit/Addproduct" class="action-btn text-decoration-none">
-        <i class="fas fa-box-open"></i>
-        <span>Add Product</span>
-    </a>
-
-    <!-- 3. Pricing -->
-    <a href="/Visit/Pricing" class="action-btn text-decoration-none">
-        <i class="fas fa-tags"></i>
-        <span>Pricing</span>
-    </a>
-
-    <!-- 4. Complied -->
-    <a href="/Visit/Complied" class="action-btn text-decoration-none">
-        <i class="fas fa-check-circle"></i>
-        <span>Complied</span>
-    </a>
-</div>
+@await Html.PartialAsync("_VisitBottomNav")
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
 
 <script>
-    // Checking visibility flag
     document.addEventListener("DOMContentLoaded", function () {
         let el = document.getElementById("checked");
         if (!el) return;
