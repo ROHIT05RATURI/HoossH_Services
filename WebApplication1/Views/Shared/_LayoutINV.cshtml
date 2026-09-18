@@ -1,236 +1,420 @@
 <!doctype html>
+@using System.Security.Claims
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    var user = HttpContextAccessor.HttpContext?.User;
+    var role = user?.FindFirst(ClaimTypes.Role)?.Value;
+    var FullName = user?.FindFirst(ClaimTypes.Name)?.Value;
+    var UserName = user?.FindFirst("UserName")?.Value ?? string.Empty;
+    string status = Context.Session.GetString("VisitStatus");
+    string IsOverall = Context.Session.GetString("IsOverall");
+    var redirectUrl = "/SuperAdmin/ProfilePage";
+    bool isOverallMode = (IsOverall != null && IsOverall.Equals("True", StringComparison.OrdinalIgnoreCase));
+}
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@ViewBag.Title - HoossH Service</title>
-
-    <!-- Favicon & Fonts -->
-    <link rel="icon" href="~/Images/Icon.ico" type="image/x-icon" />
+    <meta name="title" content="HoossH" />
+    <title>@ViewBag.Title</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="icon" href="~/Images/Icon.ico" type="image/x-icon" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Language" content="en">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no" />
+    <meta name="description" content="Dashboard to show case important data to the user">
+    <meta name="msapplication-tap-highlight" content="no">
 
-    <!-- Stylesheets -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    @*custom Layout css *@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="~/css/NewCss.css">
     <link rel="stylesheet" href="~/css/TableCreation.css">
+    <link rel="stylesheet" href="~/css/all.min.css">
     <link rel="stylesheet" href="~/css/sweetalert2.min.css">
     <link rel="stylesheet" href="~/css/OverlayScrollbars.min.css">
     <link rel="stylesheet" href="~/css/HoosshNV.css">
     <link rel="stylesheet" href="~/css/adminlte.min.css">
     <link rel="stylesheet" href="~/css/Userkundali.css">
     <link rel="stylesheet" href="~/css/site.css">
-
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <link rel="stylesheet" href="~/css/layoutINV/LayoutINV.css">
 
-    <link rel="stylesheet" href="~/css/LayoutINV/LayoutINV.css" />
 </head>
 
 <body class="hold-transition sidebar-mini sidebar-collapse layout-navbar-fixed">
 
-    @{
-        var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
-        var currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
-
-        bool isDashboard = currentController.Equals("Dashboard", StringComparison.OrdinalIgnoreCase);
-        bool isAttendance = currentController.Equals("Team", StringComparison.OrdinalIgnoreCase)
-            && (currentAction.Equals("Attendence", StringComparison.OrdinalIgnoreCase)
-                || currentAction.Equals("ViewAttendence", StringComparison.OrdinalIgnoreCase));
-        bool isLeaves = currentController.Equals("Team", StringComparison.OrdinalIgnoreCase)
-            && (currentAction.Equals("LeaveManagement", StringComparison.OrdinalIgnoreCase)
-                || currentAction.Equals("ViewApprovedHistory", StringComparison.OrdinalIgnoreCase));
-        bool isHrmsSection = isAttendance || isLeaves;
-        bool isVisits = currentController.Equals("Visit", StringComparison.OrdinalIgnoreCase);
-        bool isClients = currentController.Equals("Client", StringComparison.OrdinalIgnoreCase);
-        bool isProducts = currentController.Equals("UserProduct", StringComparison.OrdinalIgnoreCase);
-    }
-
+    @* @if (role == "SalesPerson" || role == "SalesManager")
+    {
+        <partial name="_BottomNavigation" />
+        <div class="bottom-nav d-none justify-content-around align-items-center fixed-bottom bg-white border-top py-2" id="mainBottomNav">
+            <div id="dynamic-nav-container" class="d-flex justify-content-around flex-grow-1"></div>
+            <a asp-controller="Flow" asp-action="CustomerReport" class="text-center text-decoration-none text-dark" style="min-width: 60px;">
+                <div class="btn btn-light rounded-circle shadow-sm mx-auto mb-1 d-flex align-items-center justify-content-center"
+                style="width: 40px; height: 40px; color: #3f6791;">
+                    <i class="fa-solid fa-handshake"></i>
+                </div>
+                <div style="font-size: 11px;">Meeting</div>
+            </a>
+        </div>
+    } *@
+    
     <div id="global-loader" class="loader-overlay" style="display: none;">
         <div class="spinner"></div>
     </div>
-
+    
     <div class="wrapper w-100">
-        <!-- Top Navbar -->
-        <nav class="main-header navbar navbar-expand navbar-light shadow-sm fixed-top">
+        <nav class="main-header navbar navbar-expand navbar-dark border-bottom-0 shadow-sm" style="position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; background-color: #3f6791;">
             <div class="container-fluid">
-                <ul class="navbar-nav align-items-center">
+                <!-- LEFT -->
+                <ul class="navbar-nav d-flex align-items-center">
                     <li class="nav-item">
-                        <a class="nav-link text-secondary" data-widget="pushmenu" href="#" role="button">
-                            <i class="fas fa-bars fs-5"></i>
+                        <a class="nav-link" data-widget="pushmenu" href="#" role="button">
+                            <i class="fas fa-bars text-white"></i>
                         </a>
                     </li>
                 </ul>
 
-                <div class="navbar-title-center">
-                    <h6 class="m-0">@ViewBag.Title</h6>
+                <!-- CENTER TITLE -->
+                <div class="mx-auto" style="font-size: 1.1rem; font-weight: 600; color: #fff;">
+                    @ViewBag.Title
                 </div>
 
-                <ul class="navbar-nav align-items-center ms-auto">
-                    <li class="nav-item me-3">
-                        <a href="javascript:history.back()" class="nav-link text-secondary" title="Go Back">
-                            <i class="fas fa-arrow-left fs-5"></i>
-                        </a>
-                    </li>
-                    <li class="nav-item position-relative">
-                        <img src="~/images/service-man.jpg" alt="Rahul Kumar" class="profile-icon-img cursor-pointer" id="profileMenuTrigger" />
-                        <div id="profileDropdown" class="profile-dropdown shadow-sm">
-                            <a href="@Url.Action("ProfilePage", "SuperAdmin")" class="dropdown-item"><i class="fas fa-user me-2"></i> Profile</a>
-                            <a href="/Dashboard/AllDashboard" class="dropdown-item"><i class="fas fa-scroll me-2"></i> Dashboard</a>
-                            <a href="/Login/Logout" class="dropdown-item text-danger"><i class="fas fa-sign-out-alt me-2"></i> Logout</a>
+                <div class="d-flex align-items-center">
+                    <a href="javascript:history.back()" class="nav-link" title="Go Back">
+                        <span class="back-icon" style="background-color: #fff;"></span>
+                    </a>
+                    
+                    <div class="position-relative d-inline-block me-3 d-flex align-items-center">
+                        <span class="me-2 d-none d-md-inline" style="font-weight: 500; font-size: 14px; color: #fff;">@(string.IsNullOrEmpty(FullName) ? UserName : FullName)</span>
+                        <i class="fa-solid fa-user-circle fs-4 cursor-pointer profile-icon text-white" id="profileMenuTrigger"></i>
+
+                        <div id="profileDropdown" class="profile-dropdown shadow">
+                            <a href="@redirectUrl" class="dropdown-item"> 
+                                <i class="fas fa-user me-2"></i> Profile
+                            </a>
+                            <a href="/Flow/NewKundaliOverView" class="dropdown-item"> 
+                                <i class="fas fa-user me-2"></i> Kundali
+                            </a>
+                            <a href="/home/Index" class="dropdown-item text-danger">
+                                <i class="fas fa-sign-out-alt me-2"></i> Logout
+                            </a>
                         </div>
-                    </li>
-                </ul>
+                    </div>
+                </div>
             </div>
         </nav>
 
-        <!-- Sidebar Navigation -->
-        <aside class="main-sidebar">
+        <aside class="main-sidebar" style="background-color:white; position:fixed; left :0;">
             <div class="sidebar" style="height: 100vh;">
+
                 <div class="grow-nav-header">
-                    <a class="nav-link text-secondary p-0 d-flex justify-content-between" data-widget="pushmenu" href="#" role="button">
-                        <i class="fas fa-bars fs-5"></i>
-                        <span class="bee-wrapper">
-                            <span class="bee-fly-anim">
-                                <img src="~/images/Icon.png" alt="HoossH Service" class="bee-img bee-flutter" style="height: 28px;" />
-                            </span>
-                        </span>
+                    <a class="nav-link p-0" data-widget="pushmenu" href="#" role="button" style="color: #333; font-size: 15px;">
+                        <i class="fas fa-bars"></i>
                     </a>
+                    <img src="~/Images/Icon.png" alt="Logo" style="height: 30px;" />
                 </div>
 
+                <!-- ORIGINAL HTML CODE UNTOUCHED -->
                 <div class="fb-menu-container">
 
+                    <!-- DASHBOARD -->
                     <div class="fb-menu-heading">
-                        <a href="@Url.Action("AllDashboard", "Dashboard")" class="text-decoration-none w-100 d-flex align-items-center text-dark url-link @(isDashboard ? "active" : "")">
+                        <a href="@Url.Action("AllDashboard", "Dashboard")" class="text-decoration-none w-100 url-link">
                             <i class="fas fa-home grow-nav-icon"></i>
-                            <span class="ms-2">Dashboard</span>
+                            <span class="grow-nav-title ms-2">Dashboard</span>
                         </a>
                     </div>
 
-                    <div class="fb-menu-heading @(isHrmsSection ? "active" : "")" data-target="sec-hrms">
-                        <div class="d-flex align-items-center">
-                            <i class="fas fa-users grow-nav-icon"></i>
-                            <span>HRMS</span>
+                    <!-- HRMS (Team) -->
+                    <div class="fb-menu-heading" data-target="sec-hrms">
+                        <i class="fas fa-users grow-nav-icon"></i>
+                        <div class="grow-nav-content">
+                            <span class="grow-nav-title">HRMS</span>
                         </div>
                         <i class="fas fa-chevron-down fb-chevron"></i>
                     </div>
-                    <div id="sec-hrms" class="fb-collapsible-content" style="display:@(isHrmsSection ? "block" : "none");">
+                    <div id="sec-hrms" class="fb-collapsible-content">
                         <div class="fb-grid-row">
-                            <a href="@Url.Action("Attendence", "Team")" class="fb-card url-link @(isAttendance ? "active" : "")">
-                                <i class="fas fa-clock fb-card-icon"></i>
+                            <a href="@Url.Action("Attendence", "Team")" class="fb-card url-link">
+                                <i class="fas fa-fingerprint fb-card-icon icon-blue"></i>
                                 <span class="fb-card-title">Attendance</span>
                             </a>
-                            <a href="@Url.Action("LeaveManagement", "Team")" class="fb-card url-link @(isLeaves ? "active" : "")">
-                                <i class="fas fa-calendar-minus fb-card-icon"></i>
-                                <span class="fb-card-title">Leaves</span>
+                            <a href="@Url.Action("LeaveManagement", "Team")" class="fb-card url-link">
+                                <i class="fas fa-plane-departure fb-card-icon icon-orange"></i>
+                                <span class="fb-card-title">Leave Mgmt</span>
                             </a>
                         </div>
                     </div>
 
+                    <!-- CLIENT MANAGEMENT -->
                     <div class="fb-menu-heading">
-                        <a href="@Url.Action("ViewRoutes", "Visit")" class="text-decoration-none w-100 d-flex align-items-center text-dark url-link @(isVisits ? "active" : "")">
-                            <i class="fa-solid fa-clipboard-list grow-nav-icon"></i>
-                            <span class="ms-2">Visits</span>
-                        </a>
-                    </div>
-
-                    <div class="fb-menu-heading">
-                        <a href="@Url.Action("AddClient", "Client")" class="text-decoration-none w-100 d-flex align-items-center text-dark url-link @(isClients ? "active" : "")">
+                        <a href="@Url.Action("Viewclient", "Client")" class="text-decoration-none w-100 url-link">
                             <i class="fas fa-user-tie grow-nav-icon"></i>
-                            <span class="ms-2">Clients</span>
+                            <span class="grow-nav-title ms-2">Client Management</span>
                         </a>
                     </div>
 
+                    <!-- VISIT & SALES -->
                     <div class="fb-menu-heading">
-                        <a href="@Url.Action("ProductList", "UserProduct")" class="text-decoration-none w-100 d-flex align-items-center text-dark url-link @(isProducts ? "active" : "")">
-                            <i class="fa-solid fa-box-open grow-nav-icon"></i>
-                            <span class="ms-2">Products Catalogue</span>
+                        <a href="@Url.Action("ViewRoutes", "Visit")" class="text-decoration-none w-100 url-link">
+                            <i class="fas fa-map-marked-alt grow-nav-icon"></i>
+                            <span class="grow-nav-title ms-2">Visit & Sales</span>
                         </a>
                     </div>
 
-                    <div class="fb-menu-heading mt-3 border-top pt-2">
-                        <a href="/Login/Logout" class="text-decoration-none w-100 d-flex align-items-center text-danger url-link">
-                            <i class="fas fa-sign-out-alt grow-nav-icon text-danger"></i>
-                            <span class="ms-2">Logout</span>
-                        </a>
+                    <!-- SETTINGS & LOGOUT -->
+                    <div class="fb-menu-heading" data-target="sec-settings">
+                        <i class="fas fa-cog grow-nav-icon"></i>
+                        <div class="grow-nav-content">
+                            <span class="grow-nav-title">Settings & Logout</span>
+                        </div>
+                        <i class="fas fa-chevron-down fb-chevron"></i>
                     </div>
+                    <div id="sec-settings" class="fb-collapsible-content">
+                        <div class="fb-grid-row">
+                            <a href="@Url.Action("ProfilePage", "SuperAdmin")" class="fb-card url-link">
+                                <i class="fas fa-user-cog fb-card-icon icon-teal"></i>
+                                <span class="fb-card-title">Profile</span>
+                            </a>
+                            <a href="@Url.Action("Logout", "Login")" class="fb-card url-link">
+                                <i class="fas fa-sign-out-alt fb-card-icon icon-red"></i>
+                                <span class="fb-card-title">Logout</span>
+                            </a>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </aside>
-        <partial name="_BottomNavigation" />
+
         <!-- Main Content Area -->
-        <div class="content-wrapper" style="background-color: var(--bg-light); min-height: 100vh; ">
-            <section class="content px-3 py-4">
-                <div class="container-fluid">
+        <div class="content-wrapper" style="margin-right: 0px; background-color: #f8fafc; min-height: 100vh; width:100%; padding-top: 55px;">
+            <section class="content">
+                <div class="container-fluid p-0">
                     @RenderBody()
                 </div>
             </section>
         </div>
+        
+        <!-- Modals -->
+        <partial name="_UniversalPopup" />
+        <partial name="_ExportPopup" />
+        <div class="modal fade" id="customizeMenuModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Customize Bottom Shortcuts</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="text-muted small">Select up to 4 shortcuts to show in the bottom bar.</p>
+                        <div id="shortcutList" class="d-flex flex-column gap-2"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn text-white" style="background-color: #3f6791;" onclick="saveShortcuts()">Save Changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        <footer class="main-footer text-muted text-center py-3 border-top bg-white">
-            <small>&copy; @DateTime.Now.Year HoossH Service. All rights reserved.</small>
+        <div id="offlineModal" style="display:none; position:fixed; top:0; left:0; width:100%; background-color:#ffa46b; color:white; text-align:center; padding:10px; z-index:9999;">
+            🚫 You are offline. Please check your internet connection.
+        </div>
+
+        <footer class="main-footer mt-auto">
+            <div class="float-right d-none d-sm-block">
+                <b>Version</b> 1.0.0
+            </div>
+            <div style="font-family: 'Poppins', sans-serif; font-size: 13px; color: #666; font-weight: 400; display: flex; align-items: center; gap: 5px;">
+                <span>Copyright &copy; @DateTime.Now.Year</span>
+                <a href="#" style="text-decoration: none; display: inline-flex; align-items: center;">
+                    <img src="~/Images/Login.jpg" alt="HoossH" style="height: 16px; width: auto; object-fit: contain; vertical-align: middle;" />
+                </a>
+                <span>All rights reserved.</span>
+            </div>
         </footer>
-    </div>
+
+    </div> 
 
     <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/adminlte.min.js">    </script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/jquery.overlayScrollbars.min.js"></script>
+    <script src="~/js/adminlte.min.js"></script>
+    <script src="~/js/sweetalert2.min.js"></script>
+    <script asp-append-version="true" src="~/js/site.js"></script>
+    <script asp-append-version="true" src="~/js/HoosshNV.js"></script>
+    
+    @await RenderSectionAsync("Scripts", required: false)
 
     <script>
-            // Profile dropdown toggle
-            const trigger = document.getElementById('profileMenuTrigger');
-            const dropdown = document.getElementById('profileDropdown');
+        const trigger = document.getElementById('profileMenuTrigger');
+        const dropdown = document.getElementById('profileDropdown');
 
-            if (trigger && dropdown) {
-                trigger.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-                });
-                window.addEventListener('click', function() {
-                    dropdown.style.display = 'none';
-                });
+        trigger.addEventListener('click', function(e) {
+            e.stopPropagation();
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        });
+
+        window.addEventListener('click', function() {
+            dropdown.style.display = 'none';
+        });
+
+        function closeSidebar() {
+            document.body.classList.add('sidebar-collapse');
+            document.body.classList.remove('sidebar-open');
+        }
+
+        function closeSidebarAndNavigate(url) {
+            closeSidebar();
+            location.href = url;
+        }
+
+        document.addEventListener('click', function(event) {
+            var sidebar = document.querySelector('.main-sidebar');
+            var sidebarButton = document.querySelector('[data-widget="pushmenu"]');
+            var body = document.body;
+            var isOpen = !body.classList.contains('sidebar-collapse') || body.classList.contains('sidebar-open');
+
+            if (isOpen) {
+                if (sidebar && !sidebar.contains(event.target) && sidebarButton && !sidebarButton.contains(event.target)) {
+                    closeSidebar();
+                }
+            }
+        });
+    </script>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var currentPath = window.location.pathname.toLowerCase();
+            var navLinks = document.querySelectorAll('.url-link');
+            var exactMatchFound = false;
+
+            function activateMenu(link) {
+                link.classList.add('active');
+
+                var collapseParent = link.closest('.fb-collapsible-content');
+                if (collapseParent) {
+                    collapseParent.style.display = 'block';
+                    var targetId = collapseParent.getAttribute('id');
+                    var heading = document.querySelector('[data-target="' + targetId + '"]');
+                    if (heading) {
+                        heading.classList.add('active');
+                        var chevron = heading.querySelector('.fb-chevron');
+                        if (chevron) {
+                            chevron.style.transform = 'rotate(180deg)';
+                        }
+                    }
+                } else {
+                    var directHeading = link.closest('.fb-menu-heading');
+                    if(directHeading) {
+                        directHeading.classList.add('active');
+                    }
+                }
             }
 
-            // Collapsible sidebar menu handling
-            document.querySelectorAll(".fb-menu-heading[data-target]").forEach(header => {
-                header.addEventListener("click", function() {
+            navLinks.forEach(function (link) {
+                var linkUrl = link.getAttribute('href');
+                if (linkUrl && linkUrl !== '#') {
+                    var anchor = document.createElement('a');
+                    anchor.href = linkUrl;
+                    var linkPath = anchor.pathname.toLowerCase();
+
+                    if (currentPath === linkPath) {
+                        exactMatchFound = true;
+                        localStorage.setItem('activeSidebarMenu', linkUrl);
+                        activateMenu(link);
+                    }
+                }
+            });
+
+            if (!exactMatchFound) {
+                var savedMenuUrl = localStorage.getItem('activeSidebarMenu');
+                if (savedMenuUrl) {
+                    navLinks.forEach(function (link) {
+                        var linkUrl = link.getAttribute('href');
+                        if (linkUrl && linkUrl === savedMenuUrl) {
+                            activateMenu(link);
+                        }
+                    });
+                }
+            }
+
+            navLinks.forEach(function(link) {
+                link.addEventListener('click', function() {
+                    var href = this.getAttribute('href');
+                    if(href && href !== '#') {
+                        localStorage.setItem('activeSidebarMenu', href);
+                    }
+                });
+            });
+        });
+    </script>
+
+    <script>
+        function showOfflinePopup() { document.getElementById("offlineModal").style.display = "block"; }
+        function hideOfflinePopup() { document.getElementById("offlineModal").style.display = "none"; }
+        window.addEventListener('offline', showOfflinePopup);
+        window.addEventListener('online', hideOfflinePopup);
+        if (!navigator.onLine) { showOfflinePopup(); }
+    </script>
+    
+    <script>
+        function toggleFbSection(sectionId, headerElement) {
+            const targetContent = document.getElementById(sectionId);
+            if (!targetContent) return;
+
+            if (headerElement.classList.contains('active')) {
+                targetContent.style.display = "none";
+                headerElement.classList.remove("active");
+                headerElement.querySelector('.fb-chevron').style.transform = 'rotate(0deg)';
+            } else {
+                document.querySelectorAll('.fb-collapsible-content').forEach(function(div) {
+                    div.style.display = "none";
+                });
+                document.querySelectorAll('.fb-menu-heading').forEach(function(header) {
+                    header.classList.remove("active");
+                    let chevron = header.querySelector('.fb-chevron');
+                    if(chevron) chevron.style.transform = 'rotate(0deg)';
+                });
+                targetContent.style.display = "block";
+                headerElement.classList.add("active");
+                headerElement.querySelector('.fb-chevron').style.transform = 'rotate(180deg)';
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            document.querySelectorAll(".fb-menu-heading[data-target]").forEach(el => {
+                el.addEventListener("click", function () {
                     const targetId = this.dataset.target;
-                    const targetContent = document.getElementById(targetId);
-                    if (targetContent) {
-                        const isVisible = targetContent.style.display === "block";
-                        targetContent.style.display = isVisible ? "none" : "block";
-                        this.classList.toggle("active", !isVisible);
+                    if(targetId) {
+                        toggleFbSection(targetId, this);
                     }
                 });
             });
 
-            // Close sidebar on navigation for mobile view
-            function closeSidebar() {
-                document.body.classList.add('sidebar-collapse');
-            }
+            document.querySelectorAll(".url-link").forEach(link => {
+                link.addEventListener("click", function (e) {
+                    if(this.getAttribute('href') && this.getAttribute('href') !== '#') {
+                        // Let browser navigate
+                    } else {
+                        e.preventDefault();
+                    }
+                });
+            });
+        });
     </script>
 
-    @if (isDashboard)
-    {
-        <script>
-                document.querySelectorAll('[data-widget="pushmenu"]').forEach(function(btn) {
-                    btn.addEventListener('click', function() {
-                        setTimeout(function() {
-                            if (!document.body.classList.contains('sidebar-collapse')) {
-                                var beeAnim = document.querySelector('.bee-fly-anim');
-                                if (beeAnim) {
-                                    beeAnim.classList.remove('bee-fly-in');
-                                    void beeAnim.offsetWidth; // forces reflow so animation replays every time
-                                    beeAnim.classList.add('bee-fly-in');
-                                }
-                            }
-                        }, 50);
-                    });
-                });
-        </script>
-    }
+    @await Html.PartialAsync("_PremiumAlerts")
+    @await Html.PartialAsync("_PremiumConfirm")
 
-    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

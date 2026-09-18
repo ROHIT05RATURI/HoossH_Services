@@ -1,0 +1,27 @@
+<script>
+    function showPremiumConfirm(title, text, iconClass, callback) {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: title,
+                text: text,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3f6791',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Confirm'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    if (callback && typeof callback === 'function') {
+                        callback();
+                    }
+                }
+            });
+        } else {
+            if (confirm(title + "\n" + text)) {
+                if (callback && typeof callback === 'function') {
+                    callback();
+                }
+            }
+        }
+    }
+</script>

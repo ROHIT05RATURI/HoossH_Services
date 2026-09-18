@@ -1,0 +1,27 @@
+<script>
+    function showPremiumAlert(title, message, type, callback) {
+        let swalIcon = 'info';
+        if (type === 'error') swalIcon = 'error';
+        else if (type === 'warning' || type === 'alert') swalIcon = 'warning';
+        else if (type === 'add' || type === 'update' || type === 'success') swalIcon = 'success';
+
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: title,
+                text: message,
+                icon: swalIcon,
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#3f6791'
+            }).then((result) => {
+                if (callback && typeof callback === 'function') {
+                    callback();
+                }
+            });
+        } else {
+            alert(title + "\n" + message);
+            if (callback && typeof callback === 'function') {
+                callback();
+            }
+        }
+    }
+</script>

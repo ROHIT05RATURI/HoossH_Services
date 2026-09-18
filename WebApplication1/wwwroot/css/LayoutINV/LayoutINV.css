@@ -1,217 +1,374 @@
-﻿:root {
-    --primary-color: #3f6791;
-    --primary-light: #f0f4f8;
-    --text-main: #334155;
-    --border-color: #e2e8f0;
-    --bg-light: #f8fafc;
-}
-
 body {
-    font-family: 'Poppins', sans-serif;
-    background-color: var(--bg-light);
-    color: var(--text-main);
     font-size: 14px;
 }
 
-/* Navbar Styling */
-.main-sidebar {
-    background-color: #ffffff !important;
-    border-bottom: 1px solid var(--border-color) !important;
+img.elevation-3, .brand-image.img-circle.elevation-3 {
+    box-shadow: none !important;
+    max-height: none !important;
 }
 
-.navbar-title-center {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    pointer-events: none;
-}
-
-    .navbar-title-center h6 {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: var(--text-main);
-        white-space: nowrap;
-    }
-
-/* Sidebar Styling - Modern Light Theme */
 .main-sidebar {
     position: fixed !important;
     top: 0;
     left: 0;
     height: 100vh;
-    width: 280px;
-    background-color: #ffffff !important;
-    border-right: 1px solid var(--border-color);
+    width: 76%;
     transform: translateX(-100%);
     transition: transform 0.3s ease, visibility 0.3s ease;
     z-index: 10080;
     visibility: hidden;
-    overflow: visible !important;
+    background-color: #ffffff !important;
+    overflow-y: auto !important;
 }
 
 body:not(.sidebar-collapse) .main-sidebar {
     transform: translateX(0);
     visibility: visible;
-    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.7);
 }
 
+@media(max-width: 991px) {
+    .content-wrapper, .main-header, .main-footer {
+        margin-left: 0 !important;
+        transition: none !important;
+    }
+}
+@media(min-width: 992px) {
+    body:not(.sidebar-collapse) .content-wrapper,
+    body:not(.sidebar-collapse) .main-header,
+    body:not(.sidebar-collapse) .main-footer {
+        margin-left: 320px !important;
+        transition: margin-left 0.3s ease-in-out;
+    }
+}
+
+@media(min-width : 500px) {
+    .main-sidebar {
+        width: 320px;
+        border-radius: 0px;
+    }
+}
+
+/* Header Style */
 .grow-nav-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 15px 20px;
-    border-bottom: 1px solid var(--border-color);
-    background-color: #ffffff;
+    padding: 10px 20px;
+    border-bottom: 1px solid #f1f5f9;
     position: sticky;
     top: 0;
+    background-color: white;
     z-index: 10;
 }
 
+/* =========================================
+           UI FIX: SIDEBAR MENU STYLING (EXACT IMAGE LOOK)
+           ========================================= */
 .fb-menu-container {
-    padding: 12px;
-    max-height: calc(100vh - 68px);
+    padding: 8px 12px 89px 12px;
+    height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
 }
+
+    .fb-menu-container::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    .fb-menu-container::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+    }
 
 .fb-menu-heading {
-    font-size: 13.5px;
-    font-weight: 500;
-    color: var(--text-main);
+    margin-bottom: 4px;
+    border-radius: 8px;
+}
+
+    /* Base styling for links & dropdown headings */
+    .url-link, .fb-menu-heading[data-target] {
+        display: flex !important;
+        align-items: center;
+        padding: 10px 14px !important;
+        border-radius: 8px !important;
+        color: #475569 !important; /* Slate color */
+        font-size: 14.5px;
+        text-decoration: none !important;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        position: relative;
+        cursor: pointer;
+        transition: all 0.2s ease !important;
+        white-space: nowrap !important; /* Prevents text wrap */
+        width: 100%;
+    }
+
+    .fb-menu-heading[data-target] {
+        justify-content: space-between;
+    }
+
+/* Icons & Texts */
+.grow-nav-icon {
+    font-size: 18px !important;
+    min-width: 25px !important;
+    text-align: center !important;
+    color: #64748b !important;
+    margin-right: 12px !important;
+}
+
+.grow-nav-title {
+    font-weight: 400 !important;
+}
+
+.grow-nav-content {
+    flex-grow: 1;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    cursor: pointer;
-    padding: 10px 14px;
-    border-radius: 6px;
-    transition: all 0.2s ease;
-    margin-bottom: 4px;
 }
 
-    .fb-menu-heading:hover {
-        background-color: var(--primary-light);
-        color: var(--primary-color);
-    }
-
-    .fb-menu-heading.active {
-        background-color: var(--primary-light);
-        color: var(--primary-color);
-        font-weight: 600;
-    }
-
-.grow-nav-icon {
-    color: var(--primary-color);
-    font-size: 15px;
-    width: 24px;
-    text-align: center;
-    margin-right: 8px;
+.fb-chevron {
+    font-size: 12px !important;
+    color: #94a3b8 !important;
+    transition: transform 0.3s ease !important;
 }
 
-/* Submenus / Cards Grid */
+/* Hover Effect */
+.url-link:hover, .fb-menu-heading[data-target]:hover {
+    background-color: #f8fafc !important;
+    color: #1e293b !important;
+}
+
+/* =========================================
+           ACTIVE STATE (BLUE PILL + RIGHT BORDER)
+           ========================================= */
+.url-link.active, .fb-menu-heading.active {
+    background-color: #e2e8f0 !important; /* Image jaisa light color */
+    color: #1e293b !important;
+}
+
+    .url-link.active .grow-nav-title, .fb-menu-heading.active .grow-nav-title {
+        font-weight: 500 !important; /* Active me thoda bold */
+    }
+
+    /* Right Blue Border */
+    .url-link.active::after, .fb-menu-heading.active::after {
+        content: "";
+        position: absolute;
+        right: 0;
+        top: 0;
+        height: 100%;
+        width: 4px;
+        background-color: #3f6791;
+        border-top-left-radius: 4px;
+        border-bottom-left-radius: 4px;
+    }
+
+    /* Active Icons */
+    .url-link.active .grow-nav-icon, .fb-menu-heading.active .grow-nav-icon, .fb-menu-heading.active .fb-chevron {
+        color: #3f6791 !important;
+    }
+
+    .fb-menu-heading.active .fb-chevron {
+        transform: rotate(180deg);
+    }
+
+/* =========================================
+           COLLAPSIBLE SUB-MENUS
+           ========================================= */
 .fb-collapsible-content {
     display: none;
-    margin: 6px 0 10px 0;
-    padding-left: 10px;
+    margin-top: 10px;
+    padding-bottom: 10px;
+    animation: slideDownFade 0.4s ease forwards;
+    transform-origin: top;
+}
+
+@keyframes slideDownFade {
+    from {
+        opacity: 0;
+        transform: scaleY(0.9) translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scaleY(1) translateY(0);
+    }
 }
 
 .fb-grid-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-bottom: 8px;
+    gap: 10px;
+    margin-bottom: 10px;
 }
 
 .fb-card {
     background-color: #ffffff;
-    border-radius: 8px;
-    padding: 12px;
+    border-radius: 10px;
+    padding: 15px;
     text-decoration: none;
-    border: 1px solid var(--border-color);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
-    height: 70px;
-    transition: all 0.2s ease;
+    height: 65px;
+    border: 1px solid #dbdbdb;
+    transition: all 0.3s ease;
 }
 
-    .fb-card:hover {
-        border-color: var(--primary-color);
-        background-color: var(--primary-light);
-        transform: translateY(-2px);
+    .fb-card:active {
+        transform: scale(0.96);
+        background-color: #f2f2f2;
     }
 
 .fb-card-icon {
-    font-size: 20px;
-    margin-bottom: 4px;
-    color: var(--primary-color);
+    font-size: 24px;
+    margin-bottom: 8px;
 }
 
 .fb-card-title {
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--text-main);
-    text-align: center;
+    font-size: 12px;
+    font-weight: 400;
+    color: #050505;
     line-height: 1.2;
 }
 
-/* Active Navigation States */
-.url-link.active {
-    background: var(--primary-light) !important;
-    color: var(--primary-color) !important;
-    font-weight: 600;
-    border-radius: 6px;
-    border-left: 3px solid var(--primary-color);
+/* Icons color for cards */
+.icon-blue {
+    color: #1877f2;
 }
 
-/* Profile Dropdown */
+.icon-green {
+    color: #42b72a;
+}
+
+.icon-orange {
+    color: #f7b928;
+}
+
+.icon-red {
+    color: #fa383e;
+}
+
+.icon-purple {
+    color: #7d37d3;
+}
+
+.icon-teal {
+    color: #2ABBA7;
+}
+
+/* =========================================
+           🚨 ADMINLTE SIDEBAR COLLAPSE FIX 🚨
+           ========================================= */
+body.sidebar-mini.sidebar-collapse .main-sidebar:not(:hover) .grow-nav-title,
+body.sidebar-mini.sidebar-collapse .main-sidebar:not(:hover) .grow-nav-content,
+body.sidebar-mini.sidebar-collapse .main-sidebar:not(:hover) .fb-chevron,
+body.sidebar-mini.sidebar-collapse .main-sidebar:not(:hover) .fb-collapsible-content,
+body.sidebar-mini.sidebar-collapse .main-sidebar:not(:hover) .grow-nav-header img,
+body.sidebar-mini.sidebar-collapse .main-sidebar:not(:hover) .nav-link span,
+body.sidebar-mini.sidebar-collapse .main-sidebar:not(:hover) .nav-link p,
+body.sidebar-mini.sidebar-collapse .main-sidebar:not(:hover) .url-link span,
+body.sidebar-mini.sidebar-collapse .main-sidebar:not(:hover) .url-link p,
+body.sidebar-mini.sidebar-collapse .main-sidebar:not(:hover) .dropdown-item span {
+    display: none !important; /* Hide text/menus on collapse to prevent wrap */
+}
+
+body.sidebar-mini.sidebar-collapse .main-sidebar:not(:hover) .grow-nav-header {
+    justify-content: center !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+body.sidebar-mini.sidebar-collapse .main-sidebar:not(:hover) .url-link,
+body.sidebar-mini.sidebar-collapse .main-sidebar:not(:hover) .fb-menu-heading[data-target] {
+    justify-content: center !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    width: 100%;
+}
+
+body.sidebar-mini.sidebar-collapse .main-sidebar:not(:hover) .grow-nav-icon {
+    margin-right: 0 !important;
+}
+
+/* --------------------------------------
+           OTHERS
+           -------------------------------------- */
+.profile-icon {
+    color: #ffffff;
+    cursor: pointer;
+}
+
+.back-icon {
+    width: 22px;
+    height: 21px;
+    display: inline-block;
+    background-color: #ffffff;
+    -webkit-mask: url('/Images/icon/undo_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png') no-repeat center;
+    mask: url('/Images/icon/undo_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png') no-repeat center;
+    mask-size: contain;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+    .back-icon:hover {
+        transform: translateX(-3px);
+    }
+
 .profile-dropdown {
     display: none;
     position: absolute;
     top: 100%;
     right: 0;
     background-color: white;
-    min-width: 160px;
+    min-width: 150px;
     border-radius: 8px;
     padding: 8px 0;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    border: 1px solid var(--border-color);
     z-index: 10000;
+    border: 1px solid #ddd;
+    margin-top: 10px;
 }
 
 .dropdown-item {
-    padding: 8px 16px;
-    font-size: 13px;
-    color: var(--text-main);
+    display: block;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: #333;
+    font-size: 14px;
+    transition: background 0.2s;
 }
 
     .dropdown-item:hover {
-        background-color: var(--primary-light);
-        color: var(--primary-color);
+        background-color: #f8f9fa;
     }
 
-/* Loader Overlay */
 .loader-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(2px);
-    z-index: 99999;
+    z-index: 9999;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 .spinner {
-    width: 50px;
-    height: 50px;
-    border: 4px solid var(--border-color);
-    border-top: 4px solid var(--primary-color);
+    width: 60px;
+    height: 60px;
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid #007bff;
     border-radius: 50%;
-    animation: spin 0.8s linear infinite;
+    animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
@@ -221,352 +378,5 @@ body:not(.sidebar-collapse) .main-sidebar {
 
     100% {
         transform: rotate(360deg);
-    }
-}
-
-/* Bottom Nav for Mobile */
-.bottom-nav {
-    height: 60px;
-    background-color: #fff;
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
-    z-index: 1050;
-    border-top: 1px solid var(--border-color);
-    display: none;
-}
-
-@media (max-width: 600px) {
-    .bottom-nav {
-        display: flex !important;
-    }
-}
-/* ================= HOOSSH THEME — SIDEBAR & TOPBAR RECOLOR ================= */
-/* ================= HOOSSH THEME — SIDEBAR (white bg, chip icons) ================= */
-
-.main-sidebar {
-    background-color: #ffffff !important;
-    border-right: 1px solid var(--border-color) !important;
-}
-
-.grow-nav-header {
-    background-color: #ffffff !important;
-    border-bottom: 1px solid var(--border-color) !important;
-}
-
-    .grow-nav-header .nav-link i {
-        color: #475569 !important;
-    }
-
-.fb-menu-heading {
-    color: #37768B !important;
-}
-
-    .fb-menu-heading:hover,
-    .fb-menu-heading.active {
-        background-color: #eff6ff !important;
-        color: #37768B !important;
-    }
-
-/* icon becomes a small solid-blue chip with a white glyph inside */
-.grow-nav-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 34px;
-    height: 34px;
-    min-width: 34px;
-    border-radius: 9px;
-    background-color: #37768B !important;
-    color: #ffffff !important;
-    font-size: 15px !important;
-    line-height: 1 !important;
-    margin-right: 10px;
-}
-
-.fb-menu-heading:hover .grow-nav-icon,
-.fb-menu-heading.active .grow-nav-icon {
-    background-color: #37768B !important;
-    color: #ffffff !important;
-}
-
-.fb-card {
-    background-color: #ffffff !important;
-    border-color: var(--border-color) !important;
-}
-
-    .fb-card:hover {
-        background-color: #eff6ff !important;
-        border-color: #2563eb !important;
-    }
-
-.fb-card-title {
-    color: #37768B !important;
-}
-
-.fb-card-icon {
-    color: #37768B !important;
-}
-
-.profile-icon-img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid rgba(255,255,255,0.5);
-}
-
-.url-link.active {
-    background: #eff6ff !important;
-    color: #37768B !important;
-    font-weight: 600;
-    border-radius: 6px;
-    border-left: none !important;
-}
-
-    .url-link.active .grow-nav-icon {
-        background-color: #37768B !important;
-        color: #ffffff !important;
-    }
-
-.fb-card.active {
-    background-color: #eff6ff !important;
-    border-color: #2563eb !important;
-}
-
-    .fb-card.active .fb-card-icon,
-    .fb-card.active .fb-card-title {
-        color: #37768B !important;
-    }
-
-/* ================= HOOSSH THEME — TOP NAVBAR RECOLOR ================= */
-
-.main-header {
-    background-color: #3D839B !important;
-    border-bottom: none !important;
-}
-
-    .main-header .nav-link,
-    .main-header .navbar-title-center h6,
-    .main-header .profile-icon,
-    .main-header .fs-5 {
-        color: #ffffff !important;
-    }
-
-/* ================= HOOSSH THEME — TOP NAVBAR VERTICAL ALIGNMENT FIX ================= */
-
-.main-header {
-    height: 60px;
-    display: flex;
-    align-items: center;
-}
-
-    .main-header .container-fluid {
-        display: flex;
-        align-items: center;
-        height: 100%;
-    }
-
-    .main-header .navbar-nav {
-        display: flex;
-        align-items: center;
-        height: 100%;
-    }
-
-    .main-header .nav-item {
-        display: flex;
-        align-items: center;
-        height: 100%;
-    }
-
-    .main-header .nav-link {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 100%;
-        padding-top: 0;
-        padding-bottom: 0;
-        line-height: 1;
-    }
-
-.navbar-title-center {
-    display: flex;
-    align-items: center;
-    height: 100%;
-    top: 0;
-}
-
-    .navbar-title-center h6 {
-        line-height: 1;
-    }
-
-.profile-icon-img {
-    display: block;
-}
-
-.main-header .nav-item.position-relative {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-}
-
-.profile-icon-img {
-    display: block;
-    margin: 0;
-    align-self: center;
-    vertical-align: middle;
-}
-/* ================= HOOSSH THEME — NAV HOVER MOVEMENT ================= */
-
-.fb-menu-heading {
-    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease, padding-left 0.2s ease;
-}
-
-    .fb-menu-heading:hover {
-        transform: translateX(4px);
-    }
-
-.grow-nav-icon {
-    transition: background-color 0.2s ease, transform 0.2s ease;
-}
-
-
-/* ================= HOOSSH THEME — FIX BLACK TEXT ON HOVER ================= */
-
-.fb-menu-heading:hover .url-link,
-.fb-menu-heading:hover .url-link span {
-    color: #37768B !important;
-}
-    /* ================= HOOSSH THEME — LOGOUT STAYS RED ON HOVER ================= */
-
-    .fb-menu-heading:hover .url-link.text-danger,
-    .fb-menu-heading:hover .url-link.text-danger span {
-        color: #dc2626 !important;
-    }
-/* ================= HOOSSH THEME — REALISTIC BEE FLIGHT (LAYERED) ================= */
-
-.bee-wrapper {
-    display: inline-block;
-    transform-origin: center center;
-    filter: drop-shadow(0 0 0 rgba(0, 0, 0, 0));
-    will-change: transform, filter;
-}
-
-.bee-fly-anim {
-    display: inline-block;
-}
-
-.bee-img {
-    display: block;
-    will-change: transform;
-}
-
-@keyframes beeFlightPath {
-    0% {
-        transform: translate(-180px, 22px) rotate(-10deg);
-        opacity: 0;
-    }
-
-    5% {
-        opacity: 1;
-    }
-
-    12% {
-        transform: translate(-152px, 8px) rotate(-7deg);
-    }
-
-    22% {
-        transform: translate(-122px, -4px) rotate(-3deg);
-    }
-
-    32% {
-        transform: translate(-92px, 5px) rotate(-2deg);
-    }
-
-    42% {
-        transform: translate(-64px, -2px) rotate(1deg);
-    }
-
-    52% {
-        transform: translate(-42px, 3px) rotate(0deg);
-    }
-
-    62% {
-        transform: translate(-25px, -1px) rotate(-1deg);
-    }
-
-    72% {
-        transform: translate(-13px, 2px) rotate(0deg);
-    }
-
-    82% {
-        transform: translate(-6px, -1px) rotate(1deg);
-    }
-
-    89% {
-        transform: translate(-2px, 1px) rotate(0deg);
-    }
-
-    95% {
-        transform: translate(0, -1px) rotate(0deg);
-    }
-
-    100% {
-        transform: translate(0, 0) rotate(0deg);
-        opacity: 1;
-    }
-}
-
-@keyframes beeLandShadow {
-    0% {
-        filter: drop-shadow(0 0 0 rgba(0, 0, 0, 0));
-    }
-
-    75% {
-        filter: drop-shadow(0 0 0 rgba(0, 0, 0, 0));
-    }
-
-    90% {
-        filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.08));
-    }
-
-    100% {
-        filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.18));
-    }
-}
-
-@keyframes beeWingFlutter {
-    0% {
-        transform: scaleX(1);
-    }
-
-    25% {
-        transform: scaleX(0.94);
-    }
-
-    50% {
-        transform: scaleX(1.02);
-    }
-
-    75% {
-        transform: scaleX(0.95);
-    }
-
-    100% {
-        transform: scaleX(1);
-    }
-}
-
-.bee-fly-in {
-    animation: beeFlightPath 2.1s cubic-bezier(0.16, 1, 0.3, 1) both, beeLandShadow 2.1s ease-out both;
-}
-
-.bee-flutter {
-    animation: beeWingFlutter 0.075s linear infinite;
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .bee-fly-in,
-    .bee-flutter {
-        animation: none;
     }
 }
