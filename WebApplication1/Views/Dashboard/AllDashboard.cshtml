@@ -36,7 +36,7 @@
 }
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <partial name="_BottomNavigation" />
 <link rel="stylesheet" href="/css/Kundali.css" />
@@ -67,7 +67,7 @@
     <div class="profile-card-container">
         <div class="profile-left">
             <div class="profile-avatar-wrap">
-                <img id="editProfileImg" class="agent-avatar" src="@(base64 != null ? $"data:{mime};base64,{base64}" : "/Images/Sadie_Sink.jpg")">
+                <img id="editProfileImg" class="agent-avatar" src="~/images/service-man.jpg">
             </div>
             <div class="profile-info">
                 <h2 class="agent-name">@(Model != null && !string.IsNullOrEmpty(Model.AgentName) ? Model.AgentName : "Agent Name")</h2>
@@ -1226,4 +1226,67 @@
             $('#v-mainFabBtn').html('<i class="fas fa-layer-group"></i>');
         }
     }
+    
+        document.addEventListener("DOMContentLoaded", function () {
+
+        const card = document.querySelector(".profile-card-container");
+
+        if (!card) return;
+
+        // Disable 3D effect on touch devices
+        if (window.matchMedia("(pointer: coarse)").matches) {
+            return;
+        }
+
+        card.addEventListener("mousemove", function (e) {
+
+            const rect = card.getBoundingClientRect();
+
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+
+        /*
+         * Keep this VERY small.
+         * This is what makes it feel premium instead
+         * of looking like a gaming website.
+         */
+
+        const rotateY =
+        ((x - centerX) / centerX) * 1.4;
+
+        const rotateX =
+        ((centerY - y) / centerY) * 1.4;
+
+        card.style.setProperty(
+        "--rotate-x",
+        rotateX + "deg"
+        );
+
+        card.style.setProperty(
+        "--rotate-y",
+        rotateY + "deg"
+        );
+
+        });
+
+
+        card.addEventListener("mouseleave", function () {
+
+            card.style.setProperty(
+                "--rotate-x",
+                "0deg"
+            );
+
+        card.style.setProperty(
+        "--rotate-y",
+        "0deg"
+        );
+
+        });
+
+    });
+
 </script>
