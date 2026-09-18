@@ -98,80 +98,75 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <script>
-        $(document).ready(function() {
+   <script>
+    $(document).ready(function() {
 
-            // 1. Password Visibility Logic
-            $('#toggleIcon').on('click', function() {
-                const passInput = $('#password');
-                if (passInput.attr('type') === 'password') {
-                    passInput.attr('type', 'text');
-                    $(this).removeClass('fa-eye-slash').addClass('fa-eye');
-                } else {
-                    passInput.attr('type', 'password');
-                    $(this).removeClass('fa-eye').addClass('fa-eye-slash');
+        // 1. Password Visibility Logic
+        $('#toggleIcon').on('click', function() {
+            const passInput = $('#password');
+            if (passInput.attr('type') === 'password') {
+                passInput.attr('type', 'text');
+                $(this).removeClass('fa-eye-slash').addClass('fa-eye');
+            } else {
+                passInput.attr('type', 'password');
+                $(this).removeClass('fa-eye').addClass('fa-eye-slash');
+            }
+        });
+
+        // 2. AJAX Login Submit
+        $("#loginForm").on("submit", function(e) {
+            e.preventDefault();
+
+            // Reset UI
+            $("#errorMessage").addClass("d-none");
+            $("#btnSubmit").prop("disabled", true);
+            $("#btnText").text("Authenticating...");
+
+            const loginData = {
+                Username: $("#userName").val(),
+                Password: $("#password").val()
+            };
+
+            $.ajax({
+                url: '/api/Auth/Login', // API URL Mapping
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(loginData),
+                success: function(response) {
+                    const successModal = document.getElementById("customSuccessModal");
+                    const successCard = document.getElementById("successCard");
+
+                    successCard.classList.remove("animate__zoomIn", "animate__zoomOut");
+                    successModal.classList.add("active");
+                    successCard.classList.add("animate__zoomIn");
+
+                    setTimeout(() => {
+                        successCard.classList.remove("animate__zoomIn");
+                        successCard.classList.add("animate__zoomOut");
+
+                        setTimeout(() => {
+                            window.location.href = '/Dashboard/AllDashboard';
+                        }, 400);
+                    }, 2000);
+                },
+                error: function(xhr) {
+                    let errorMessage = "An unexpected error occurred. Please try again.";
+                    
+                    if(xhr.status === 401 && xhr.responseJSON) {
+                        errorMessage = xhr.responseJSON.message || "Invalid username or password";
+                    } else if (xhr.status === 400) {
+                        errorMessage = "Please enter valid details.";
+                    }
+
+                    $("#errorText").text(errorMessage);
+                    $("#errorMessage").removeClass("d-none");
+                    $("#btnSubmit").prop("disabled", false);
+                    $("#btnText").text("Log In");
                 }
             });
-
-            // 2. Your AJAX Login Logic
-            $("#loginForm").on("submit", function(e) {
-                e.preventDefault();
-
-                // Reset UI
-                $("#errorMessage").addClass("d-none");
-                $("#btnSubmit").prop("disabled", true);
-                $("#btnText").text("Authenticating...");
-
-                const loginData = {
-                    username: $("#userName").val(),
-                    Password: $("#password").val()
-                };
-
-                $.ajax({
-                    url: '/Login/Login',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(loginData),
-                    success: function(response) {
-                        if (response.success) {
-                            const successModal = document.getElementById("customSuccessModal");
-                            const successCard = document.getElementById("successCard");
-
-                            // Reset animations
-                            successCard.classList.remove("animate__zoomIn", "animate__zoomOut");
-
-                            // Show Success modal
-                            successModal.classList.add("active");
-                            successCard.classList.add("animate__zoomIn");
-
-                            setTimeout(() => {
-                                successCard.classList.remove("animate__zoomIn");
-                                successCard.classList.add("animate__zoomOut");
-
-                                setTimeout(() => {
-                                    window.location.href = response.redirect;
-                                }, 400);
-                            }, 2000);
-                        } else {
-                            // Show error above credentials
-                            $("#errorText").text(response.message);
-                            $("#errorMessage").removeClass("d-none");
-
-                            // Reset button
-                            $("#btnSubmit").prop("disabled", false);
-                            $("#btnText").text("Log In");
-                        }
-                    },
-                    error: function() {
-                        $("#errorText").text("An unexpected error occurred. Please try again.");
-                        $("#errorMessage").removeClass("d-none");
-                        $("#btnSubmit").prop("disabled", false);
-                        $("#btnText").text("Log In");
-                    }
-                });
-            });
         });
-    </script>
+    }); // Sirf ek baar close hoga yahan
+</script>
 </body>
 </html>
 

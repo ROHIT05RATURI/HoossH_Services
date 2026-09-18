@@ -86,8 +86,9 @@
                 </div>
 
                 <div class="d-flex align-items-center">
+                    <!-- REPLACED GO BACK BUTTON -->
                     <a href="javascript:history.back()" class="nav-link" title="Go Back">
-                        <span class="back-icon" style="background-color: #fff;"></span>
+                        <i class="fas fa-arrow-left text-white" style="font-size: 1.2rem;"></i>
                     </a>
                     
                     <div class="position-relative d-inline-block me-3 d-flex align-items-center">
@@ -101,7 +102,7 @@
                             <a href="/Flow/NewKundaliOverView" class="dropdown-item"> 
                                 <i class="fas fa-user me-2"></i> Kundali
                             </a>
-                            <a href="/home/Index" class="dropdown-item text-danger">
+                            <a href="/Login/Index" class="dropdown-item text-danger">
                                 <i class="fas fa-sign-out-alt me-2"></i> Logout
                             </a>
                         </div>
@@ -223,7 +224,7 @@
                 </div>
             </div>
         </div>
-
+        <partial name="_BottomNavigation" />
         <div id="offlineModal" style="display:none; position:fixed; top:0; left:0; width:100%; background-color:#ffa46b; color:white; text-align:center; padding:10px; z-index:9999;">
             🚫 You are offline. Please check your internet connection.
         </div>

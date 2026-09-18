@@ -20,7 +20,7 @@ namespace HoossH_Service_DAL.Repositories
 
             public async Task<LoginUser?> AuthenticateAsync(string username, string password)
             {
-                var query = "SELECT loginid, username, role, active, hashpassword FROM LoginCredentials WHERE username = @Username AND active = 1";
+                var query = "SELECT loginid, username, active, hashpassword FROM LoginCredentials WHERE username = @Username AND active = 1";
 
                 using var connection = new SqlConnection(_connectionString);
 
@@ -29,7 +29,7 @@ namespace HoossH_Service_DAL.Repositories
                 if (user != null && !string.IsNullOrEmpty(user.hashpassword))
                 {
                     var hasher = new PasswordHasher<LoginUser>();
-                    var result = hasher.VerifyHashedPassword(user, user.hashpassword, password);
+                    var result = hasher.VerifyHashedPassword(user, user.hashpassword,password);
 
                     if (result == PasswordVerificationResult.Success || result == PasswordVerificationResult.SuccessRehashNeeded)
                     {

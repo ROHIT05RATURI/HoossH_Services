@@ -36,7 +36,7 @@
             };
 
             $.ajax({
-                url: '@Url.Action("Login", "Home")',
+                url: '@Url.Action("Login" , "Home")',
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(loginData),

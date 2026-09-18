@@ -16,13 +16,6 @@ namespace HoossH_Services.Controllers
             return View();
         }
 
-        public IActionResult ViewAttendence()
-        {
-            return View();
-        }
-
-
-
         public IActionResult LeaveManagement()
         {
             var model = new HoossH_Services.Models.Leaves();

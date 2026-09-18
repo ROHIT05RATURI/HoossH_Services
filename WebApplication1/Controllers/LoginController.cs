@@ -18,30 +18,30 @@ namespace HoossH_Services.Controllers
             return View(new HoossH_Service_DAL.Models.LoginUser());
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Login([FromBody] HoossH_Service_DAL.Models.LoginUser request)
-        {
-            if (request == null || string.IsNullOrEmpty(request.username) || string.IsNullOrEmpty(request.Password))
-            {
-                return Json(new { success = false, message = "Please enter username and password" });
-            }
+        //[HttpPost]
+        //public async Task<IActionResult> Login([FromBody] HoossH_Service_DAL.Models.LoginUser request)
+        //{
+        //    if (request == null || string.IsNullOrEmpty(request.username) || string.IsNullOrEmpty(request.Password))
+        //    {
+        //        return Json(new { success = false, message = "Please enter username and password" });
+        //    }
 
-            try 
-            {
-                var user = await _authRepository.AuthenticateAsync(request.username, request.Password);
+        //    try 
+        //    {
+        //        var user = await _authRepository.AuthenticateAsync(request.username, request.Password);
 
-                if (user != null)
-                {
-                    return Json(new { success = true, redirect = Url.Action("AllDashboard","Dashboard") });
-                }
+        //        if (user != null)
+        //        {
+        //            return Json(new { success = true, redirect = Url.Action("AllDashboard","Dashboard") });
+        //        }
 
-                return Json(new { success = false, message = "Invalid username or password" });
-            }
-            catch (System.Exception ex)
-            {
-                return Json(new { success = false, message = "Database Error: " + ex.Message });
-            }
-        }
+        //        return Json(new { success = false, message = "Invalid username or password" });
+        //    }
+        //    catch (System.Exception ex)
+        //    {
+        //        return Json(new { success = false, message = "Database Error: " + ex.Message });
+        //    }
+        //}
 
         public IActionResult Logout()
         {
