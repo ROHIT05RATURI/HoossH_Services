@@ -3,9 +3,10 @@ using HoossH_Services.Models;
 using HoossH_Service_DAL.Repo;
 using System;
 using System.Threading.Tasks;
-using System.Security.Claims; 
+using System.Security.Claims;
 using HoossH_Service_DAL.Models;
-using Microsoft.AspNetCore.Authorization; 
+using Microsoft.AspNetCore.Authorization;
+using System.Collections.Generic;
 
 namespace HoossH_Services.Controllers
 {
@@ -26,7 +27,6 @@ namespace HoossH_Services.Controllers
         public async Task<IActionResult> Attendance()
         {
             var model = new List<Attendance>();
-
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             if (Guid.TryParse(userIdString, out Guid loginId))
@@ -35,19 +35,6 @@ namespace HoossH_Services.Controllers
             }
 
             ViewBag.daysInMonth = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
-
-            return View(model);
-        }
-
-        public IActionResult LeaveManagement()
-        {
-            var model = new Leaves();
-            return View(model);
-        }
-
-        public IActionResult ViewApprovedHistory()
-        {
-            ManagerAttendance model = new ManagerAttendance();
             return View(model);
         }
 
@@ -67,7 +54,10 @@ namespace HoossH_Services.Controllers
 
                 if (dto.Status == "Present")
                 {
-                    isSuccess = await _attendanceRepository.MarkCheckInAsync(loginId, dto.Location);
+                    // Check if date is provided by UI, otherwise send null (for today's checkin)
+                    DateTime? manualDate = dto.AttendenceDate == DateTime.MinValue ? (DateTime?)null : dto.AttendenceDate;
+
+                    isSuccess = await _attendanceRepository.MarkCheckInAsync(loginId, dto.Location, manualDate);
                 }
                 else if (dto.Status == "Checkout")
                 {

@@ -17,17 +17,35 @@ namespace HoossH_Service_DAL.Repo
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
-        public async Task<bool> MarkCheckInAsync(Guid loginId, string location)
+        public async Task<bool> MarkCheckInAsync(Guid loginId, string location, DateTime? attendenceDate = null)
         {
-            var query = @"IF NOT EXISTS (SELECT 1 FROM attendance WHERE LoginId = @LoginId AND [date] = CAST(GETDATE() AS DATE))
-                      BEGIN
-                          INSERT INTO attendance ([date], checkInTime, attendanceStatus, CheckInLocation, LoginId) 
-                          VALUES (CAST(GETDATE() AS DATE), GETDATE(), 'Present', @Location, @LoginId)
-                      END";
-
             using var connection = new SqlConnection(_connectionString);
-            var rows = await connection.ExecuteAsync(query, new { LoginId = loginId, Location = location });
-            return rows > 0;
+            string query;
+
+            // Agar UI se purani date aayi hai (Past Attendance Popup se)
+            if (attendenceDate.HasValue)
+            {
+                query = @"IF NOT EXISTS (SELECT 1 FROM attendance WHERE LoginId = @LoginId AND [date] = CAST(@ManualDate AS DATE))
+                          BEGIN
+                              INSERT INTO attendance ([date], checkInTime, attendanceStatus, CheckInLocation, LoginId) 
+                              VALUES (CAST(@ManualDate AS DATE), @ManualDate, 'Present', @Location, @LoginId)
+                          END";
+
+                var rows = await connection.ExecuteAsync(query, new { LoginId = loginId, Location = location, ManualDate = attendenceDate.Value });
+                return rows > 0;
+            }
+            else
+            {
+                // Normal Dashboard wale Check-In button se (Aaj ki date)
+                query = @"IF NOT EXISTS (SELECT 1 FROM attendance WHERE LoginId = @LoginId AND [date] = CAST(GETDATE() AS DATE))
+                          BEGIN
+                              INSERT INTO attendance ([date], checkInTime, attendanceStatus, CheckInLocation, LoginId) 
+                              VALUES (CAST(GETDATE() AS DATE), GETDATE(), 'Present', @Location, @LoginId)
+                          END";
+
+                var rows = await connection.ExecuteAsync(query, new { LoginId = loginId, Location = location });
+                return rows > 0;
+            }
         }
 
         public async Task<List<Attendance>> GetUserAttendanceAsync(Guid loginId)
@@ -46,7 +64,6 @@ namespace HoossH_Service_DAL.Repo
 
             using var connection = new SqlConnection(_connectionString);
             var result = await connection.QueryAsync<Attendance>(query, new { LoginId = loginId });
-
             return result.AsList();
         }
 
