@@ -1,75 +1,2263 @@
 @{
-    ViewBag.Title = "Pricing";
+    ViewBag.Title = "Service Pricing";
     Layout = "~/Views/Shared/_LayoutINV.cshtml";
 }
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<link rel="stylesheet" href="/css/Shared/Pricing.css">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-<div class="screen-container">
-    <div class="top-header-card">
-        <div class="header-icon-box">
-            <i class="fas fa-box-open"></i>
+
+<style>
+
+    /* =========================================================
+           ROOT
+           (Matched to Attendance Dashboard palette)
+           ========================================================= */
+
+    :root {
+        --primary: #3D839B;
+        --primary-dark: #2d6478;
+        --primary-light: #e0f2fe;
+        --accent: #00e6a2;
+        --success: #16a34a;
+        --success-light: #dcfce7;
+        --text: #0f172a;
+        --text-soft: #64748b;
+        --muted: #94a3b8;
+        --border: #e2e8f0;
+        --border-light: #f1f5f9;
+        --background: #f4f6f8;
+        --white: #ffffff;
+        --danger: #dc2626;
+        --danger-light: #fee2e2;
+        --warning: #ca8a04;
+        --warning-light: #fef08a;
+        --purple: #9333ea;
+        --purple-light: #f3e8ff;
+    }
+
+
+    /* =========================================================
+           PAGE
+           ========================================================= */
+
+    .pricing-page {
+        min-height: 100vh;
+        background: var(--background);
+        padding: 32px 20px 60px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        color: var(--text);
+    }
+
+    .pricing-container {
+        width: 100%;
+        max-width: 950px;
+        margin: 0 auto;
+    }
+
+
+    /* =========================================================
+           PAGE HEADER
+           ========================================================= */
+
+    .page-header {
+        margin-bottom: 24px;
+    }
+
+    .page-title-row {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .page-title-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: var(--primary-light);
+        color: #0ea5e9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 19px;
+        flex-shrink: 0;
+    }
+
+    .page-title {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 900;
+        letter-spacing: -0.4px;
+        color: var(--text);
+    }
+
+    .page-subtitle {
+        margin: 4px 0 0;
+        color: var(--text-soft);
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+
+    /* =========================================================
+           COMMON CARD
+           ========================================================= */
+
+    .pricing-card {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        margin-bottom: 20px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    }
+
+
+    /* =========================================================
+           CARD HEADER
+           ========================================================= */
+
+    .card-header {
+        padding: 20px 24px;
+        border-bottom: 2px dashed var(--border-light);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+    }
+
+    .card-header-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .card-header-left > div:last-child {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+    .card-header-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: var(--primary-light);
+        color: #0ea5e9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 15px;
+    }
+
+    .card-title {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 800;
+        color: var(--text);
+    }
+
+    .card-description {
+        margin: 3px 0 0;
+        font-size: 12px;
+        color: var(--text-soft);
+    }
+
+
+    /* =========================================================
+           PRODUCT INFORMATION
+           ========================================================= */
+
+    .product-info {
+        padding: 22px 24px;
+    }
+
+    .product-main {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .product-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 16px;
+        background: var(--purple-light);
+        color: var(--purple);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        flex-shrink: 0;
+    }
+
+    .product-name {
+        margin: 0 0 5px;
+        font-size: 17px;
+        font-weight: 800;
+        color: var(--text);
+    }
+
+    .product-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+    }
+
+    .product-tag {
+        background: var(--border-light);
+        border: 1px solid var(--border);
+        color: var(--text-soft);
+        border-radius: 6px;
+        padding: 5px 8px;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .product-status {
+        margin-left: auto;
+        background: var(--success-light);
+        color: var(--success);
+        border: 1px solid #bbf7d0;
+        border-radius: 20px;
+        padding: 7px 11px;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        white-space: nowrap;
+    }
+
+
+    /* =========================================================
+           PARTS TABLE
+           ========================================================= */
+
+    .parts-body {
+        padding: 0 24px 24px;
+    }
+
+    .parts-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+        .parts-table th {
+            background: var(--border-light);
+            padding: 12px 14px;
+            text-align: left;
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .parts-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border-light);
+            vertical-align: middle;
+            background: #fff;
+        }
+
+        .parts-table tr:last-child td {
+            border-bottom: none;
+        }
+
+    .part-number {
+        width: 38px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .part-select {
+        width: 100%;
+        min-width: 230px;
+        height: 40px;
+        border: 1.5px solid var(--border);
+        border-radius: 10px;
+        background: #fff;
+        padding: 0 35px 0 11px;
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text);
+        outline: none;
+        cursor: pointer;
+        transition: all .2s;
+    }
+
+        .part-select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(0, 230, 162, .12);
+        }
+
+    .quantity-input,
+    .price-input {
+        width: 100%;
+        height: 40px;
+        border: 1.5px solid var(--border);
+        border-radius: 10px;
+        padding: 0 10px;
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text);
+        outline: none;
+        background: #fff;
+        transition: all .2s;
+    }
+
+    .quantity-input {
+        min-width: 75px;
+    }
+
+    .price-input {
+        min-width: 110px;
+    }
+
+        .quantity-input:focus,
+        .price-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(0, 230, 162, .12);
+        }
+
+    .amount-cell {
+        min-width: 120px;
+        font-size: 13px;
+        font-weight: 800;
+        color: var(--text);
+        white-space: nowrap;
+    }
+
+    .remove-part {
+        width: 34px;
+        height: 34px;
+        border: none;
+        border-radius: 10px;
+        background: var(--danger-light);
+        color: var(--danger);
+        cursor: pointer;
+        transition: .2s ease;
+    }
+
+        .remove-part:hover {
+            background: #fecaca;
+            transform: translateY(-1px);
+        }
+
+
+    /* =========================================================
+           ADD PART BUTTON
+           ========================================================= */
+
+    .parts-actions {
+        margin-top: 14px;
+    }
+
+    .add-part-btn {
+        border: 2px dashed #b8c8ce;
+        background: #f8fbfb;
+        color: var(--primary);
+        border-radius: 10px;
+        padding: 10px 15px;
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 800;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: .2s ease;
+    }
+
+        .add-part-btn:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+
+    /* =========================================================
+           SERVICE CHARGE
+           ========================================================= */
+
+    .service-charge-body {
+        padding: 20px 24px;
+    }
+
+    .service-charge-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+    }
+
+    .service-charge-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .charge-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: var(--warning-light);
+        color: var(--warning);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+    }
+
+    .charge-title {
+        margin: 0 0 3px;
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+    .charge-description {
+        margin: 0;
+        color: var(--text-soft);
+        font-size: 11px;
+    }
+
+    .service-charge-input-wrap {
+        position: relative;
+        width: 190px;
+    }
+
+    .currency-symbol {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-soft);
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .service-charge-input {
+        width: 100%;
+        height: 44px;
+        border: 1.5px solid var(--border);
+        border-radius: 12px;
+        padding: 0 12px 0 28px;
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text);
+        outline: none;
+        transition: all .2s;
+    }
+
+        .service-charge-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(0, 230, 162, .12);
+        }
+
+
+    /* =========================================================
+           SUMMARY
+           ========================================================= */
+
+    .summary-card {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    }
+
+    .summary-content {
+        padding: 22px 24px;
+    }
+
+    .summary-layout {
+        display: grid;
+        grid-template-columns: 1fr 300px;
+        gap: 40px;
+        align-items: start;
+    }
+
+    .summary-left-title {
+        margin: 0 0 15px;
+        font-size: 13px;
+        font-weight: 800;
+        color: var(--text);
+    }
+
+    .summary-note {
+        background: var(--border-light);
+        border: 1px solid var(--border-light);
+        border-radius: 12px;
+        padding: 12px 14px;
+        color: var(--text-soft);
+        font-size: 11px;
+        line-height: 1.6;
+    }
+
+        .summary-note i {
+            color: var(--primary);
+            margin-right: 6px;
+        }
+
+    .summary-lines {
+        width: 100%;
+    }
+
+    .summary-line {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        padding: 8px 0;
+        font-size: 12px;
+    }
+
+    .summary-label {
+        color: var(--text-soft);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        font-size: 11px;
+    }
+
+    .summary-value {
+        color: var(--text);
+        font-weight: 700;
+    }
+
+    .gst-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .gst-select {
+        height: 34px;
+        border: 1.5px solid var(--border);
+        border-radius: 8px;
+        padding: 0 9px;
+        font-family: inherit;
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--text);
+        outline: none;
+        background: #fff;
+    }
+
+        .gst-select:focus {
+            border-color: var(--accent);
+        }
+
+    .summary-divider {
+        height: 1px;
+        background: var(--border);
+        margin: 8px 0;
+    }
+
+    .grand-total {
+        margin-top: 8px;
+        padding-top: 15px;
+        border-top: 2px dashed var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+    }
+
+    .grand-total-label {
+        font-size: 14px;
+        font-weight: 800;
+        color: var(--text);
+    }
+
+    .grand-total-value {
+        font-size: 24px;
+        font-weight: 900;
+        color: var(--primary);
+        white-space: nowrap;
+        text-shadow: 0 4px 15px rgba(61, 131, 155, 0.25);
+    }
+
+
+    /* =========================================================
+           FOOTER BUTTONS
+           ========================================================= */
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 22px;
+    }
+
+    .action-btn {
+        min-width: 145px;
+        height: 44px;
+        padding: 0 18px;
+        border-radius: 10px;
+        border: none;
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 800;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: .2s ease;
+    }
+
+    .btn-draft {
+        background: #fff;
+        border: 1.5px solid var(--border);
+        color: var(--text-soft);
+    }
+
+        .btn-draft:hover {
+            background: var(--border-light);
+            color: var(--text);
+        }
+
+    .btn-complete {
+        background: var(--primary);
+        color: #fff;
+        box-shadow: 0 5px 12px rgba(61, 131, 155, .25);
+    }
+
+        .btn-complete:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 7px 16px rgba(61, 131, 155, .3);
+        }
+
+
+    /* =========================================================
+           MOBILE
+           ========================================================= */
+
+    /* =========================================================
+       MOBILE RESPONSIVE
+       ========================================================= */
+
+    @@media (max-width: 800px) {
+
+        .summary-layout {
+            grid-template-columns: 1fr;
+            gap: 25px;
+        }
+        /*
+           Don't let the entire page become horizontally scrollable.
+           Only the parts section will be handled separately.
+        */
+        .parts-body {
+            overflow-x: visible;
+        }
+
+        .parts-table {
+            min-width: 0;
+        }
+    }
+
+
+    /* =========================================================
+       PHONE
+       ========================================================= */
+
+    @@media (max-width: 600px) {
+        /* ---------------------------------------------
+           PAGE
+        --------------------------------------------- */
+
+        .pricing-page {
+            padding: 16px 10px 32px;
+        }
+
+        .pricing-container {
+            width: 100%;
+        }
+        /* ---------------------------------------------
+           PAGE HEADER
+        --------------------------------------------- */
+
+        .page-header {
+            margin-bottom: 16px;
+        }
+
+        .page-title-row {
+            gap: 10px;
+            align-items: center;
+        }
+
+        .page-title-icon {
+            width: 42px;
+            height: 42px;
+            font-size: 16px;
+        }
+
+        .page-title {
+            font-size: 19px;
+            letter-spacing: -0.3px;
+        }
+
+        .page-subtitle {
+            font-size: 11px;
+            line-height: 1.45;
+            margin-top: 3px;
+        }
+        /* ---------------------------------------------
+           COMMON CARDS
+        --------------------------------------------- */
+
+        .pricing-card,
+        .summary-card {
+            border-radius: 14px;
+            margin-bottom: 14px;
+        }
+        /* ---------------------------------------------
+           CARD HEADERS
+        --------------------------------------------- */
+
+        .card-header {
+            padding: 15px;
+            gap: 10px;
+        }
+
+        .card-header-left {
+            gap: 10px;
+            min-width: 0;
+        }
+
+        .card-header-icon {
+            width: 36px;
+            height: 36px;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .card-title {
+            font-size: 14px;
+        }
+
+        .card-description {
+            font-size: 10.5px;
+            line-height: 1.4;
+        }
+        /* ---------------------------------------------
+           PRODUCT
+        --------------------------------------------- */
+
+        .product-info {
+            padding: 15px;
+        }
+
+        .product-main {
+            display: grid;
+            grid-template-columns: 46px 1fr;
+            gap: 11px;
+            align-items: center;
+        }
+
+        .product-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 13px;
+            font-size: 18px;
+        }
+
+        .product-name {
+            font-size: 15px;
+            margin-bottom: 7px;
+            line-height: 1.25;
+        }
+
+        .product-meta {
+            gap: 5px;
+        }
+
+        .product-tag {
+            padding: 4px 6px;
+            font-size: 9.5px;
+            border-radius: 5px;
+        }
+        /*
+           Status doesn't need to compete with the product
+           information on a small screen.
+        */
+        .product-status {
+            display: none;
+        }
+        /* ---------------------------------------------
+           REPLACEMENT PARTS
+        --------------------------------------------- */
+
+        .parts-body {
+            padding: 12px;
+            overflow: visible;
+        }
+        /*
+           IMPORTANT:
+           Remove desktop table sizing on mobile.
+        */
+        .parts-table {
+            width: 100%;
+            min-width: 0;
+            border: none;
+            border-radius: 0;
+            display: block;
+        }
+
+            .parts-table thead {
+                display: none;
+            }
+
+            .parts-table tbody {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+            /*
+           Each table row becomes a card.
+        */
+            .parts-table tr.part-row {
+                display: grid;
+                grid-template-columns: 1fr auto;
+                gap: 0;
+                background: #fff;
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                overflow: hidden;
+                padding: 12px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.025);
+            }
+
+            .parts-table td {
+                display: block;
+                border: none;
+                padding: 0;
+                background: transparent;
+            }
+                /* ---------------------------------------------
+           PART NUMBER
+        --------------------------------------------- */
+
+                .parts-table td.part-number {
+                    grid-column: 1;
+                    grid-row: 1;
+                    width: auto;
+                    color: var(--primary);
+                    font-size: 11px;
+                    font-weight: 800;
+                    padding-bottom: 10px;
+                }
+
+                    .parts-table td.part-number::before {
+                        content: "PART #";
+                        margin-right: 5px;
+                        color: var(--muted);
+                        font-size: 9px;
+                        letter-spacing: .5px;
+                    }
+                /* ---------------------------------------------
+           DELETE BUTTON
+        --------------------------------------------- */
+
+                .parts-table td:nth-child(6) {
+                    grid-column: 2;
+                    grid-row: 1;
+                    display: flex;
+                    justify-content: flex-end;
+                    align-items: flex-start;
+                }
+
+        .remove-part {
+            width: 32px;
+            height: 32px;
+            border-radius: 9px;
+            font-size: 11px;
+        }
+        /* ---------------------------------------------
+           PART SELECT
+        --------------------------------------------- */
+
+        .parts-table td:nth-child(2) {
+            grid-column: 1 / -1;
+            grid-row: 2;
+            margin-bottom: 12px;
+        }
+
+            .parts-table td:nth-child(2)::before {
+                content: "PART";
+                display: block;
+                margin-bottom: 5px;
+                color: var(--muted);
+                font-size: 9px;
+                font-weight: 800;
+                letter-spacing: .6px;
+                text-transform: uppercase;
+            }
+
+        .part-select {
+            width: 100%;
+            min-width: 0;
+            height: 42px;
+            padding-left: 11px;
+            padding-right: 32px;
+            font-size: 11px;
+            border-radius: 9px;
+        }
+        /* ---------------------------------------------
+           QUANTITY
+        --------------------------------------------- */
+
+        .parts-table td:nth-child(3) {
+            grid-column: 1;
+            grid-row: 3;
+            width: calc(100% - 6px);
+            margin-right: 6px;
+        }
+
+            .parts-table td:nth-child(3)::before {
+                content: "QUANTITY";
+                display: block;
+                margin-bottom: 5px;
+                color: var(--muted);
+                font-size: 9px;
+                font-weight: 800;
+                letter-spacing: .6px;
+            }
+
+        .quantity-input {
+            width: 100%;
+            min-width: 0;
+            height: 40px;
+            font-size: 12px;
+            border-radius: 9px;
+        }
+        /* ---------------------------------------------
+           UNIT PRICE
+        --------------------------------------------- */
+
+        .parts-table td:nth-child(4) {
+            grid-column: 2;
+            grid-row: 3;
+            width: calc(100% - 6px);
+            margin-left: 6px;
+        }
+
+            .parts-table td:nth-child(4)::before {
+                content: "UNIT PRICE";
+                display: block;
+                margin-bottom: 5px;
+                color: var(--muted);
+                font-size: 9px;
+                font-weight: 800;
+                letter-spacing: .6px;
+            }
+
+        .price-input {
+            width: 100%;
+            min-width: 0;
+            height: 40px;
+            font-size: 12px;
+            border-radius: 9px;
+        }
+        /* ---------------------------------------------
+           AMOUNT
+        --------------------------------------------- */
+
+        .parts-table td:nth-child(5) {
+            grid-column: 1 / -1;
+            grid-row: 4;
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 1px dashed var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+            .parts-table td:nth-child(5)::before {
+                content: "AMOUNT";
+                color: var(--muted);
+                font-size: 9px;
+                font-weight: 800;
+                letter-spacing: .6px;
+            }
+
+        .amount-cell {
+            min-width: 0;
+            font-size: 14px;
+            font-weight: 900;
+            color: var(--primary);
+        }
+        /* ---------------------------------------------
+           ADD PART
+        --------------------------------------------- */
+
+        .parts-actions {
+            margin-top: 10px;
+        }
+
+        .add-part-btn {
+            width: 100%;
+            height: 42px;
+            justify-content: center;
+            padding: 9px 12px;
+            font-size: 11px;
+        }
+        /* ---------------------------------------------
+           SERVICE CHARGE
+        --------------------------------------------- */
+
+        .service-charge-body {
+            padding: 15px;
+        }
+
+        .service-charge-row {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 14px;
+        }
+
+        .service-charge-info {
+            gap: 10px;
+        }
+
+        .charge-icon {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+            font-size: 14px;
+        }
+
+        .charge-title {
+            font-size: 12px;
+        }
+
+        .charge-description {
+            font-size: 10px;
+            line-height: 1.4;
+        }
+
+        .service-charge-input-wrap {
+            width: 100%;
+        }
+
+        .service-charge-input {
+            height: 44px;
+            font-size: 14px;
+        }
+        /* ---------------------------------------------
+           SUMMARY
+        --------------------------------------------- */
+
+        .summary-content {
+            padding: 15px;
+        }
+
+        .summary-layout {
+            display: flex;
+            flex-direction: column;
+            gap: 17px;
+        }
+
+        .summary-left-title {
+            font-size: 12px;
+            margin-bottom: 9px;
+        }
+
+        .summary-note {
+            padding: 10px 11px;
+            font-size: 10px;
+            line-height: 1.55;
+        }
+
+        .summary-line {
+            padding: 7px 0;
+            font-size: 11px;
+        }
+
+        .summary-label {
+            font-size: 9.5px;
+        }
+
+        .summary-value {
+            font-size: 11px;
+        }
+
+        .gst-select {
+            height: 32px;
+            font-size: 10px;
+        }
+
+        .grand-total {
+            margin-top: 8px;
+            padding-top: 13px;
+        }
+
+        .grand-total-label {
+            font-size: 13px;
+        }
+
+        .grand-total-value {
+            font-size: 21px;
+        }
+        /* ---------------------------------------------
+           ACTION BUTTONS
+        --------------------------------------------- */
+
+        .form-actions {
+            flex-direction: column-reverse;
+            gap: 8px;
+            margin-top: 14px;
+            padding-bottom: 10px;
+        }
+
+        .action-btn {
+            width: 100%;
+            min-width: 0;
+            height: 45px;
+            font-size: 11px;
+        }
+    }
+
+</style>
+
+
+<div class="pricing-page">
+
+    <div class="pricing-container">
+
+        <!-- =====================================================
+             PAGE HEADER
+        ====================================================== -->
+
+        <div class="page-header">
+
+            <div class="page-title-row">
+
+                <div class="page-title-icon">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                </div>
+
+                <div>
+                    <h1 class="page-title">Service Pricing</h1>
+
+                    <p class="page-subtitle">
+                        Add replacement parts, service charges and prepare the final service amount.
+                    </p>
+                </div>
+
+            </div>
+
         </div>
-        <h2 class="header-title">Product & Service Details</h2>
-        <p class="header-subtitle">
-            <i class="fas fa-map-marker-alt"></i> Enter requirements and charges
-        </p>
+
+
+        <!-- =====================================================
+             PRODUCT BEING SERVICED
+        ====================================================== -->
+
+        <div class="pricing-card">
+
+            <div class="card-header">
+
+                <div class="card-header-left">
+
+                    <div class="card-header-icon">
+                        <i class="fas fa-box-open"></i>
+                    </div>
+
+                    <div>
+                        <h2 class="card-title">Product Being Serviced</h2>
+
+                        <p class="card-description">
+                            Product selected from the previous service-product step.
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="product-info">
+
+                <div class="product-main">
+
+                    <div class="product-icon">
+                        <i class="fas fa-wind"></i>
+                    </div>
+
+                    <div>
+
+                        <h3 class="product-name" id="productName">
+                            Split AC 1.5 Ton
+                        </h3>
+
+                        <div class="product-meta">
+
+                            <span class="product-tag">
+                                <strong>Brand:</strong> Voltas
+                            </span>
+
+                            <span class="product-tag">
+                                <strong>Model:</strong> XYZ123
+                            </span>
+
+                            <span class="product-tag">
+                                <strong>Serial:</strong> AC123456
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="product-status">
+                        <i class="fas fa-screwdriver-wrench"></i>
+                        Service In Progress
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             PARTS
+        ====================================================== -->
+
+        <div class="pricing-card">
+
+            <div class="card-header">
+
+                <div class="card-header-left">
+
+                    <div class="card-header-icon">
+                        <i class="fas fa-gears"></i>
+                    </div>
+
+                    <div>
+                        <h2 class="card-title">Replacement Parts</h2>
+
+                        <p class="card-description">
+                            Add the parts required for this service.
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="parts-body">
+
+                <table class="parts-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th style="width:40px;">#</th>
+
+                            <th>Part</th>
+
+                            <th style="width:100px;">
+                                Quantity
+                            </th>
+
+                            <th style="width:140px;">
+                                Unit Price
+                            </th>
+
+                            <th style="width:130px;">
+                                Amount
+                            </th>
+
+                            <th style="width:55px;"></th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="partsContainer">
+                    </tbody>
+
+                </table>
+
+
+                <div class="parts-actions">
+
+                    <button type="button"
+                            class="add-part-btn"
+                            id="addPartBtn">
+
+                        <i class="fas fa-plus"></i>
+
+                        Add Part
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             SERVICE CHARGE
+        ====================================================== -->
+
+        <div class="pricing-card">
+
+            <div class="card-header">
+
+                <div class="card-header-left">
+
+                    <div class="card-header-icon">
+                        <i class="fas fa-screwdriver-wrench"></i>
+                    </div>
+
+                    <div>
+
+                        <h2 class="card-title">
+                            Service Charge
+                        </h2>
+
+                        <p class="card-description">
+                            Labour or technician service charges.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="service-charge-body">
+
+                <div class="service-charge-row">
+
+                    <div class="service-charge-info">
+
+                        <div class="charge-icon">
+                            <i class="fas fa-tools"></i>
+                        </div>
+
+                        <div>
+
+                            <h3 class="charge-title">
+                                Technician Service Charge
+                            </h3>
+
+                            <p class="charge-description">
+                                Enter the labour/service amount for this job.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="service-charge-input-wrap">
+
+                        <span class="currency-symbol">
+                            ₹
+                        </span>
+
+                        <input type="number"
+                               id="serviceCharge"
+                               name="ServiceCharge"
+                               class="service-charge-input"
+                               value="0"
+                               min="0"
+                               step="0.01"
+                               placeholder="0.00">
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             PRICING SUMMARY
+        ====================================================== -->
+
+        <div class="summary-card">
+
+            <div class="card-header">
+
+                <div class="card-header-left">
+
+                    <div class="card-header-icon">
+                        <i class="fas fa-receipt"></i>
+                    </div>
+
+                    <div>
+
+                        <h2 class="card-title">
+                            Pricing Summary
+                        </h2>
+
+                        <p class="card-description">
+                            Final amount for this service.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="summary-content">
+
+                <div class="summary-layout">
+
+
+                    <!-- LEFT -->
+
+                    <div>
+
+                        <h3 class="summary-left-title">
+                            Service Pricing
+                        </h3>
+
+                        <div class="summary-note">
+
+                            <i class="fas fa-circle-info"></i>
+
+                            Parts are calculated using quantity × unit price.
+                            GST is calculated on the parts subtotal plus service charge.
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- RIGHT -->
+
+                    <div class="summary-lines">
+
+                        <div class="summary-line">
+
+                            <span class="summary-label">
+                                Parts Subtotal
+                            </span>
+
+                            <span class="summary-value"
+                                  id="partsSubtotal">
+                                ₹0.00
+                            </span>
+
+                        </div>
+
+
+                        <div class="summary-line">
+
+                            <span class="summary-label">
+                                Service Charge
+                            </span>
+
+                            <span class="summary-value"
+                                  id="serviceChargeDisplay">
+                                ₹0.00
+                            </span>
+
+                        </div>
+
+
+                        <div class="summary-divider"></div>
+
+
+                        <div class="summary-line">
+
+                            <span class="summary-label">
+                                Subtotal
+                            </span>
+
+                            <span class="summary-value"
+                                  id="subtotal">
+                                ₹0.00
+                            </span>
+
+                        </div>
+
+
+                        <div class="summary-line">
+
+                            <div class="gst-row">
+
+                                <span class="summary-label">
+                                    GST
+                                </span>
+
+                                <select id="gstPercentage"
+                                        name="GSTPercentage"
+                                        class="gst-select">
+
+                                    <option value="0">0%</option>
+                                    <option value="5">5%</option>
+                                    <option value="9">9%</option>
+                                    <option value="12">12%</option>
+                                    <option value="18" selected>18%</option>
+                                    <option value="28">28%</option>
+
+                                </select>
+
+                            </div>
+
+                            <span class="summary-value"
+                                  id="gstAmount">
+                                ₹0.00
+                            </span>
+
+                        </div>
+
+
+                        <div class="grand-total">
+
+                            <span class="grand-total-label">
+                                Grand Total
+                            </span>
+
+                            <span class="grand-total-value"
+                                  id="grandTotal">
+                                ₹0.00
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             ACTION BUTTONS
+        ====================================================== -->
+
+        <div class="form-actions">
+
+            <button type="button"
+                    class="action-btn btn-draft"
+                    id="saveDraftBtn">
+
+                <i class="far fa-save"></i>
+
+                Save Draft
+
+            </button>
+
+
+            <button type="button"
+                    class="action-btn btn-complete"
+                    id="completeBtn">
+
+                <i class="fas fa-check"></i>
+
+                Complete Service Pricing
+
+            </button>
+
+        </div>
+
     </div>
 
-    <form method="post" action="javascript:void(0);">
-        <div class="form-card" onclick="document.getElementById('ProductType').focus();">
-            <div class="card-icon-box icon-blue">
-                <i class="fas fa-handshake"></i>
-            </div>
-            <div class="action-content">
-                <label for="ProductType">Select Product</label>
-                <select id="ProductType" name="ProductId" class="stealth-input" required>
-                    <option value="" disabled selected>-- Choose from list --</option>
-                    <option value="1">Split AC 1.5 Ton</option>
-                    <option value="2">Window AC 1.0 Ton</option>
-                    <option value="3">RO Water Purifier</option>
-                    <option value="4">Washing Machine (Top Load)</option>
-                    <option value="5">Microwave Oven 32L</option>
-                </select>
-            </div>
-            <div class="action-chevron"><i class="fas fa-chevron-down"></i></div>
-        </div>
-
-        <div class="form-card" onclick="document.getElementById('PartsName').focus();">
-            <div class="card-icon-box icon-purple">
-                <i class="fas fa-cogs"></i>
-            </div>
-            <div class="action-content">
-                <label for="PartsName">Parts Name</label>
-                <input type="text" id="PartsName" name="PartsName" class="stealth-input" placeholder="e.g., Compressor, PCB Board..." />
-            </div>
-            <div class="action-chevron"><i class="fas fa-pen"></i></div>
-        </div>
-
-        <div class="form-card" onclick="document.getElementById('ServiceCharge').focus();">
-            <div class="card-icon-box icon-green">
-                <i class="fas fa-file-invoice-dollar"></i>
-            </div>
-            <div class="action-content">
-                <label for="ServiceCharge">Service Charge (₹)</label>
-                <input type="number" id="ServiceCharge" name="ServiceCharge" class="stealth-input" placeholder="0.00" min="0" step="0.01" required />
-            </div>
-            <div class="action-chevron"><i class="fas fa-pen"></i></div>
-        </div>
-
-        <div class="button-group">
-            <button type="submit" name="SubmitType" value="Save" class="btn-action btn-save">
-                <i class="far fa-save"></i> Save Draft
-            </button>
-
-            <button type="submit" name="SubmitType" value="Complete" class="btn-action btn-complete">
-                <i class="fas fa-check"></i> Complete
-            </button>
-        </div>
-
-    </form>
 </div>
 
-@await Html.PartialAsync("_VisitBottomNav")
+
+<script>
+
+    /* =========================================================
+       PRODUCT-SPECIFIC PART DATA
+
+       TEMPORARY SAMPLE DATA
+
+       Later this should come from your backend/API.
+    ========================================================= */
+
+    const productParts = {
+
+        "Split AC 1.5 Ton": [
+            {
+                id: 101,
+                name: "Compressor",
+                price: 8500
+            },
+            {
+                id: 102,
+                name: "PCB Board",
+                price: 3200
+            },
+            {
+                id: 103,
+                name: "Capacitor",
+                price: 450
+            },
+            {
+                id: 104,
+                name: "Fan Motor",
+                price: 1800
+            },
+            {
+                id: 105,
+                name: "Thermostat",
+                price: 650
+            },
+            {
+                id: 106,
+                name: "Copper Pipe",
+                price: 250
+            },
+            {
+                id: 107,
+                name: "Drain Pipe",
+                price: 120
+            },
+            {
+                id: 108,
+                name: "Swing Motor",
+                price: 750
+            },
+            {
+                id: 109,
+                name: "AC Remote",
+                price: 550
+            }
+        ],
+
+
+        "Window AC 1.0 Ton": [
+            {
+                id: 201,
+                name: "Compressor",
+                price: 7200
+            },
+            {
+                id: 202,
+                name: "PCB Board",
+                price: 2800
+            },
+            {
+                id: 203,
+                name: "Capacitor",
+                price: 400
+            },
+            {
+                id: 204,
+                name: "Fan Motor",
+                price: 1500
+            },
+            {
+                id: 205,
+                name: "Thermostat",
+                price: 550
+            }
+        ],
+
+
+        "RO Water Purifier": [
+            {
+                id: 301,
+                name: "RO Membrane",
+                price: 1200
+            },
+            {
+                id: 302,
+                name: "Sediment Filter",
+                price: 350
+            },
+            {
+                id: 303,
+                name: "Carbon Filter",
+                price: 450
+            },
+            {
+                id: 304,
+                name: "Booster Pump",
+                price: 950
+            },
+            {
+                id: 305,
+                name: "SMPS",
+                price: 700
+            },
+            {
+                id: 306,
+                name: "UV Lamp",
+                price: 850
+            }
+        ],
+
+
+        "Washing Machine (Top Load)": [
+            {
+                id: 401,
+                name: "Drain Pump",
+                price: 850
+            },
+            {
+                id: 402,
+                name: "Inlet Valve",
+                price: 650
+            },
+            {
+                id: 403,
+                name: "Motor",
+                price: 3200
+            },
+            {
+                id: 404,
+                name: "PCB Board",
+                price: 2800
+            },
+            {
+                id: 405,
+                name: "Door Lock",
+                price: 750
+            },
+            {
+                id: 406,
+                name: "Drive Belt",
+                price: 450
+            },
+            {
+                id: 407,
+                name: "Bearing",
+                price: 900
+            }
+        ],
+
+
+        "Microwave Oven 32L": [
+            {
+                id: 501,
+                name: "Magnetron",
+                price: 2200
+            },
+            {
+                id: 502,
+                name: "High Voltage Capacitor",
+                price: 850
+            },
+            {
+                id: 503,
+                name: "Diode",
+                price: 350
+            },
+            {
+                id: 504,
+                name: "Turntable Motor",
+                price: 500
+            },
+            {
+                id: 505,
+                name: "Control PCB",
+                price: 1800
+            }
+        ]
+
+    };
+
+
+    /* =========================================================
+       CURRENT PRODUCT
+
+       For now this is a sample product.
+
+       Later you can populate this from:
+       - Route parameter
+       - ViewModel
+       - TempData
+       - Session
+       - Database
+       - API
+    ========================================================= */
+
+    const currentProduct = "Split AC 1.5 Ton";
+
+
+    /* =========================================================
+       DOM ELEMENTS
+    ========================================================= */
+
+    const partsContainer =
+        document.getElementById("partsContainer");
+
+    const addPartBtn =
+        document.getElementById("addPartBtn");
+
+    const serviceChargeInput =
+        document.getElementById("serviceCharge");
+
+    const gstPercentage =
+        document.getElementById("gstPercentage");
+
+
+    /* =========================================================
+       CURRENCY FORMAT
+    ========================================================= */
+
+    function formatCurrency(value) {
+
+        return new Intl.NumberFormat("en-IN", {
+
+            style: "currency",
+
+            currency: "INR",
+
+            minimumFractionDigits: 2,
+
+            maximumFractionDigits: 2
+
+        }).format(value || 0);
+
+    }
+
+
+    /* =========================================================
+       CREATE PART OPTIONS
+    ========================================================= */
+
+    function createPartOptions() {
+
+        const parts =
+            productParts[currentProduct] || [];
+
+        let html =
+            `<option value="">Choose part...</option>`;
+
+        parts.forEach(function(part) {
+
+            html += `
+                    <option
+                        value="${part.id}"
+                        data-price="${part.price}">
+                        ${part.name}
+                    </option>
+                `;
+
+        });
+
+        return html;
+    }
+
+
+    /* =========================================================
+       ADD PART ROW
+    ========================================================= */
+
+    function addPartRow() {
+
+        const row =
+            document.createElement("tr");
+
+        row.className = "part-row";
+
+        row.innerHTML = `
+
+                <td class="part-number">
+                    1
+                </td>
+
+                <td>
+
+                    <select
+                        class="part-select"
+                        name="Parts[0].PartId">
+
+                        ${createPartOptions()}
+
+                    </select>
+
+                </td>
+
+                <td>
+
+                    <input
+                        type="number"
+                        class="quantity-input"
+                        name="Parts[0].Quantity"
+                        value="1"
+                        min="1"
+                        step="1">
+
+                </td>
+
+                <td>
+
+                    <input
+                        type="number"
+                        class="price-input"
+                        name="Parts[0].UnitPrice"
+                        value="0"
+                        min="0"
+                        step="0.01"
+                        placeholder="0.00">
+
+                </td>
+
+                <td class="amount-cell">
+                    ₹0.00
+                </td>
+
+                <td>
+
+                    <button
+                        type="button"
+                        class="remove-part"
+                        title="Remove Part">
+
+                        <i class="fas fa-trash"></i>
+
+                    </button>
+
+                </td>
+
+            `;
+
+
+        partsContainer.appendChild(row);
+
+
+        attachRowEvents(row);
+
+        updateIndexes();
+
+        updateTotals();
+
+    }
+
+
+    /* =========================================================
+       ATTACH EVENTS TO ROW
+    ========================================================= */
+
+    function attachRowEvents(row) {
+
+        const partSelect =
+            row.querySelector(".part-select");
+
+        const quantityInput =
+            row.querySelector(".quantity-input");
+
+        const priceInput =
+            row.querySelector(".price-input");
+
+        const removeButton =
+            row.querySelector(".remove-part");
+
+
+        /* ---------------------------------------------
+           PART SELECT
+        --------------------------------------------- */
+
+        partSelect.addEventListener("change", function() {
+
+            const selectedOption =
+                this.options[this.selectedIndex];
+
+            const price =
+                selectedOption.dataset.price;
+
+            if (price) {
+
+                priceInput.value = price;
+
+            }
+
+            updateTotals();
+
+        });
+
+
+        /* ---------------------------------------------
+           QUANTITY
+        --------------------------------------------- */
+
+        quantityInput.addEventListener("input", function() {
+
+            if (this.value < 1) {
+
+                this.value = 1;
+
+            }
+
+            updateTotals();
+
+        });
+
+
+        /* ---------------------------------------------
+           PRICE
+        --------------------------------------------- */
+
+        priceInput.addEventListener("input", function() {
+
+            if (this.value < 0) {
+
+                this.value = 0;
+
+            }
+
+            updateTotals();
+
+        });
+
+
+        /* ---------------------------------------------
+           REMOVE
+        --------------------------------------------- */
+
+        removeButton.addEventListener("click", function() {
+
+            row.remove();
+
+            updateIndexes();
+
+            updateTotals();
+
+        });
+
+    }
+
+
+    /* =========================================================
+       UPDATE ROW INDEXES
+
+       Required for ASP.NET MVC model binding.
+    ========================================================= */
+
+    function updateIndexes() {
+
+        const rows =
+            document.querySelectorAll(".part-row");
+
+
+        rows.forEach(function(row, index) {
+
+            row.querySelector(".part-number").textContent =
+                index + 1;
+
+
+            row.querySelector(".part-select").name =
+                `Parts[${index}].PartId`;
+
+
+            row.querySelector(".quantity-input").name =
+                `Parts[${index}].Quantity`;
+
+
+            row.querySelector(".price-input").name =
+                `Parts[${index}].UnitPrice`;
+
+        });
+
+    }
+
+
+    /* =========================================================
+       CALCULATE TOTALS
+    ========================================================= */
+
+    function updateTotals() {
+
+        const rows =
+            document.querySelectorAll(".part-row");
+
+        let partsSubtotal = 0;
+
+
+        rows.forEach(function(row) {
+
+            const quantity =
+                parseFloat(
+                    row.querySelector(".quantity-input").value
+                ) || 0;
+
+
+            const unitPrice =
+                parseFloat(
+                    row.querySelector(".price-input").value
+                ) || 0;
+
+
+            const amount =
+                quantity * unitPrice;
+
+
+            row.querySelector(".amount-cell").textContent =
+                formatCurrency(amount);
+
+
+            partsSubtotal += amount;
+
+        });
+
+
+        const serviceCharge =
+            parseFloat(serviceChargeInput.value) || 0;
+
+
+        const subtotal =
+            partsSubtotal + serviceCharge;
+
+
+        const gstRate =
+            parseFloat(gstPercentage.value) || 0;
+
+
+        const gstAmount =
+            subtotal * gstRate / 100;
+
+
+        const grandTotal =
+            subtotal + gstAmount;
+
+
+        document.getElementById("partsSubtotal")
+            .textContent =
+            formatCurrency(partsSubtotal);
+
+
+        document.getElementById("serviceChargeDisplay")
+            .textContent =
+            formatCurrency(serviceCharge);
+
+
+        document.getElementById("subtotal")
+            .textContent =
+            formatCurrency(subtotal);
+
+
+        document.getElementById("gstAmount")
+            .textContent =
+            formatCurrency(gstAmount);
+
+
+        document.getElementById("grandTotal")
+            .textContent =
+            formatCurrency(grandTotal);
+
+    }
+
+
+    /* =========================================================
+       SERVICE CHARGE EVENT
+    ========================================================= */
+
+    serviceChargeInput.addEventListener(
+        "input",
+        function() {
+
+            if (this.value < 0) {
+
+                this.value = 0;
+
+            }
+
+            updateTotals();
+
+        }
+    );
+
+
+    /* =========================================================
+       GST EVENT
+    ========================================================= */
+
+    gstPercentage.addEventListener(
+        "change",
+        updateTotals
+    );
+
+
+    /* =========================================================
+       ADD PART
+    ========================================================= */
+
+    addPartBtn.addEventListener(
+        "click",
+        addPartRow
+    );
+
+
+    /* =========================================================
+       INITIAL ROW
+    ========================================================= */
+
+    addPartRow();
+
+
+    /* =========================================================
+       INITIAL TOTAL
+    ========================================================= */
+
+    updateTotals();
+
+
+    /* =========================================================
+       SAVE DRAFT
+    ========================================================= */
+
+    document.getElementById("saveDraftBtn")
+        .addEventListener("click", function() {
+
+            /*
+             * Connect this button to your controller later.
+             *
+             * Example:
+             *
+             * form.submit();
+             *
+             */
+
+            console.log("Save Draft clicked.");
+
+        });
+
+
+    /* =========================================================
+       COMPLETE
+    ========================================================= */
+
+    document.getElementById("completeBtn")
+        .addEventListener("click", function() {
+
+            /*
+             * Connect this button to your controller later.
+             *
+             * Before submitting, you can validate:
+             *
+             * - Product
+             * - Parts
+             * - Quantity
+             * - Prices
+             * - Service charge
+             * - GST
+             */
+
+            console.log("Complete Service Pricing clicked.");
+
+        });
+
+</script>
