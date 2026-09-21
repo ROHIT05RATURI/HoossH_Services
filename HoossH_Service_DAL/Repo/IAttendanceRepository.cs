@@ -7,7 +7,7 @@ namespace HoossH_Service_DAL.Repo
 {
    public interface IAttendanceRepository
     {
-        Task<bool> MarkCheckInAsync(Guid loginId, string location);
+        Task<bool> MarkCheckInAsync(Guid loginId, string location, DateTime? attendenceDate = null);
         Task<bool> MarkCheckOutAsync(Guid loginId, string location, string description);
         Task<List<Attendance>> GetUserAttendanceAsync(Guid loginId);
     }

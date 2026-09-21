@@ -35,10 +35,8 @@
 </style>
 
 <div class="attendance-dashboard mx-lg-5 mt-4">
-
     <!-- UNIFIED HERO LAYOUT -->
     <div class="unified-hero-card">
-        <!-- 1. LEFT PANEL -->
         <div class="hero-left-action">
             <div class="greeting-header">
                 <div class="sun-icon-large"><i class="fa-solid fa-sun"></i></div>
@@ -65,7 +63,6 @@
             </div>
         </div>
 
-        <!-- 2. RIGHT PANEL -->
         <div class="hero-right-kpis">
             <div class="kpi-box">
                 <div class="kpi-icon-circle" style="background:#e0f2fe; color:#0ea5e9;"><i class="fas fa-calendar-day"></i></div>
@@ -271,15 +268,13 @@
         try {
             const location = await GeoService.getLocation();
             const latLong = location.latitude + "," + location.longitude;
-            
-            // Generate Safe ISO String
-            const localISO = new Date(now - (now.getTimezoneOffset() * 60000)).toISOString().slice(0, 19);
 
             const payload = {
                 Status: currentAction,
-                AttendenceDate: localISO,
                 Location: latLong,
                 Description: "User " + currentAction
+                // Aaj ki date check in karne ke liye AttendenceDate property khali jayegi
+                // Taki backend me normal GETDATE() function chal jaye
             };
 
             $.ajax({
@@ -330,10 +325,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-        // 🔥 FIX 1: Safe Date Comparison (Timezone Bug Fixed)
         const todayDate = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD
-        
-        // Match string-to-string (YYYY-MM-DD) instead of converting to Date object
         const recordToday = attendanceDataGlobal ? attendanceDataGlobal.find(r => r.date && r.date.split('T')[0] === todayDate) : null;
 
         const greeting = document.getElementById("greetingText");
@@ -402,11 +394,9 @@
             }
         });
 
-        // 🔥 FIX 2: Safe Date Extraction for Calendar Colors
         attendanceDataGlobal.forEach(record => {
             if (!record.date) return;
             
-            // Extract purely YYYY-MM-DD to avoid timezone shifting
             const datePart = record.date.split('T')[0]; 
             const [rYear, rMonth, rDay] = datePart.split('-');
 
@@ -435,7 +425,6 @@
             }
         });
 
-        // KPI COUNTERS UPDATE
         setTimeout(() => {
             const pCount = document.querySelectorAll('#calendar-body .present-dark, #calendar-body .pending-bg').length;
             const aCount = document.querySelectorAll('#calendar-body .absent-bg').length;
@@ -465,7 +454,6 @@
 
         const clickedDateStr = clickedDate.toLocaleDateString('en-CA');
         
-        // 🔥 FIX 3: Safe Date matching for Past Dates Popup
         const existingRecord = attendanceDataGlobal.find(r => r.date && r.date.split('T')[0] === clickedDateStr);
 
         if (!existingRecord || existingRecord.status === "Absent" || existingRecord.status === "Leave") {
