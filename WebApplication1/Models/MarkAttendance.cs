@@ -1,6 +1,6 @@
 ﻿namespace HoossH_Services.Models
 {
-    public class MarkAttendence
+    public class MarkAttendance
     {
         public DateTime AttendenceDate { get; set; }
 
@@ -9,7 +9,7 @@
         public string? location { get; set; }
         public string? description { get; set; }
 
-        public int isCheckedout { get; set; }
+        public bool isCheckedout { get; set; }
 
         public string CheckInStr { get; set; }
         public string CheckOutStr { get; set; }

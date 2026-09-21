@@ -3,12 +3,15 @@
 @inject IHttpContextAccessor HttpContextAccessor
 
 @{
-    var user = HttpContextAccessor.HttpContext?.User;
-    var role = user?.FindFirst(ClaimTypes.Role)?.Value;
-    var FullName = user?.FindFirst(ClaimTypes.Name)?.Value;
-    var UserName = user?.FindFirst("UserName")?.Value ?? string.Empty;
-    string status = Context.Session.GetString("VisitStatus");
-    string IsOverall = Context.Session.GetString("IsOverall");
+    // User object views mein by default available hota hai
+    var role = User.FindFirst(ClaimTypes.Role)?.Value;
+    var FullName = User.FindFirst(ClaimTypes.Name)?.Value;
+    var UserName = User.FindFirst("UserName")?.Value ?? string.Empty;
+    
+    // Agar aapne IsOverall aur VisitStatus bhi claim me dale hain to aise nikalein:
+    string status = User.FindFirst("VisitStatus")?.Value;
+    string IsOverall = User.FindFirst("IsOverall")?.Value;
+
     var redirectUrl = "/SuperAdmin/ProfilePage";
     bool isOverallMode = (IsOverall != null && IsOverall.Equals("True", StringComparison.OrdinalIgnoreCase));
 }
@@ -92,7 +95,7 @@
                     </a>
                     
                     <div class="position-relative d-inline-block me-3 d-flex align-items-center">
-                        <span class="me-2 d-none d-md-inline" style="font-weight: 500; font-size: 14px; color: #fff;">@(string.IsNullOrEmpty(FullName) ? UserName : FullName)</span>
+                        @* <span class="me-2 d-none d-md-inline" style="font-weight: 500; font-size: 14px; color: #fff;">@(string.IsNullOrEmpty(FullName) ? UserName : FullName)</span> *@
                         <i class="fa-solid fa-user-circle fs-4 cursor-pointer profile-icon text-white" id="profileMenuTrigger"></i>
 
                         <div id="profileDropdown" class="profile-dropdown shadow">
@@ -142,7 +145,7 @@
                     </div>
                     <div id="sec-hrms" class="fb-collapsible-content">
                         <div class="fb-grid-row">
-                            <a href="@Url.Action("Attendence", "Team")" class="fb-card url-link">
+                            <a href="@Url.Action("Attendance", "Team")" class="fb-card url-link">
                                 <i class="fas fa-fingerprint fb-card-icon icon-blue"></i>
                                 <span class="fb-card-title">Attendance</span>
                             </a>
@@ -179,9 +182,9 @@
                     </div>
                     <div id="sec-settings" class="fb-collapsible-content">
                         <div class="fb-grid-row">
-                            <a href="@Url.Action("ProfilePage", "SuperAdmin")" class="fb-card url-link">
-                                <i class="fas fa-user-cog fb-card-icon icon-teal"></i>
-                                <span class="fb-card-title">Profile</span>
+                            <a href="@Url.Action("ResetCredentials", "Home")" class="fb-card url-link">
+                                <i class="fas fa-key fb-card-icon icon-teal"></i>
+                                <span class="fb-card-title">Change Password</span>
                             </a>
                             <a href="@Url.Action("Logout", "Login")" class="fb-card url-link">
                                 <i class="fas fa-sign-out-alt fb-card-icon icon-red"></i>

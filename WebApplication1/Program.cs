@@ -1,12 +1,25 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddScoped<HoossH_Service_DAL.Repositories.IAuthRepository, HoossH_Service_DAL.Repositories.LoginRepository>();
 
-// Session support
-builder.Services.AddDistributedMemoryCache();
+builder.Services.AddScoped<HoossH_Service_DAL.Repositories.IAuthRepository, HoossH_Service_DAL.Repositories.LoginRepository>();
+builder.Services.AddScoped<HoossH_Service_DAL.Repo.IAttendanceRepository, HoossH_Service_DAL.Repo.AttendanceRepository>();
+
+// 1. COOKIE AUTHENTICATION (Login ke liye)
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Login/Index";
+        options.LogoutPath = "/Login/Logout";
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+    });
+
+// 2. SESSION (Aapke purane variables / Layout.cshtml ko crash hone se bachane ke liye)
+builder.Services.AddDistributedMemoryCache(); // <-- Ye line miss ho gayi thi
 builder.Services.AddSession(options => {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
     options.Cookie.HttpOnly = true;
@@ -14,23 +27,20 @@ builder.Services.AddSession(options => {
 
 var app = builder.Build();
 
-
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
 app.UseRouting();
 
-// Enable session middleware (must be before endpoints)
-app.UseSession();
-
-app.UseAuthorization();
-
+// MIDDLEWARE ORDER (Ye order bahut zaroori hai)
+app.UseSession();        // 1. Pehle Session
+app.UseAuthentication(); // 2. Phir Authentication (Claims)
+app.UseAuthorization();  // 3. Phir Authorization
 
 app.MapStaticAssets();
 
@@ -38,6 +48,5 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Login}/{action=Index}/{id?}")
     .WithStaticAssets();
-
 
 app.Run();

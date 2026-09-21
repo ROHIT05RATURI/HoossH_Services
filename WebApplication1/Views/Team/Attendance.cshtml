@@ -1,11 +1,13 @@
-@using HoossH_Services.Models
-@using System.Web;
-@model List<MarkAttendence>
+@using HoossH_Service_DAL.Models
+@using System.Web
+@model List<Attendance>
 @{
     ViewBag.Title = "Attendance Dashboard";
     Layout = "~/Views/Shared/_LayoutINV.cshtml";
 }
 
+<!-- JQUERY ADDED FOR AJAX -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 <link rel="stylesheet" href="/css/HRMS.css">
@@ -22,10 +24,9 @@
         border: 1px solid #e2e8f0;
         gap: 2rem;
         margin-bottom: 2rem;
-        overflow-x: auto; /* Handles small screens gracefully */
+        overflow-x: auto;
     }
 
-    /* 1. LEFT SECTION (Greeting & Buttons) */
     .hero-left-action {
         display: flex;
         flex-direction: column;
@@ -33,7 +34,7 @@
         flex-shrink: 0;
         min-width: 260px;
         padding-right: 2rem;
-        border-right: 2px dashed #f1f5f9; /* Separator line like screenshot */
+        border-right: 2px dashed #f1f5f9;
     }
 
     .greeting-header {
@@ -57,14 +58,13 @@
         display: block;
     }
 
-    /* Updated Title with Glow Effect */
     .greet-title {
         font-size: 2.2rem;
         font-weight: 900;
-        color: #6495ED; /* Cornflower blue matching screenshot */
+        color: #6495ED;
         margin: 0;
         line-height: 1.2;
-        text-shadow: 0 4px 15px rgba(100, 149, 237, 0.4); /* Glowing text shadow */
+        text-shadow: 0 4px 15px rgba(100, 149, 237, 0.4);
     }
 
     .greet-subtitle {
@@ -74,7 +74,6 @@
         margin-bottom: 0;
     }
 
-    /* Action Buttons inside Left Section */
     .btn-checkin-custom {
         background-color: #3D839B;
         color: white;
@@ -92,12 +91,11 @@
         cursor: pointer;
     }
 
-        .btn-checkin-custom:hover {
-            background-color: #00e6a2;
-            color: white;
-        }
+    .btn-checkin-custom:hover {
+        background-color: #00e6a2;
+        color: white;
+    }
 
-    /* Updated Check-Out Button (Small Pill Shape) */
     .btn-checkout-custom {
         background-color: #00e6a2;
         color: #e85a4f;
@@ -113,16 +111,15 @@
         box-shadow: 0 4px 10px rgba(232, 90, 79, 0.25);
         transition: all 0.2s;
         cursor: pointer;
-        width: fit-content; /* Fit Content ensures it doesn't take full width */
+        width: fit-content;
         margin-top: 0.5rem;
     }
 
-        .btn-checkout-custom:hover {
-            background-color: #fdf2f1;
-            color: #d9483f;
-        }
+    .btn-checkout-custom:hover {
+        background-color: #fdf2f1;
+        color: #d9483f;
+    }
 
-    /* 2. RIGHT SECTION (Horizontal KPI Cards) */
     .hero-right-kpis {
         display: flex;
         align-items: center;
@@ -146,10 +143,10 @@
         transition: transform 0.2s ease;
     }
 
-        .kpi-box:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        }
+    .kpi-box:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
 
     .kpi-icon-circle {
         width: 42px;
@@ -178,7 +175,6 @@
         text-align: center;
     }
 
-    /* Mobile Responsiveness */
     @@media (max-width: 992px) {
         .unified-hero-card {
             flex-direction: column;
@@ -195,7 +191,7 @@
 
         .hero-right-kpis {
             flex-wrap: nowrap;
-            overflow-x: auto; /* Allow scrolling horizontally on mobile */
+            overflow-x: auto;
             padding-bottom: 10px;
         }
 
@@ -207,17 +203,12 @@
 
 <div class="attendance-dashboard mx-lg-5 mt-4">
 
-    <!-- =====================================================
-         UNIFIED HERO LAYOUT (Everything in one div)
-         ===================================================== -->
+    <!-- UNIFIED HERO LAYOUT -->
     <div class="unified-hero-card">
-
-        <!-- 1. LEFT PANEL (Greeting & Action Buttons) -->
+        <!-- 1. LEFT PANEL -->
         <div class="hero-left-action">
             <div class="greeting-header">
-                <div class="sun-icon-large">
-                    <i class="fa-solid fa-sun"></i>
-                </div>
+                <div class="sun-icon-large"><i class="fa-solid fa-sun"></i></div>
                 <div>
                     <span class="daily-label">DAILY ATTENDANCE</span>
                     <h2 class="greet-title" id="greetingText">Good Morning! ⛅</h2>
@@ -226,92 +217,58 @@
             </div>
 
             <div class="action-section">
-                <!-- Check-In Button -->
                 <button type="button" class="btn-checkin-custom" id="btnCheckIn" onclick="openCustomPopup('Present')">
                     <i class="fas fa-sign-in-alt"></i> Check-In
                 </button>
-
-                <!-- Check-Out Button -->
                 <button type="button" class="btn-checkout-custom" id="btnCheckOut" style="display:none;" onclick="openCustomPopup('Checkout')">
                     <i class="fas fa-sign-out-alt"></i> Check-Out
                 </button>
-
-                <!-- Shift Completed Message -->
                 <div id="shiftCompletedMsg" style="display:none; color: #10b981; font-weight: 700; font-size: 1rem; text-align: center; background: #e8fdf5; padding: 0.75rem; border-radius: 8px; border: 1px solid #10b981;">
                     <i class="fas fa-check-double me-1"></i> Shift Completed
                 </div>
-
-                <!-- Hidden Form -->
                 <form id="attendanceForm" style="display:none;">
                     <input type="hidden" name="Location" id="location" />
                 </form>
             </div>
         </div>
 
-        <!-- 2. RIGHT PANEL (Horizontal KPI Cards) -->
+        <!-- 2. RIGHT PANEL -->
         <div class="hero-right-kpis">
-
-            <!-- TOTAL DAYS -->
             <div class="kpi-box">
-                <div class="kpi-icon-circle" style="background:#e0f2fe; color:#0ea5e9;">
-                    <i class="fas fa-calendar-day"></i>
-                </div>
+                <div class="kpi-icon-circle" style="background:#e0f2fe; color:#0ea5e9;"><i class="fas fa-calendar-day"></i></div>
                 <h4 id="totalDaysCount">@ViewBag.daysInMonth</h4>
                 <span>TOTAL DAYS</span>
             </div>
-
-            <!-- PRESENT -->
             <div class="kpi-box">
-                <div class="kpi-icon-circle" style="background:#dcfce7; color:#16a34a;">
-                    <i class="fas fa-user-check"></i>
-                </div>
+                <div class="kpi-icon-circle" style="background:#dcfce7; color:#16a34a;"><i class="fas fa-user-check"></i></div>
                 <h4 id="presentCount">0</h4>
                 <span>PRESENT</span>
             </div>
-
-            <!-- LEAVE -->
             <div class="kpi-box">
-                <div class="kpi-icon-circle" style="background:#fef08a; color:#ca8a04;">
-                    <i class="fas fa-plane-departure"></i>
-                </div>
+                <div class="kpi-icon-circle" style="background:#fef08a; color:#ca8a04;"><i class="fas fa-plane-departure"></i></div>
                 <h4 id="leaveCount">0</h4>
                 <span>LEAVES</span>
             </div>
-
-            <!-- ABSENT -->
             <div class="kpi-box">
-                <div class="kpi-icon-circle" style="background:#fee2e2; color:#dc2626;">
-                    <i class="fas fa-user-times"></i>
-                </div>
+                <div class="kpi-icon-circle" style="background:#fee2e2; color:#dc2626;"><i class="fas fa-user-times"></i></div>
                 <h4 id="absentCount">0</h4>
                 <span>ABSENT</span>
             </div>
-
-            <!-- WEEK OFF -->
             <div class="kpi-box">
-                <div class="kpi-icon-circle" style="background:#f3e8ff; color:#9333ea;">
-                    <i class="fas fa-mug-hot"></i>
-                </div>
+                <div class="kpi-icon-circle" style="background:#f3e8ff; color:#9333ea;"><i class="fas fa-mug-hot"></i></div>
                 <h4 id="weekoffCount">0</h4>
                 <span>WEEKOFF</span>
             </div>
-
         </div>
-
     </div>
 
-    <!-- =====================================================
-         CALENDAR SECTION
-         ===================================================== -->
+    <!-- CALENDAR SECTION -->
     <div class="calendar-card">
         <div style="display: flex; align-items:center; justify-content: center; margin-bottom: 10px;">
             <div class="month-indicator-badge">
-                <div class="calendar-icon-wrapper">
-                    <i class="fas fa-calendar-alt"></i>
-                </div>
+                <div class="calendar-icon-wrapper"><i class="fas fa-calendar-alt"></i></div>
                 <h4 id="monthAndYear" class="moving-text"></h4>
             </div>
-
             <div style="display: none;" aria-hidden="true">
                 <select id="month">
                     @for (int i = 0; i < 12; i++)
@@ -336,57 +293,44 @@
                 <div class="legend-item"><span class="legend-color Weekoff-bg"></span><span>Weekend</span></div>
                 <div class="legend-item"><span class="legend-color leave-bg"></span><span>Leave</span></div>
                 <div class="legend-item"><span class="legend-color working-leave-bg"></span><span>Working on Leave</span></div>
-                <div class="legend-item"><span class="legend-color not-joined-bg"></span><span>Not Joined</span></div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- =========================================================
-     CUSTOM POPUPS & MODALS
-     ========================================================= -->
-<!-- Check In/Out Popup -->
+<!-- CUSTOM POPUPS & MODALS -->
 <div id="customPopupModal" class="popup-modal-overlay">
     <div class="popup-content-card animate__animated">
         <button type="button" class="popup-close-btn" onclick="closeCustomPopup()">
             <i class="fas fa-times" style="font-size: 18px; color: #64748b;"></i>
         </button>
-
         <div class="popup-icon-container">
             <div id="dynamicIcon"></div>
             <span id="popupBadge" class="popup-notif-badge" style="display:none;">1</span>
         </div>
-
         <h3 id="popupTitle" class="premium-popup-title">Ready to start?</h3>
         <p id="popupTime" class="premium-popup-time-text">Time: <b>00:00 AM</b></p>
         <p id="popupSubText" class="premium-popup-subtext">Confirm to proceed</p>
-
         <div class="popup-action-area">
             <button type="button" class="button-3d-rendering button-3d-confirm" onclick="confirmPopupAction()">
                 <div class="btn-3d-text" id="actionBtnText">YES, LET'S GO</div>
-                <div class="btn-3d-icon-circle">
-                    <i class="fas fa-check" style="color: white; font-size: 16px;"></i>
-                </div>
+                <div class="btn-3d-icon-circle"><i class="fas fa-check" style="color: white; font-size: 16px;"></i></div>
             </button>
         </div>
     </div>
 </div>
 
-<!-- Past Attendance Popup -->
 <div id="pastDatePopupModal" class="popup-modal-overlay">
     <div class="popup-content-card animate__animated">
         <button type="button" class="popup-close-btn" onclick="closePastDatePopup()">
             <i class="fas fa-times" style="font-size: 18px; color: #64748b;"></i>
         </button>
-
         <div class="popup-icon-container">
             <i class="fas fa-calendar-check" style="font-size: 55px; color: #3f6791; filter: drop-shadow(0 8px 10px rgba(63, 103, 145, 0.3));"></i>
         </div>
-
         <h3 class="premium-popup-title">Past Attendance</h3>
         <p id="pastDateDisplay" class="premium-popup-time-text" style="background: #e0f2fe; color: #0284c7; border: 1px solid #bae6fd;"></p>
         <p class="premium-popup-subtext">Enter your check-in time</p>
-
         <div style="margin-bottom: 25px; text-align: left;">
             <label style="font-size: 0.75rem; font-weight: 800; color: #64748b; margin-bottom: 6px; display: block; letter-spacing: 0.5px;">CHECK-IN TIME</label>
             <input type="time" id="pastCheckInTime" style="width: 100%; padding: 12px 15px; border-radius: 12px; border: 1.5px solid #cbd5e1; font-family: 'Courier New', monospace; font-weight: 700; font-size: 1rem; color: #1e293b; background: #f8fafc; outline: none; transition: all 0.3s;" onfocus="this.style.borderColor='#00d09c'; this.style.boxShadow='0 0 0 4px rgba(0,208,156,0.1)';" onblur="this.style.borderColor='#cbd5e1'; this.style.boxShadow='none';">
@@ -395,9 +339,7 @@
         <div class="popup-action-area">
             <button type="button" class="button-3d-rendering button-3d-confirm" onclick="submitPastAttendance()">
                 <div class="btn-3d-text">MARK PRESENT</div>
-                <div class="btn-3d-icon-circle">
-                    <i class="fas fa-check" style="color: white; font-size: 16px;"></i>
-                </div>
+                <div class="btn-3d-icon-circle"><i class="fas fa-check" style="color: white; font-size: 16px;"></i></div>
             </button>
         </div>
     </div>
@@ -420,19 +362,27 @@
     </div>
 </div>
 
-<!-- =========================================================
-     SCRIPTS
-     ========================================================= -->
+<!-- SCRIPTS -->
 <script src="/js/Attendence.js"></script>
 <script src="/js/geolocation.js"></script>
 
 <script>
-    // 1. Global Data
+    // 1. Global Data mapped to DAL Model
     const attendanceDataGlobal = @Html.Raw(Json.Serialize(Model));
     let currentAction = 'Present';
-    window.attendanceJoinDate = '@ViewBag.JoinDate';
 
-    // 2. Custom Popup Functions
+    // 2. Helper to Format TimeSpan
+    function formatTimeSpan(timeSpanStr) {
+        if (!timeSpanStr) return "";
+        const parts = timeSpanStr.split(':');
+        if (parts.length >= 2) {
+            const d = new Date();
+            d.setHours(parseInt(parts[0]), parseInt(parts[1]));
+            return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+        return timeSpanStr;
+    }
+
     function openCustomPopup(action) {
         currentAction = action;
         const isCheckOut = action === 'Checkout';
@@ -476,7 +426,6 @@
         setTimeout(() => { popup.classList.remove("active"); }, 400);
     }
 
-    // 3. Confirm Action (API Call)
     async function confirmPopupAction() {
         closeCustomPopup();
         const now = new Date();
@@ -493,81 +442,85 @@
             const latLong = location.latitude + "," + location.longitude;
             const localISO = new Date(now - (now.getTimezoneOffset() * 60000)).toISOString().slice(0, 19);
 
-            $.post("/Team/MarkAttendence", {
+            const payload = {
                 Status: currentAction,
                 AttendenceDate: localISO,
-                location: latLong,
-                description: "User " + currentAction
-            }, function() {
-                loader.classList.remove("active");
+                Location: latLong,
+                Description: "User " + currentAction
+            };
 
-                const successModal = document.getElementById("customSuccessModal");
-                const successCard = document.getElementById("successCard");
-                const successIconWrapper = document.getElementById("successIconWrapper");
-                const successIcon = document.getElementById("successIcon");
-                const successTitle = document.getElementById("successTitle");
-                const successTime = document.getElementById("successTime");
+            $.ajax({
+                url: "/Team/MarkAttendence", 
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(payload),
+                success: function(response) {
+                    loader.classList.remove("active");
+                    const successModal = document.getElementById("customSuccessModal");
+                    const successCard = document.getElementById("successCard");
+                    const successIconWrapper = document.getElementById("successIconWrapper");
+                    const successIcon = document.getElementById("successIcon");
+                    const successTitle = document.getElementById("successTitle");
+                    const successTime = document.getElementById("successTime");
 
-                successCard.classList.remove("animate__zoomIn", "animate__zoomOut");
+                    successCard.classList.remove("animate__zoomIn", "animate__zoomOut");
 
-                if (isCheckOut) {
-                    successTitle.innerText = "Great Job! ✨";
-                    successIconWrapper.className = "success-icon-wrapper checkout";
-                    successIcon.className = "fas fa-check-double";
-                } else {
-                    successTitle.innerText = "Checked-In! 🌟";
-                    successIconWrapper.className = "success-icon-wrapper checkin";
-                    successIcon.className = "fas fa-check";
+                    if (isCheckOut) {
+                        successTitle.innerText = "Great Job! ✨";
+                        successIconWrapper.className = "success-icon-wrapper checkout";
+                        successIcon.className = "fas fa-check-double";
+                    } else {
+                        successTitle.innerText = "Checked-In! 🌟";
+                        successIconWrapper.className = "success-icon-wrapper checkin";
+                        successIcon.className = "fas fa-check";
+                    }
+
+                    successTime.innerText = `Time: ${currentTime}`;
+                    successModal.classList.add("active");
+                    successCard.classList.add("animate__zoomIn");
+
+                    setTimeout(() => {
+                        successCard.classList.remove("animate__zoomIn");
+                        successCard.classList.add("animate__zoomOut");
+                        setTimeout(() => { window.location.reload(); }, 400);
+                    }, 2000);
+                },
+                error: function(err) {
+                    loader.classList.remove("active");
+                    Swal.fire('Error', 'Failed to mark attendance.', 'error');
                 }
-
-                successTime.innerText = `Time: ${currentTime}`;
-                successModal.classList.add("active");
-                successCard.classList.add("animate__zoomIn");
-
-                setTimeout(() => {
-                    successCard.classList.remove("animate__zoomIn");
-                    successCard.classList.add("animate__zoomOut");
-                    setTimeout(() => { window.location.reload(); }, 400);
-                }, 2000);
             });
         } catch (err) {
             loader.classList.remove("active");
-            Swal.fire('GPS Required', 'Please enable location access to mark attendance.', 'warning');
+            Swal.fire('GPS Required', 'Please enable location access.', 'warning');
         }
     }
 
-    // 4. On Page Load (Initialize Dashboard & UI Toggle)
     document.addEventListener('DOMContentLoaded', function() {
         const todayDate = new Date().toLocaleDateString('en-CA');
-        const recordToday = attendanceDataGlobal ? attendanceDataGlobal.find(r => new Date(r.attendenceDate).toLocaleDateString('en-CA') === todayDate) : null;
+        
+        const recordToday = attendanceDataGlobal ? attendanceDataGlobal.find(r => new Date(r.date).toLocaleDateString('en-CA') === todayDate) : null;
 
         const greeting = document.getElementById("greetingText");
         const subGreeting = document.getElementById("subGreeting");
-
         const btnCheckIn = document.getElementById("btnCheckIn");
         const btnCheckOut = document.getElementById("btnCheckOut");
         const shiftCompletedMsg = document.getElementById("shiftCompletedMsg");
 
-        // Set dynamic greeting text based on time
         const hour = new Date().getHours();
         let timeGreet = (hour < 12) ? "Good Morning! ⛅" : (hour < 17) ? "Good Afternoon! ⛅" : "Good Evening! 🌙";
         greeting.innerText = timeGreet;
 
-        // Check user state and update UI (Toggle Buttons)
         if (recordToday) {
-            if ((recordToday.status === "Present" || recordToday.status === "Pending" || recordToday.status === "Working on Leave") && !recordToday.isCheckedout) {
+            let checkedOut = recordToday.checkOutTime !== null && recordToday.checkOutTime !== undefined;
 
-                // Show Check-Out button, Hide Check-In
+            if (!checkedOut && (recordToday.status === "Present" || recordToday.status === "Pending")) {
                 btnCheckIn.style.display = "none";
                 btnCheckOut.style.display = "inline-flex";
 
-                // Update text to "Working since HH:MM AM/PM" with dark bold style
-                const checkInTime = new Date(recordToday.attendenceDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const checkInTime = formatTimeSpan(recordToday.checkInTime);
                 subGreeting.innerHTML = `Working since <strong style="color: #334155; font-weight: 800;">${checkInTime}</strong>`;
-
-            } else if ((recordToday.status === "Present" || recordToday.status === "Pending" || recordToday.status === "Working on Leave") && recordToday.isCheckedout) {
-
-                // Shift completed, Hide both buttons
+            } else if (checkedOut) {
                 btnCheckIn.style.display = "none";
                 btnCheckOut.style.display = "none";
                 shiftCompletedMsg.style.display = "block";
@@ -582,46 +535,47 @@
         }
     });
 
-    // 5. Apply Calendar Styles (Color coding)
     function applyAttendanceStyles() {
         if (!attendanceDataGlobal) return;
+        
         const currentMonth = parseInt(document.getElementById("month").value);
         const currentYear = parseInt(document.getElementById("year").value);
+        
         const today = new Date();
-        const joinDate = new Date(window.attendanceJoinDate);
-        joinDate.setHours(0, 0, 0, 0);
+        today.setHours(0, 0, 0, 0);
 
         document.querySelectorAll('#calendar-body td').forEach(cell => {
             const day = parseInt(cell.getAttribute('data-date'));
             if (!day) return;
+            
             const cellDate = new Date(currentYear, currentMonth, day);
             cellDate.setHours(0, 0, 0, 0);
 
-            if (cellDate < joinDate) {
-                cell.className = 'date-picker not-joined-bg';
-                cell.innerHTML = `<div>${day}</div>`;
-                return;
+            cell.className = 'date-picker';
+            cell.innerHTML = `<div>${day}</div>`;
+
+            if (cellDate.getDay() === 0) {
+                cell.classList.add('sunday-bg');
+                cell.classList.add('Weekoff-bg'); 
+            } 
+            else if (cellDate < today) {
+                cell.classList.add('absent-bg');
             }
 
-            if (cellDate.getDay() === 0) cell.classList.add('sunday-bg');
             if (day === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear()) {
                 cell.classList.add('today-highlight');
             }
         });
 
         attendanceDataGlobal.forEach(record => {
-            const dateObj = new Date(record.attendenceDate);
-            const originalTime = new Date(record.attendenceDate);
+            const dateObj = new Date(record.date);
 
             if (dateObj.getMonth() === currentMonth && dateObj.getFullYear() === currentYear) {
-                dateObj.setHours(0, 0, 0, 0);
-                if (dateObj < joinDate) return;
-
                 const day = dateObj.getDate();
                 const cell = document.querySelector(`[data-date="${day}"]`);
 
                 if (cell) {
-                    cell.classList.remove('Weekoff-bg', 'present-light', 'present-dark', 'leave-bg', 'absent-bg', 'pending-bg', 'working-leave-bg');
+                    cell.classList.remove('Weekoff-bg', 'absent-bg', 'sunday-bg');
 
                     const status = record.status;
                     if (status === "Present") cell.classList.add('present-dark');
@@ -629,21 +583,32 @@
                     else if (status === "Leave") cell.classList.add('leave-bg');
                     else if (status === "Weekoff") cell.classList.add('Weekoff-bg');
                     else if (status === "Absent") cell.classList.add('absent-bg');
-                    else if (status === "Working on Leave") cell.classList.add('working-leave-bg');
 
                     const oldTime = cell.querySelector(".attendance-time");
                     if (oldTime) oldTime.remove();
 
-                    if (status === "Present" || status === "Pending" || status === "Working on Leave") {
-                        const timeStr = originalTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    if (status === "Present" || status === "Pending") {
+                        const timeStr = formatTimeSpan(record.checkInTime);
                         $(cell).append(`<span class="attendance-time">${timeStr} </span>`);
                     }
                 }
             }
         });
+
+        // KPI COUNTERS UPDATE
+        setTimeout(() => {
+            const pCount = document.querySelectorAll('#calendar-body .present-dark, #calendar-body .pending-bg').length;
+            const aCount = document.querySelectorAll('#calendar-body .absent-bg').length;
+            const lCount = document.querySelectorAll('#calendar-body .leave-bg, #calendar-body .working-leave-bg').length;
+            const wCount = document.querySelectorAll('#calendar-body .Weekoff-bg').length;
+
+            document.getElementById('presentCount').innerText = pCount;
+            document.getElementById('absentCount').innerText = aCount;
+            document.getElementById('leaveCount').innerText = lCount;
+            document.getElementById('weekoffCount').innerText = wCount;
+        }, 100);
     }
 
-    // 6. Past Attendance Logic
     document.getElementById('calendar-body').addEventListener('click', function(e) {
         const cell = e.target.closest('td');
         if (!cell) return;
@@ -656,18 +621,10 @@
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
-        const joinDate = new Date(window.attendanceJoinDate);
-        joinDate.setHours(0, 0, 0, 0);
-
-        if (clickedDate < joinDate) {
-            Swal.fire({ title: 'Info', text: 'You cannot mark attendance before your join date.', icon: 'info', confirmButtonColor: '#3f6791' });
-            return;
-        }
-
-        if (clickedDate >= today) return;
+        if (clickedDate >= today || clickedDate.getDay() === 0) return;
 
         const clickedDateStr = clickedDate.toLocaleDateString('en-CA');
-        const existingRecord = attendanceDataGlobal.find(r => new Date(r.attendenceDate).toLocaleDateString('en-CA') === clickedDateStr);
+        const existingRecord = attendanceDataGlobal.find(r => new Date(r.date).toLocaleDateString('en-CA') === clickedDateStr);
 
         if (!existingRecord || existingRecord.status === "Absent" || existingRecord.status === "Leave") {
             openPastDatePopup(clickedDateStr);
@@ -701,7 +658,7 @@
         const timeStr = document.getElementById("pastCheckInTime").value;
 
         if (!timeStr) {
-            Swal.fire({ title: 'Missing Time', text: 'Please select a valid check-in time.', icon: 'warning', confirmButtonColor: '#3f6791' });
+            Swal.fire({ title: 'Missing Time', text: 'Please select a valid check-in time.', icon: 'warning' });
             return;
         }
 
@@ -716,37 +673,46 @@
         loaderText.innerText = "Updating Records...";
         loader.classList.add("active");
 
-        $.post("/Team/MarkAttendence", {
+        const payload = {
             Status: "Present",
             AttendenceDate: localISO,
-            location: "Manual Entry",
-            description: "Past Attendance Manual Entry"
-        }, function() {
-            loader.classList.remove("active");
-            const successModal = document.getElementById("customSuccessModal");
-            const successCard = document.getElementById("successCard");
-            const successIconWrapper = document.getElementById("successIconWrapper");
-            const successIcon = document.getElementById("successIcon");
-            const successTitle = document.getElementById("successTitle");
-            const successTime = document.getElementById("successTime");
+            Location: "Manual Entry",
+            Description: "Past Attendance Manual Entry"
+        };
 
-            successCard.classList.remove("animate__zoomIn", "animate__zoomOut");
-            successTitle.innerText = "Updated! 🌟";
-            successIconWrapper.className = "success-icon-wrapper checkin";
-            successIcon.className = "fas fa-calendar-check";
-            successTime.innerText = `${new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} at ${timeStr}`;
+        $.ajax({
+            url: "/Team/MarkAttendence", 
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(payload),
+            success: function(response) {
+                loader.classList.remove("active");
+                const successModal = document.getElementById("customSuccessModal");
+                const successCard = document.getElementById("successCard");
+                const successIconWrapper = document.getElementById("successIconWrapper");
+                const successIcon = document.getElementById("successIcon");
+                const successTitle = document.getElementById("successTitle");
+                const successTime = document.getElementById("successTime");
 
-            successModal.classList.add("active");
-            successCard.classList.add("animate__zoomIn");
+                successCard.classList.remove("animate__zoomIn", "animate__zoomOut");
+                successTitle.innerText = "Updated! 🌟";
+                successIconWrapper.className = "success-icon-wrapper checkin";
+                successIcon.className = "fas fa-calendar-check";
+                successTime.innerText = `${new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} at ${timeStr}`;
 
-            setTimeout(() => {
-                successCard.classList.remove("animate__zoomIn");
-                successCard.classList.add("animate__zoomOut");
-                setTimeout(() => { window.location.reload(); }, 400);
-            }, 2000);
-        }).fail(function() {
-            loader.classList.remove("active");
-            Swal.fire({ title: 'Error', text: 'Failed to update attendance.', icon: 'error', confirmButtonColor: '#ef4444' });
+                successModal.classList.add("active");
+                successCard.classList.add("animate__zoomIn");
+
+                setTimeout(() => {
+                    successCard.classList.remove("animate__zoomIn");
+                    successCard.classList.add("animate__zoomOut");
+                    setTimeout(() => { window.location.reload(); }, 400);
+                }, 2000);
+            },
+            error: function(err) {
+                loader.classList.remove("active");
+                Swal.fire({ title: 'Error', text: 'Failed to update attendance.', icon: 'error' });
+            }
         });
     }
 </script>

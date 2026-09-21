@@ -39,5 +39,67 @@ namespace HoossH_Service_DAL.Repositories
 
                 return null; 
             }
+
+        // 2. NAYA METHOD: Check Duplicate Username
+        public async Task<bool> IsUsernameTakenAsync(string newUsername, Guid currentUserId)
+        {
+            // Ye check karega ki naya username DB me kisi aur user ke paas toh nahi hai (Active users me)
+            var query = "SELECT COUNT(1) FROM LoginCredentials WHERE username = @Username AND loginid != @UserId AND active = 1";
+
+            using var connection = new SqlConnection(_connectionString);
+            var count = await connection.ExecuteScalarAsync<int>(query, new { Username = newUsername, UserId = currentUserId });
+
+            return count > 0;
         }
+
+        // 3. NAYA METHOD: Update Password
+        public async Task<bool> UpdatePasswordAsync(Guid loginId, string oldUsername, string oldPasswordHash, string newPasswordHash)
+        {
+            // WHERE clause mein LoginId, OldUsername aur OldPasswordHash teeno check honge security ke liye
+            string query = @"
+                UPDATE LoginCredentials 
+                SET hashpassword = @NewPasswordHash 
+                WHERE loginid = @LoginId 
+                  AND username = @OldUsername 
+                  AND hashpassword = @OldPasswordHash 
+                  AND active = 1";
+
+            using var connection = new SqlConnection(_connectionString);
+            int rowsAffected = await connection.ExecuteAsync(query, new
+            {
+                NewPasswordHash = newPasswordHash,
+                LoginId = loginId,
+                OldUsername = oldUsername,
+                OldPasswordHash = oldPasswordHash
+            });
+
+            return rowsAffected > 0;
+        }
+
+        // 4. NAYA METHOD: Update Username
+        public async Task<bool> UpdateUsernameAsync(Guid loginId, string oldUsername, string oldPasswordHash, string newUsername)
+        {
+            // WHERE clause mein LoginId, OldUsername aur OldPasswordHash teeno check honge security ke liye
+            string query = @"
+                UPDATE LoginCredentials 
+                SET username = @NewUsername 
+                WHERE loginid = @LoginId 
+                  AND username = @OldUsername 
+                  AND hashpassword = @OldPasswordHash 
+                  AND active = 1";
+
+            using var connection = new SqlConnection(_connectionString);
+            int rowsAffected = await connection.ExecuteAsync(query, new
+            {
+                NewUsername = newUsername,
+                LoginId = loginId,
+                OldUsername = oldUsername,
+                OldPasswordHash = oldPasswordHash
+            });
+
+            return rowsAffected > 0;
+        }
+
+
+    }
     }
