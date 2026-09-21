@@ -14,191 +14,24 @@
 <link rel="stylesheet" href="/Attendance/Attendance.css">
 
 <style>
-    .unified-hero-card {
-        display: flex;
-        align-items: center;
-        background: #ffffff;
-        border-radius: 16px;
-        padding: 1.5rem;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.04);
-        border: 1px solid #e2e8f0;
-        gap: 2rem;
-        margin-bottom: 2rem;
-        overflow-x: auto;
-    }
-
-    .hero-left-action {
-        display: flex;
-        flex-direction: column;
-        gap: 1.2rem;
-        flex-shrink: 0;
-        min-width: 260px;
-        padding-right: 2rem;
-        border-right: 2px dashed #f1f5f9;
-    }
-
-    .greeting-header {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-    }
-
-    .sun-icon-large {
-        font-size: 2.8rem;
-        color: #facc15;
-    }
-
-    .daily-label {
-        font-size: 0.65rem;
-        font-weight: 800;
-        color: #94a3b8;
-        letter-spacing: 0.5px;
-        text-transform: uppercase;
-        margin-bottom: 2px;
-        display: block;
-    }
-
-    .greet-title {
-        font-size: 2.2rem;
-        font-weight: 900;
-        color: #6495ED;
-        margin: 0;
-        line-height: 1.2;
-        text-shadow: 0 4px 15px rgba(100, 149, 237, 0.4);
-    }
-
-    .greet-subtitle {
-        font-size: 1.05rem;
-        color: #64748b;
-        margin-top: 0.4rem;
-        margin-bottom: 0;
-    }
-
-    .btn-checkin-custom {
-        background-color: #3D839B;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        padding: 0.85rem 1rem;
-        font-weight: 700;
-        font-size: 1rem;
-        width: 40%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        transition: all 0.2s;
-        cursor: pointer;
-    }
-
-    .btn-checkin-custom:hover {
-        background-color: #00e6a2;
-        color: white;
-    }
-
-    .btn-checkout-custom {
-        background-color: #00e6a2;
-        color: #e85a4f;
-        border: 2px solid #e85a4f;
-        border-radius: 50px;
-        padding: 0.5rem 1.5rem;
-        font-weight: 700;
-        font-size: 1.05rem;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        box-shadow: 0 4px 10px rgba(232, 90, 79, 0.25);
-        transition: all 0.2s;
-        cursor: pointer;
-        width: fit-content;
-        margin-top: 0.5rem;
-    }
-
-    .btn-checkout-custom:hover {
-        background-color: #fdf2f1;
-        color: #d9483f;
-    }
-
-    .hero-right-kpis {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        flex-grow: 1;
-        justify-content: space-between;
-    }
-
-    .kpi-box {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        border: 1px solid #f1f5f9;
-        border-radius: 12px;
-        padding: 1.2rem 0.5rem;
-        flex: 1;
-        min-width: 110px;
-        background: #ffffff;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-        transition: transform 0.2s ease;
-    }
-
-    .kpi-box:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    }
-
-    .kpi-icon-circle {
-        width: 42px;
-        height: 42px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.1rem;
-        margin-bottom: 0.8rem;
-    }
-
-    .kpi-box h4 {
-        margin: 0 0 4px 0;
-        font-size: 1.4rem;
-        font-weight: 800;
-        color: #0f172a;
-    }
-
-    .kpi-box span {
-        font-size: 0.65rem;
-        font-weight: 800;
-        color: #64748b;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        text-align: center;
-    }
-
-    @@media (max-width: 992px) {
-        .unified-hero-card {
-            flex-direction: column;
-            align-items: stretch;
-            gap: 1.5rem;
-        }
-
-        .hero-left-action {
-            border-right: none;
-            border-bottom: 2px dashed #f1f5f9;
-            padding-right: 0;
-            padding-bottom: 1.5rem;
-        }
-
-        .hero-right-kpis {
-            flex-wrap: nowrap;
-            overflow-x: auto;
-            padding-bottom: 10px;
-        }
-
-        .kpi-box {
-            min-width: 120px;
-        }
-    }
+    .unified-hero-card { display: flex; align-items: center; background: #ffffff; border-radius: 16px; padding: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.04); border: 1px solid #e2e8f0; gap: 2rem; margin-bottom: 2rem; overflow-x: auto; }
+    .hero-left-action { display: flex; flex-direction: column; gap: 1.2rem; flex-shrink: 0; min-width: 260px; padding-right: 2rem; border-right: 2px dashed #f1f5f9; }
+    .greeting-header { display: flex; align-items: center; gap: 1rem; }
+    .sun-icon-large { font-size: 2.8rem; color: #facc15; }
+    .daily-label { font-size: 0.65rem; font-weight: 800; color: #94a3b8; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 2px; display: block; }
+    .greet-title { font-size: 2.2rem; font-weight: 900; color: #6495ED; margin: 0; line-height: 1.2; text-shadow: 0 4px 15px rgba(100, 149, 237, 0.4); }
+    .greet-subtitle { font-size: 1.05rem; color: #64748b; margin-top: 0.4rem; margin-bottom: 0; }
+    .btn-checkin-custom { background-color: #3D839B; color: white; border: none; border-radius: 8px; padding: 0.85rem 1rem; font-weight: 700; font-size: 1rem; width: 40%; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; cursor: pointer; }
+    .btn-checkin-custom:hover { background-color: #00e6a2; color: white; }
+    .btn-checkout-custom { background-color: #00e6a2; color: #e85a4f; border: 2px solid #e85a4f; border-radius: 50px; padding: 0.5rem 1.5rem; font-weight: 700; font-size: 1.05rem; display: inline-flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 10px rgba(232, 90, 79, 0.25); transition: all 0.2s; cursor: pointer; width: fit-content; margin-top: 0.5rem; }
+    .btn-checkout-custom:hover { background-color: #fdf2f1; color: #d9483f; }
+    .hero-right-kpis { display: flex; align-items: center; gap: 1rem; flex-grow: 1; justify-content: space-between; }
+    .kpi-box { display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid #f1f5f9; border-radius: 12px; padding: 1.2rem 0.5rem; flex: 1; min-width: 110px; background: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.02); transition: transform 0.2s ease; }
+    .kpi-box:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .kpi-icon-circle { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; margin-bottom: 0.8rem; }
+    .kpi-box h4 { margin: 0 0 4px 0; font-size: 1.4rem; font-weight: 800; color: #0f172a; }
+    .kpi-box span { font-size: 0.65rem; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; text-align: center; }
+    @@media (max-width: 992px) { .unified-hero-card { flex-direction: column; align-items: stretch; gap: 1.5rem; } .hero-left-action { border-right: none; border-bottom: 2px dashed #f1f5f9; padding-right: 0; padding-bottom: 1.5rem; } .hero-right-kpis { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 10px; } .kpi-box { min-width: 120px; } }
 </style>
 
 <div class="attendance-dashboard mx-lg-5 mt-4">
@@ -367,11 +200,9 @@
 <script src="/js/geolocation.js"></script>
 
 <script>
-    // 1. Global Data mapped to DAL Model
     const attendanceDataGlobal = @Html.Raw(Json.Serialize(Model));
     let currentAction = 'Present';
 
-    // 2. Helper to Format TimeSpan
     function formatTimeSpan(timeSpanStr) {
         if (!timeSpanStr) return "";
         const parts = timeSpanStr.split(':');
@@ -440,6 +271,8 @@
         try {
             const location = await GeoService.getLocation();
             const latLong = location.latitude + "," + location.longitude;
+            
+            // Generate Safe ISO String
             const localISO = new Date(now - (now.getTimezoneOffset() * 60000)).toISOString().slice(0, 19);
 
             const payload = {
@@ -497,9 +330,11 @@
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-        const todayDate = new Date().toLocaleDateString('en-CA');
+        // 🔥 FIX 1: Safe Date Comparison (Timezone Bug Fixed)
+        const todayDate = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD
         
-        const recordToday = attendanceDataGlobal ? attendanceDataGlobal.find(r => new Date(r.date).toLocaleDateString('en-CA') === todayDate) : null;
+        // Match string-to-string (YYYY-MM-DD) instead of converting to Date object
+        const recordToday = attendanceDataGlobal ? attendanceDataGlobal.find(r => r.date && r.date.split('T')[0] === todayDate) : null;
 
         const greeting = document.getElementById("greetingText");
         const subGreeting = document.getElementById("subGreeting");
@@ -567,11 +402,16 @@
             }
         });
 
+        // 🔥 FIX 2: Safe Date Extraction for Calendar Colors
         attendanceDataGlobal.forEach(record => {
-            const dateObj = new Date(record.date);
+            if (!record.date) return;
+            
+            // Extract purely YYYY-MM-DD to avoid timezone shifting
+            const datePart = record.date.split('T')[0]; 
+            const [rYear, rMonth, rDay] = datePart.split('-');
 
-            if (dateObj.getMonth() === currentMonth && dateObj.getFullYear() === currentYear) {
-                const day = dateObj.getDate();
+            if (parseInt(rMonth) - 1 === currentMonth && parseInt(rYear) === currentYear) {
+                const day = parseInt(rDay);
                 const cell = document.querySelector(`[data-date="${day}"]`);
 
                 if (cell) {
@@ -624,7 +464,9 @@
         if (clickedDate >= today || clickedDate.getDay() === 0) return;
 
         const clickedDateStr = clickedDate.toLocaleDateString('en-CA');
-        const existingRecord = attendanceDataGlobal.find(r => new Date(r.date).toLocaleDateString('en-CA') === clickedDateStr);
+        
+        // 🔥 FIX 3: Safe Date matching for Past Dates Popup
+        const existingRecord = attendanceDataGlobal.find(r => r.date && r.date.split('T')[0] === clickedDateStr);
 
         if (!existingRecord || existingRecord.status === "Absent" || existingRecord.status === "Leave") {
             openPastDatePopup(clickedDateStr);

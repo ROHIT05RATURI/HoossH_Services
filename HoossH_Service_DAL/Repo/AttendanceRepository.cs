@@ -8,7 +8,7 @@ using HoossH_Service_DAL.Models;
 
 namespace HoossH_Service_DAL.Repo
 {
-    public class AttendanceRepository :IAttendanceRepository
+    public class AttendanceRepository : IAttendanceRepository
     {
         private readonly string _connectionString;
 
@@ -34,7 +34,7 @@ namespace HoossH_Service_DAL.Repo
         {
             var query = @"
                 SELECT 
-                    [date] AS AttendenceDate, 
+                    [date] AS Date,              
                     attendanceStatus AS Status, 
                     checkInTime AS Checkintime,
                     checkOutTime AS CheckoutTime,
@@ -49,11 +49,17 @@ namespace HoossH_Service_DAL.Repo
 
             return result.AsList();
         }
+
         public async Task<bool> MarkCheckOutAsync(Guid loginId, string location, string description)
         {
-            var query = @"UPDATE attendance 
-                      SET checkOutTime = GETDATE(), CheckOutLocation = @Location, CheckOutDescription = @Description
-                      WHERE LoginId = @LoginId AND [date] = CAST(GETDATE() AS DATE) AND checkOutTime IS NULL";
+            var query = @"
+                UPDATE attendance 
+                SET checkOutTime = GETDATE(), CheckOutLocation = @Location, CheckOutDescription = @Description
+                WHERE Id = (
+                    SELECT TOP 1 Id FROM attendance 
+                    WHERE LoginId = @LoginId AND checkOutTime IS NULL 
+                    ORDER BY [date] DESC
+                )";
 
             using var connection = new SqlConnection(_connectionString);
             var rows = await connection.ExecuteAsync(query, new { LoginId = loginId, Location = location, Description = description });

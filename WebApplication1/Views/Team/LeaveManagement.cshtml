@@ -241,25 +241,5 @@
         });
     });
 
-    document.addEventListener("DOMContentLoaded", function() {
-        const leaveDropdown = document.getElementById("LeaveType");
-        const leaveOptionsCount = leaveDropdown.options.length;
-
-        if (leaveOptionsCount <= 1) {
-            setTimeout(() => {
-                showPremiumAlert('Leaves Not Assigned!', 'It looks like your leave quota isn\'t set yet. Please ask your <b>Higher Authorities</b> to add leave types for you.', 'alert');
-            }, 500);
-        }
-    });
-</script>
-
-@if (Model.LeaveTypes == null || !Model.LeaveTypes.Any() || Model.LeaveTypes.Sum(x => x.AllocatedDays) == 0)
-{
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            setTimeout(() => {
-                showPremiumAlert('Leaves Not Assigned!', 'It looks like your leave quota isn\'t set yet. Please ask your <b>Higher Authorities</b> to add leave types for you.', 'alert');
-            }, 600);
-        });
+   
     </script>
-}
