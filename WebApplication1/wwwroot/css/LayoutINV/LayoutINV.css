@@ -37,7 +37,6 @@ body:not(.sidebar-collapse) .main-sidebar {
     body:not(.sidebar-collapse) .content-wrapper,
     body:not(.sidebar-collapse) .main-header,
     body:not(.sidebar-collapse) .main-footer {
-        margin-left: 320px !important;
         transition: margin-left 0.3s ease-in-out;
     }
 }
@@ -380,3 +379,9 @@ body.sidebar-mini.sidebar-collapse .main-sidebar:not(:hover) .grow-nav-icon {
         transform: rotate(360deg);
     }
 }
+
+.main-footer {
+    margin: 0 auto 55px !important; /* centered, 55px gap above bottom nav */
+    width: 93%; /* adjust to line up with the card */
+    border-radius: 16px; /* matches the rounded card above */
+    transition: none !important;

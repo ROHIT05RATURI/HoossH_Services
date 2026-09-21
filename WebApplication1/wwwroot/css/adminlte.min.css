@@ -12088,16 +12088,21 @@ body:not(.layout-fixed) .main-sidebar {
 
 .main-footer {
     background-color: #fff;
-    border-top: 1px solid #dee2e6;
-    color: #869099;
+   
+    /* color: #869099; */
     padding: 1rem;
-    display:flex;
-    justify-content:center;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 55px;
+    word-spacing: 3px;
+    gap: 10px;
+    box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgb(209, 213, 219) 0px 0px 0px 1px inset;
+    /* width: 90%; */
 }
 
-    .main-footer.text-sm, .text-sm .main-footer {
-        padding: .812rem
-    }
+.main-footer.text-sm, .text-sm .main-footer {
+    padding: .812rem
+}
 
 .content-header {
     padding: 15px .5rem
